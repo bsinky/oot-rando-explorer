@@ -1,0 +1,17 @@
+html {
+    background-color: #0e1318;
+    color: #dadada;
+    /* backgroundAccent: #171e27; */
+    /* backgroundLightAccent: #1e2732; */
+    /* backgroundDarkAccent: #0d1014; */
+    font-family: "Open Sans",sans-serif;
+}
+
+a {
+    color: #5fa4ff;
+}
+
+h1, h2, h3 {
+    color:#eb802b;
+    font-family: "Righteous",sans-serif;
+}

@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>OOT Rando Explorer</title>
+        <link rel="stylesheet" rel="stylesheet" href="/assets/index.css"/>
+        <script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h1>OOT Rando Explorer</h1>
+        <h2>Upload or check a seed</h2>
+        <form id="seed-form">
+            <input name="spoilerlog" type="file" required=""/>
+            <button type="submit"
+                hx-post="/uploadseed"
+                hx-trigger="click"
+                hx-target="#upload-errors"
+                hx-swap="innerHTML"
+                hx-encoding="multipart/form-data">
+                Upload
+            </button>
+            <label id="upload-errors"></label>
+        </fieldset>
+    </body>
+</html>
