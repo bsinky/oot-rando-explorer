@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// TODO: newer spoilerlogs use "seed" and "version" with no underscores, will need to check for those when deserializing too
 type SpoilerLog struct {
 	Seed     string        `json:"_seed"`
 	Version  string        `json:"_version"`

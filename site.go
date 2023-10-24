@@ -11,6 +11,7 @@ import (
 	"ootrandoexplorer/site/randoseed"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,15 +33,11 @@ func getSeed(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
-	// TODO: create HTML template for displaying seed
-	// TODO: render template using seed
 	c.HTML(http.StatusFound, "seed.tmpl", seed)
 }
 
 func downloadSeed(c *gin.Context) {
-	// TODO: create HTML template for displaying seed
 	filehash := c.Param("filehash")
-	// TODO: retrieve seed from db based on filehash
 
 	_, err := seedsDatabase.GetByFileHash(filehash)
 	if err != nil {
@@ -69,7 +66,11 @@ func uploadSeed(c *gin.Context) {
 	uploadedFile := formData[0]
 	uploadedFilename := formData[0].Filename
 	fmt.Printf("multipart Filename is %s", uploadedFilename)
-	// TODO: check spoiler log file name, see if an existing uploaded seed matches it and redirect to that page if so
+
+	if alreadyUploaded, _ := seedsDatabase.GetByFileHash(strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
+		c.Redirect(http.StatusFound, "/s/"+alreadyUploaded.FileHash)
+		return
+	}
 
 	spoilerlogFile, err := uploadedFile.Open()
 	defer spoilerlogFile.Close()
@@ -87,7 +88,6 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	// fmt.Printf("Attempting to parse json from %s", spoilerLogBytes[0:30])
 	spoilerLog := randoseed.SpoilerLog{}
 	jsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), &spoilerLog)
 	if jsonErr != nil {
@@ -106,6 +106,7 @@ func uploadSeed(c *gin.Context) {
 	}
 
 	// TODO: use a database transaction and only commit it once writing file to disk succeeds too
+	// TODO: raw settings JSON isn't working as expected, probably just  write another method to extract it
 	rawSettingsJson, rErr := json.Marshal(rawSettings)
 	if rErr != nil {
 		fmt.Println("Couldn't serialize raw settings json")
@@ -126,6 +127,10 @@ func uploadSeed(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, writeErr)
 		return
 	}
+
+	redirectDest := "/s/" + newDbRecord.FileHash
+	c.Header("HX-Location", redirectDest)
+	c.Redirect(http.StatusFound, redirectDest)
 }
 
 const sqliteDbFileName = "sqlite.db"
@@ -145,7 +150,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	gin.DisableConsoleColor()
 	f, _ := os.Create("oot-rando.log")
 	// Write to logfile and stdout
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
@@ -160,7 +164,6 @@ func main() {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		fmt.Println("%i recent seeds found", len(seeds))
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{"seeds": seeds})
 	})
 
