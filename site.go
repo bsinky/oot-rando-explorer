@@ -2,54 +2,54 @@ package main
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"strconv"
-	"strings"
+	"ootrandoexplorer/site/randoseed"
+	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
 
-// JSON-parse types
-type SpoilerLog struct {
-	Seed     string        `json:"_seed"`
-	Version  string        `json:"_version"`
-	FileHash []int         `json:"file_hash"`
-	Settings RandoSettings `json:"settings"`
+var seedsDatabase *randoseed.SQLiteRepository
+
+const spoilerLogDir = "spoiler_logs"
+
+func getSpoilerLogDest(fileHash string) string {
+	fileName := fileHash + ".json"
+	return filepath.Join(spoilerLogDir, fileName)
 }
 
-type RandoSettings struct {
-	Logic       string `json:"Logic Options:Logic"`
-	Shopsanity  string `json:"Shuffle Settings:Shopsanity"`
-	Tokensanity string `json:"Shuffle Settings:Tokensanity"`
-	Scrubsanity string `json:"Shuffle Settings:Scrub Shuffle"`
-}
+func getSeed(c *gin.Context) {
+	filehash := c.Param("filehash")
 
-// database types
-type DBSeed struct {
-	Seed        string
-	Version     string
-	FileHash    string
-	Logic       string
-	Shopsanity  string
-	Tokensanity string
-	Scrubsanity string
-	RawSettings string
-}
-
-func (s SpoilerLog) FileHashString() string {
-	hashString := strings.Builder{}
-	for i := 0; i < len(s.FileHash); i++ {
-		if s.FileHash[i] < 10 {
-			hashString.WriteString("0")
-		}
-		hashString.WriteString(strconv.Itoa((s.FileHash[i])))
-		hashString.WriteString("-")
+	seed, err := seedsDatabase.GetByFileHash(filehash)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
 	}
-	ret := hashString.String()
-	return ret[:len(ret)-1] // remove trailing "-"
+	// TODO: create HTML template for displaying seed
+	// TODO: render template using seed
+	c.HTML(http.StatusFound, "seed.tmpl", seed)
+}
+
+func downloadSeed(c *gin.Context) {
+	// TODO: create HTML template for displaying seed
+	filehash := c.Param("filehash")
+	// TODO: retrieve seed from db based on filehash
+
+	_, err := seedsDatabase.GetByFileHash(filehash)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	fileName := filehash + ".json"
+	c.FileAttachment(filepath.Join(spoilerLogDir, fileName), fileName)
 }
 
 func uploadSeed(c *gin.Context) {
@@ -88,7 +88,7 @@ func uploadSeed(c *gin.Context) {
 	}
 
 	// fmt.Printf("Attempting to parse json from %s", spoilerLogBytes[0:30])
-	spoilerLog := SpoilerLog{}
+	spoilerLog := randoseed.SpoilerLog{}
 	jsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), &spoilerLog)
 	if jsonErr != nil {
 		fmt.Println("Couldn't parse JSON")
@@ -96,24 +96,78 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	// TODO: create database records
-	// TODO: write uploaded file to file system
+	rawSettings := struct {
+		settings any
+	}{}
+	if sJsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), &rawSettings); sJsonErr != nil {
+		fmt.Println("Couldn't parse raw settings json")
+		c.AbortWithError(http.StatusBadRequest, sJsonErr)
+		return
+	}
+
+	// TODO: use a database transaction and only commit it once writing file to disk succeeds too
+	rawSettingsJson, rErr := json.Marshal(rawSettings)
+	if rErr != nil {
+		fmt.Println("Couldn't serialize raw settings json")
+		c.AbortWithError(http.StatusBadRequest, rErr)
+		return
+	}
+
+	newDbRecord := randoseed.MakeDatabaseRecord(spoilerLog, string(rawSettingsJson))
+	if _, insertErr := seedsDatabase.Create(newDbRecord); insertErr != nil {
+		fmt.Println("Couldn't insert new db record")
+		c.AbortWithError(http.StatusInternalServerError, insertErr)
+		return
+	}
+
+	writeErr := os.WriteFile(getSpoilerLogDest(newDbRecord.FileHash), spoilerLogBytes.Bytes(), 0777)
+	if writeErr != nil {
+		fmt.Println("Couldn't write spoiler log to disk")
+		c.AbortWithError(http.StatusInternalServerError, writeErr)
+		return
+	}
 }
 
+const sqliteDbFileName = "sqlite.db"
+
 func main() {
+	db, err := sql.Open("sqlite3", sqliteDbFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	seedsDatabase = randoseed.NewSQLiteRepository(db)
+	if err := seedsDatabase.Migrate(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := os.MkdirAll(spoilerLogDir, 0777); err != nil {
+		log.Fatal(err)
+	}
+
+	gin.DisableConsoleColor()
+	f, _ := os.Create("oot-rando.log")
+	// Write to logfile and stdout
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+
 	r := gin.Default()
 	r.StaticFS("/assets", http.Dir("assets"))
-	r.LoadHTMLFiles("index.html")
+	r.LoadHTMLGlob("templates/*")
 
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
+		seeds, err := seedsDatabase.MostRecent(5)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		fmt.Println("%i recent seeds found", len(seeds))
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{"seeds": seeds})
 	})
+
+	r.GET("/s/:filehash", getSeed)
+	r.GET("/download/:filehash", downloadSeed)
 
 	r.POST("/uploadseed", uploadSeed)
-
-	r.GET("/download/:seedhash", func(c *gin.Context) {
-		// c.FileAttachment()
-	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

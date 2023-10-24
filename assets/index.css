@@ -7,6 +7,11 @@ html {
     font-family: "Open Sans",sans-serif;
 }
 
+body {
+    width: 50%;
+    margin: auto;
+}
+
 a {
     color: #5fa4ff;
 }

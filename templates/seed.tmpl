@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>OOT Rando Explorer - {{ .FileHash }}</title>
+        <link rel="stylesheet" rel="stylesheet" href="/assets/index.css"/>
+        <script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <a href="/">
+            <h1>OOT Rando Explorer</h1>
+        </a>
+        <h2>Seed</h2>
+        <h2>
+            {{ .FileHash }}
+        </h2>
+        <a href="/download/{{ .FileHash }}">Download</a>
+        <div>Uploaded {{ .UploadTime }}</div>
+        <div>{{ .Version }}</div>
+        <div class="randoSettings">
+            {{ .Logic }},
+            Shopsanity {{ .Shopsanity }},
+            Tokensanity {{ .Tokensanity }},
+            Scrubsanity {{ .Scrubsanity }}
+        </div>
+        <div>
+            <textarea disabled>{{ .RawSettings }}</textarea>
+        </div>
+    </body>
+</html>

@@ -18,6 +18,12 @@
                 Upload
             </button>
             <label id="upload-errors"></label>
-        </fieldset>
+        </form>
+        <h3>Most Recent Seeds</h3>
+        {{ range .seeds }}
+        <div>
+            <a href="/s/{{ .FileHash }}">{{ .FileHash }}</a> | {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
+        </div>
+        {{ end }}
     </body>
 </html>

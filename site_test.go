@@ -1,15 +1,16 @@
 package main
 
 import (
+	"ootrandoexplorer/site/randoseed"
 	"testing"
 )
 
 func TestFileHashString(t *testing.T) {
-	s := SpoilerLog{
+	s := randoseed.SpoilerLog{
 		Seed:     "",
 		Version:  "",
 		FileHash: []int{1, 2, 3, 4, 5},
-		Settings: RandoSettings{},
+		Settings: randoseed.RandoSettings{},
 	}
 	want := "01-02-03-04-05"
 	actual := s.FileHashString()
