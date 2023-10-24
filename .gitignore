@@ -1,3 +1,4 @@
 **/*.exe
 *.log
 *.db
+spoiler_logs/
