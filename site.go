@@ -33,7 +33,7 @@ func getSeed(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
-	c.HTML(http.StatusFound, "seed.tmpl", seed)
+	c.HTML(http.StatusOK, "seed.tmpl", seed)
 }
 
 func downloadSeed(c *gin.Context) {
@@ -159,7 +159,7 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 
 	r.GET("/", func(c *gin.Context) {
-		seeds, err := seedsDatabase.MostRecent(5)
+		seeds, err := seedsDatabase.MostRecent(10)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
