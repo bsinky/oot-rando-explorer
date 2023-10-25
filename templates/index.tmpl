@@ -17,7 +17,9 @@
                 {{ range fileHashIcons .FileHash }}
                     <img src="{{.}}"/>
                 {{end}}
-            {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
+            <span class="recent-seed-info">
+                {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
+            </span>
             </a>
         </div>
         {{ end }}

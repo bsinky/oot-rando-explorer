@@ -21,6 +21,7 @@ h1, h2, h3 {
 }
 
 .hash-icons img, .hash-icons-2x img, a.hash-icons, a.hash-icons-2x {
+    display: inline-block;
     text-decoration: none;
 }
 
@@ -32,4 +33,10 @@ h1, h2, h3 {
 .hash-icons-2x img {
     width: 64px;
     height: 64px;
+}
+
+.recent-seed-info {
+    display: inline-block;
+    vertical-align: middle;
+    padding-bottom: 24px;
 }

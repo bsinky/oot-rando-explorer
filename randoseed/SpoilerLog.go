@@ -1,33 +1,61 @@
 package randoseed
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
 
-// TODO: newer spoilerlogs use "seed" and "version" with no underscores, will need to check for those when deserializing too
+// TODO: unify this with the DBSeed struct to just have a single struct representation of the seed
+// TODO: then RandoSettings struct could also go away
 type SpoilerLog struct {
-	Seed     string        `json:"_seed"`
-	Version  string        `json:"_version"`
-	FileHash []int         `json:"file_hash"`
-	Settings RandoSettings `json:"settings"`
+	Seed     string
+	Version  string
+	FileHash []int
+	Settings RandoSettings
 }
 
-// func (s SpoilerLog) UnmarshalJSON(data []byte) error {
-// 	spoilerLog := SpoilerLog{}
-// 	strMap := make(map[string]string)
-// 	err := json.Unmarshal(data, &strMap)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	// TODO: handle settings explicitly somehow
-// 	spoilerLog.Seed = strMap["_seed"]
-// 	spoilerLog.Version = strMap["_version"]
-// 	// spoilerLog.FileHash = strMap["file_hash"]
-// 	spoilerLog.Version = strMap["_version"]
+func (spoilerLog *SpoilerLog) UnmarshalJSON(data []byte) error {
+	strMap := make(map[string]json.RawMessage)
+	err := json.Unmarshal(data, &strMap)
+	if err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	var rawSeed json.RawMessage
+	if seedVal, ok := strMap["_seed"]; ok {
+		rawSeed = seedVal
+	} else if seedVal, ok := strMap["seed"]; ok {
+		rawSeed = seedVal
+	}
+	if err := json.Unmarshal(rawSeed, &spoilerLog.Seed); err != nil {
+		return err
+	}
+
+	var rawVersion json.RawMessage
+	if versionVal, ok := strMap["_version"]; ok {
+		rawVersion = versionVal
+	} else if versionVal, ok := strMap["version"]; ok {
+		rawVersion = versionVal
+	}
+	if err := json.Unmarshal(rawVersion, &spoilerLog.Version); err != nil {
+		return err
+	}
+
+	if fileHashVal, ok := strMap["file_hash"]; ok {
+		if err := json.Unmarshal(fileHashVal, &spoilerLog.FileHash); err != nil {
+			return err
+		}
+	}
+
+	if settingsVal, ok := strMap["settings"]; ok {
+		if err := json.Unmarshal(settingsVal, &spoilerLog.Settings); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 func (s SpoilerLog) FileHashString() string {
 	hashString := strings.Builder{}
