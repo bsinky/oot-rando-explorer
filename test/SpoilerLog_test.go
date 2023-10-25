@@ -26,6 +26,18 @@ func testReadingSpoilerLog(t *testing.T, filePath string) {
 	if spoilerLog.Seed == "" {
 		t.Fatalf(`Seed was empty after deserialization`)
 	}
+
+	if spoilerLog.RawSettings == "" {
+		t.Fatalf(`RawSettings was empty after deserialization`)
+	}
+}
+
+// TODO: every 5.1.4 seed I generate gives "unexpected end of input" JSON errors,
+// TODO: but all the online validators I've tried say its valid. Something is causing
+// TODO: Go not to read the whole file maybe? Not sure what's going on.
+// Bradley Echo 5.1.4
+func TestReadingBradleyEchoSpoilerLog(t *testing.T) {
+	testReadingSpoilerLog(t, "37-07-80-16-59.json")
 }
 
 // Khan Bravo 6.1.1

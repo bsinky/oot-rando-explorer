@@ -21,7 +21,7 @@ func (seed DBSeed) FormattedUploadTime() string {
 	return seed.UploadTime.Format(time.RFC1123)
 }
 
-func MakeDatabaseRecord(s SpoilerLog, rawSettings string) DBSeed {
+func MakeDatabaseRecord(s SpoilerLog) DBSeed {
 	return DBSeed{
 		UploadTime:  time.Now(),
 		Seed:        s.Seed,
@@ -31,6 +31,6 @@ func MakeDatabaseRecord(s SpoilerLog, rawSettings string) DBSeed {
 		Shopsanity:  s.Settings.Shopsanity,
 		Tokensanity: s.Settings.Tokensanity,
 		Scrubsanity: s.Settings.Scrubsanity,
-		RawSettings: rawSettings,
+		RawSettings: s.RawSettings,
 	}
 }

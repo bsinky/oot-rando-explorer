@@ -44,8 +44,20 @@ func (r *SQLiteRepository) Migrate() error {
 	return err
 }
 
-func (r *SQLiteRepository) Create(dbseed DBSeed) (*DBSeed, error) {
-	res, err := r.db.Exec(`INSERT INTO seeds(
+func (r *SQLiteRepository) BeginTx() (*sql.Tx, error) {
+	return r.db.Begin()
+}
+
+func (r *SQLiteRepository) Create(dbseed DBSeed, tx *sql.Tx) (*DBSeed, error) {
+	var execFunc func(command string, args ...any) (sql.Result, error)
+
+	if tx != nil {
+		execFunc = tx.Exec
+	} else {
+		execFunc = r.db.Exec
+	}
+
+	res, err := execFunc(`INSERT INTO seeds(
 		upload_time,
 		seed,
 		version,

@@ -9,10 +9,11 @@ import (
 // TODO: unify this with the DBSeed struct to just have a single struct representation of the seed
 // TODO: then RandoSettings struct could also go away
 type SpoilerLog struct {
-	Seed     string
-	Version  string
-	FileHash []int
-	Settings RandoSettings
+	Seed        string
+	Version     string
+	FileHash    []int
+	Settings    RandoSettings
+	RawSettings string
 }
 
 func (spoilerLog *SpoilerLog) UnmarshalJSON(data []byte) error {
@@ -52,6 +53,7 @@ func (spoilerLog *SpoilerLog) UnmarshalJSON(data []byte) error {
 		if err := json.Unmarshal(settingsVal, &spoilerLog.Settings); err != nil {
 			return err
 		}
+		(*spoilerLog).RawSettings = string(settingsVal)
 	}
 
 	return nil

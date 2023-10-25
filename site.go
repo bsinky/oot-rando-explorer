@@ -54,7 +54,6 @@ func uploadSeed(c *gin.Context) {
 	// TODO: some kind of CAPTCHA
 	form, err := c.MultipartForm()
 	if err != nil {
-		fmt.Println("Error getting multipart form")
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
@@ -66,7 +65,6 @@ func uploadSeed(c *gin.Context) {
 
 	uploadedFile := formData[0]
 	uploadedFilename := formData[0].Filename
-	fmt.Printf("multipart Filename is %s", uploadedFilename)
 
 	if alreadyUploaded, _ := seedsDatabase.GetByFileHash(strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
 		c.Redirect(http.StatusFound, "/s/"+alreadyUploaded.FileHash)
@@ -76,7 +74,6 @@ func uploadSeed(c *gin.Context) {
 	spoilerlogFile, err := uploadedFile.Open()
 	defer spoilerlogFile.Close()
 	if err != nil {
-		fmt.Println("Couldn't open form file")
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
@@ -84,7 +81,6 @@ func uploadSeed(c *gin.Context) {
 	spoilerLogBytes := bytes.NewBuffer(nil)
 	spoilerLogSize, err := io.Copy(spoilerLogBytes, spoilerlogFile)
 	if err != nil || spoilerLogSize == 0 {
-		fmt.Println("Couldn't read form file")
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
@@ -92,45 +88,35 @@ func uploadSeed(c *gin.Context) {
 	spoilerLog := randoseed.SpoilerLog{}
 	jsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), &spoilerLog)
 	if jsonErr != nil {
-		fmt.Println("Couldn't parse JSON")
 		c.AbortWithError(http.StatusBadRequest, jsonErr)
 		return
 	}
 
-	rawSettings := struct {
-		settings any
-	}{}
-	if sJsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), &rawSettings); sJsonErr != nil {
-		fmt.Println("Couldn't parse raw settings json")
-		c.AbortWithError(http.StatusBadRequest, sJsonErr)
+	tx, txErr := seedsDatabase.BeginTx()
+	if txErr != nil {
+		c.AbortWithError(http.StatusInternalServerError, txErr)
 		return
 	}
+	defer tx.Rollback()
 
-	// TODO: use a database transaction and only commit it once writing file to disk succeeds too
-	// TODO: raw settings JSON isn't working as expected, probably just  write another method to extract it
-	rawSettingsJson, rErr := json.Marshal(rawSettings)
-	if rErr != nil {
-		fmt.Println("Couldn't serialize raw settings json")
-		c.AbortWithError(http.StatusBadRequest, rErr)
-		return
-	}
-
-	newDbRecord := randoseed.MakeDatabaseRecord(spoilerLog, string(rawSettingsJson))
-	if _, insertErr := seedsDatabase.Create(newDbRecord); insertErr != nil {
-		fmt.Println("Couldn't insert new db record")
+	newDbRecord := randoseed.MakeDatabaseRecord(spoilerLog)
+	if _, insertErr := seedsDatabase.Create(newDbRecord, tx); insertErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, insertErr)
 		return
 	}
 
 	writeErr := os.WriteFile(getSpoilerLogDest(newDbRecord.FileHash), spoilerLogBytes.Bytes(), 0777)
 	if writeErr != nil {
-		fmt.Println("Couldn't write spoiler log to disk")
 		c.AbortWithError(http.StatusInternalServerError, writeErr)
 		return
 	}
 
+	if err = tx.Commit(); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
 	redirectDest := "/s/" + newDbRecord.FileHash
-	c.Header("HX-Location", redirectDest)
 	c.Redirect(http.StatusFound, redirectDest)
 }
 
