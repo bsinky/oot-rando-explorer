@@ -5,8 +5,10 @@
             <h1>OOT Rando Explorer</h1>
         </a>
         <h2>Seed</h2>
-        <h2>
-            {{ .FileHash }}
+        <h2 class="hash-icons-2x">
+            {{ range fileHashIcons .FileHash }}
+                <img src="{{.}}"/>
+            {{end}}
         </h2>
         <a href="/download/{{ .FileHash }}">Download</a>
         <div>Uploaded {{ .UploadTime }}</div>

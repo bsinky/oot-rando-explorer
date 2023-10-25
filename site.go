@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/gin-gonic/gin"
 )
@@ -135,6 +136,14 @@ func uploadSeed(c *gin.Context) {
 
 const sqliteDbFileName = "sqlite.db"
 
+func fileHashIcons(fileHash string) []string {
+	hashIconUrls := make([]string, 5)
+	for i, hash := range strings.Split(fileHash, "-") {
+		hashIconUrls[i] = "/assets/hash/" + hash + ".png"
+	}
+	return hashIconUrls
+}
+
 func main() {
 	db, err := sql.Open("sqlite3", sqliteDbFileName)
 	if err != nil {
@@ -156,6 +165,9 @@ func main() {
 
 	r := gin.Default()
 	r.StaticFS("/assets", http.Dir("assets"))
+	r.SetFuncMap(template.FuncMap{
+		"fileHashIcons": fileHashIcons,
+	})
 	r.LoadHTMLGlob("templates/*")
 
 	r.GET("/", func(c *gin.Context) {

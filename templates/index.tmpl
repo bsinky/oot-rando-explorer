@@ -3,15 +3,22 @@
     <body>
         <h1>OOT Rando Explorer</h1>
         <h2>Upload or check a seed</h2>
-        <form id="seed-form" action="/uploadseed" method="POST" enctype="multipart/form-data">
-            <input name="spoilerlog" type="file" required=""/>
-            <button type="submit">Upload</button>
-            <label id="upload-errors"></label>
-        </form>
+        <div>
+            <form id="seed-form" action="/uploadseed" method="POST" enctype="multipart/form-data">
+                <input name="spoilerlog" type="file" required=""/>
+                <button type="submit">Upload</button>
+                <label id="upload-errors"></label>
+            </form>
+        </div>
         <h3>Most Recent Seeds</h3>
         {{ range .seeds }}
         <div>
-            <a href="/s/{{ .FileHash }}">{{ .FileHash }}</a> | {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
+            <a href="/s/{{ .FileHash }}" class="hash-icons">
+                {{ range fileHashIcons .FileHash }}
+                    <img src="{{.}}"/>
+                {{end}}
+            {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
+            </a>
         </div>
         {{ end }}
     </body>

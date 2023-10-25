@@ -1,6 +1,8 @@
 package randoseed
 
-import "time"
+import (
+	"time"
+)
 
 type DBSeed struct {
 	Id          int64

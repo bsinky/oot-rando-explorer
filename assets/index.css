@@ -1,14 +1,11 @@
 html {
     background-color: #0e1318;
     color: #dadada;
-    /* backgroundAccent: #171e27; */
-    /* backgroundLightAccent: #1e2732; */
-    /* backgroundDarkAccent: #0d1014; */
     font-family: "Open Sans",sans-serif;
 }
 
 body {
-    width: 40%;
+    width: 50%;
     min-width: 540px;
     margin: auto;
 }
@@ -18,6 +15,21 @@ a {
 }
 
 h1, h2, h3 {
+    text-align: center;
     color:#eb802b;
     font-family: "Righteous",sans-serif;
+}
+
+.hash-icons img, .hash-icons-2x img, a.hash-icons, a.hash-icons-2x {
+    text-decoration: none;
+}
+
+.hash-icons img {
+    width: 32px;
+    height: 32px;
+}
+
+.hash-icons-2x img {
+    width: 64px;
+    height: 64px;
 }
