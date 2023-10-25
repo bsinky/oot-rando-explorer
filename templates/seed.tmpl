@@ -1,16 +1,18 @@
 <html>
     {{ template "head" }}
     <body>
-        <a href="/">
-            <h1>OOT Rando Explorer</h1>
+        <h1>
+            <a href="/">
+            OOT Rando Explorer
         </a>
+        </h1>
         <h2>Seed</h2>
         <h2 class="hash-icons-2x">
             {{ range fileHashIcons .FileHash }}
                 <img src="{{.}}"/>
             {{end}}
         </h2>
-        <a href="/download/{{ .FileHash }}">Download</a>
+        <a class="button download-button" href="/download/{{ .FileHash }}">Download</a>
         <div>Uploaded {{ .UploadTime }}</div>
         <div>{{ .Version }}</div>
         <div class="randoSettings">
@@ -20,7 +22,8 @@
             Scrubsanity {{ .Scrubsanity }}
         </div>
         <div>
-            <textarea disabled>{{ .RawSettings }}</textarea>
+            <div>All settings:</div>
+            <textarea class="raw-settings" disabled rows="30" cols="80">{{ .RawSettings }}</textarea>
         </div>
     </body>
 </html>

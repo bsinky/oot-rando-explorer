@@ -7,6 +7,7 @@ html {
 body {
     width: 50%;
     min-width: 540px;
+    max-width: 750px;
     margin: auto;
 }
 
@@ -14,10 +15,20 @@ a {
     color: #5fa4ff;
 }
 
-h1, h2, h3 {
+h1 {
+    font-size: 2.8em;
+}
+
+h1, h2, h3, h1 a {
     text-align: center;
     color:#eb802b;
+    text-decoration-color: #eb802b;
     font-family: "Righteous",sans-serif;
+}
+
+.seed-form {
+    display: block;
+    margin: 0 25% auto;
 }
 
 .hash-icons img, .hash-icons-2x img, a.hash-icons, a.hash-icons-2x {
@@ -39,4 +50,32 @@ h1, h2, h3 {
     display: inline-block;
     vertical-align: middle;
     padding-bottom: 24px;
+}
+
+button, .button {
+    display: block;
+    margin: 10px auto;
+    width: 10em;
+    text-align: center;
+    padding: 20px 10px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.download-button {
+    background-color: #b6cde5;
+    color: #1f568c;
+}
+
+.download-button:hover {
+    transition: all 0.2s;
+    background-color: #839ebb;
+    color: #0e3e6d;
+}
+
+.raw-settings {
+    color: white;
+    background-color: #2d2d2d;
 }
