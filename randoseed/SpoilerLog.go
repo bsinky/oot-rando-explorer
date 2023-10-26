@@ -6,14 +6,12 @@ import (
 	"strings"
 )
 
-// TODO: unify this with the DBSeed struct to just have a single struct representation of the seed
-// TODO: then RandoSettings struct could also go away
 type SpoilerLog struct {
-	Seed        string
-	Version     string
-	FileHash    []int
+	Seed        string `validate:"required_with=Version"`
+	Version     string `validate:"required_with=Seed"`
+	FileHash    []uint `validate:"len=5"`
 	Settings    RandoSettings
-	RawSettings string
+	RawSettings string `validate:"required"`
 }
 
 func (spoilerLog *SpoilerLog) UnmarshalJSON(data []byte) error {
@@ -65,7 +63,7 @@ func (s SpoilerLog) FileHashString() string {
 		if s.FileHash[i] < 10 {
 			hashString.WriteString("0")
 		}
-		hashString.WriteString(strconv.Itoa((s.FileHash[i])))
+		hashString.WriteString(strconv.FormatUint(uint64(s.FileHash[i]), 10))
 		hashString.WriteString("-")
 	}
 	ret := hashString.String()

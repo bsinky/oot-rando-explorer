@@ -9,7 +9,7 @@ func TestFileHashString(t *testing.T) {
 	s := randoseed.SpoilerLog{
 		Seed:     "",
 		Version:  "",
-		FileHash: []int{1, 2, 3, 4, 5},
+		FileHash: []uint{1, 2, 3, 4, 5},
 		Settings: randoseed.RandoSettings{},
 	}
 	want := "01-02-03-04-05"

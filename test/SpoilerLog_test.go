@@ -5,7 +5,15 @@ import (
 	"ootrandoexplorer/site/randoseed"
 	"os"
 	"testing"
+
+	"github.com/go-playground/validator/v10"
 )
+
+var validate *validator.Validate
+
+func init() {
+	validate = validator.New(validator.WithRequiredStructEnabled())
+}
 
 func testReadingSpoilerLog(t *testing.T, filePath string) {
 	fileBytes, err := os.ReadFile(filePath)
@@ -19,16 +27,9 @@ func testReadingSpoilerLog(t *testing.T, filePath string) {
 		t.Fatal(jsonErr)
 	}
 
-	if spoilerLog.Version == "" {
-		t.Fatalf(`Version was empty after deserialization`)
-	}
-
-	if spoilerLog.Seed == "" {
-		t.Fatalf(`Seed was empty after deserialization`)
-	}
-
-	if spoilerLog.RawSettings == "" {
-		t.Fatalf(`RawSettings was empty after deserialization`)
+	if err := validate.Struct(&spoilerLog); err != nil {
+		errs := err.(validator.ValidationErrors)
+		t.Fatalf(errs.Error())
 	}
 }
 
