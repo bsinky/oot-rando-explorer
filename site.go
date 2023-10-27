@@ -17,8 +17,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var seedsDatabase *randoseed.SQLiteRepository
-
 const spoilerLogDir = "spoiler_logs"
 
 func getSpoilerLogDest(fileHash string) string {
@@ -26,21 +24,55 @@ func getSpoilerLogDest(fileHash string) string {
 	return filepath.Join(spoilerLogDir, fileName)
 }
 
+// Middleware to connect the database for each request that uses this
+// middleware.
+func connectDatabase(db *randoseed.SQLiteRepository) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set("database", db)
+	}
+}
+
+type ViewSeedModel struct {
+	Seed      *randoseed.DBSeed
+	AvgRating *randoseed.AvgSeedRank
+	MyRating  *randoseed.SeedRank
+}
+
 func getSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
+	db := c.Value("database").(*randoseed.SQLiteRepository)
 
-	seed, err := seedsDatabase.GetByFileHash(filehash)
+	seed, err := db.GetByFileHash(filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
-	c.HTML(http.StatusOK, "seed.tmpl", seed)
+
+	userID := "TODO"
+
+	avgRating, avgErr := db.GetAverageRank(filehash)
+	if avgErr != nil {
+		c.AbortWithError(http.StatusInternalServerError, avgErr)
+		return
+	}
+	myRating, myRatingErr := db.GetUserRank(filehash, userID)
+	if myRatingErr != nil {
+		c.AbortWithError(http.StatusInternalServerError, myRatingErr)
+		return
+	}
+
+	c.HTML(http.StatusOK, "seed.tmpl", ViewSeedModel{
+		Seed:      seed,
+		AvgRating: avgRating,
+		MyRating:  myRating,
+	})
 }
 
 func downloadSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
+	db := c.Value("database").(*randoseed.SQLiteRepository)
 
-	_, err := seedsDatabase.GetByFileHash(filehash)
+	_, err := db.GetByFileHash(filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -51,6 +83,8 @@ func downloadSeed(c *gin.Context) {
 }
 
 func uploadSeed(c *gin.Context) {
+	db := c.Value("database").(*randoseed.SQLiteRepository)
+
 	// TODO: some kind of CAPTCHA
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -66,7 +100,7 @@ func uploadSeed(c *gin.Context) {
 	uploadedFile := formData[0]
 	uploadedFilename := formData[0].Filename
 
-	if alreadyUploaded, _ := seedsDatabase.GetByFileHash(strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
+	if alreadyUploaded, _ := db.GetByFileHash(strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
 		c.Redirect(http.StatusFound, "/s/"+alreadyUploaded.FileHash)
 		return
 	}
@@ -92,7 +126,7 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	tx, txErr := seedsDatabase.BeginTx()
+	tx, txErr := db.BeginTx()
 	if txErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, txErr)
 		return
@@ -100,7 +134,7 @@ func uploadSeed(c *gin.Context) {
 	defer tx.Rollback()
 
 	newDbRecord := randoseed.MakeDatabaseRecord(spoilerLog)
-	if _, insertErr := seedsDatabase.Create(newDbRecord, tx); insertErr != nil {
+	if _, insertErr := db.CreateSeed(newDbRecord, tx); insertErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, insertErr)
 		return
 	}
@@ -120,6 +154,46 @@ func uploadSeed(c *gin.Context) {
 	c.Redirect(http.StatusFound, redirectDest)
 }
 
+func voteOnSeed(c *gin.Context) {
+	filehash := c.Param("filehash")
+	db := c.Value("database").(*randoseed.SQLiteRepository)
+
+	seed, err := db.GetByFileHash(filehash)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// TODO: CAPTCHA
+
+	// TODO: prevent user from voting multiple times
+	// TODO: if the user has already voted, update their vote
+
+	rank := &randoseed.SeedRank{}
+	if err := c.Bind(rank); err != nil {
+		return
+	}
+	rank.UserID = "TODO"
+	rank.DBSeedId = seed.Id
+
+	if _, err := db.CreateRank(*rank, nil); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	avgRating, avgErr := db.GetAverageRank(filehash)
+	if avgErr != nil {
+		c.AbortWithError(http.StatusInternalServerError, avgErr)
+		return
+	}
+
+	c.HTML(http.StatusOK, "seedrank", ViewSeedModel{
+		Seed:      seed,
+		AvgRating: avgRating,
+		MyRating:  rank,
+	})
+}
+
 const sqliteDbFileName = "sqlite.db"
 
 func fileHashIcons(fileHash string) []string {
@@ -130,34 +204,36 @@ func fileHashIcons(fileHash string) []string {
 	return hashIconUrls
 }
 
-func main() {
-	db, err := sql.Open("sqlite3", sqliteDbFileName)
+func SetUpDBAndStorage(dbURI string, storageDir string) (*randoseed.SQLiteRepository, error) {
+	db, err := sql.Open("sqlite3", dbURI)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	seedsDatabase = randoseed.NewSQLiteRepository(db)
-	if err := seedsDatabase.Migrate(); err != nil {
-		log.Fatal(err)
+	repo := randoseed.NewSQLiteRepository(db)
+	if err := repo.Migrate(); err != nil {
+		return nil, err
 	}
 
-	if err := os.MkdirAll(spoilerLogDir, 0777); err != nil {
-		log.Fatal(err)
+	if err := os.MkdirAll(storageDir, 0777); err != nil {
+		return nil, err
 	}
 
-	f, _ := os.Create("oot-rando.log")
-	// Write to logfile and stdout
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	return repo, nil
+}
 
-	r := gin.Default()
+func SetupRouter(r *gin.Engine, db *randoseed.SQLiteRepository) {
 	r.StaticFS("/assets", http.Dir("assets"))
 	r.SetFuncMap(template.FuncMap{
 		"fileHashIcons": fileHashIcons,
 	})
+	// TODO: rename templates file extension to html for better syntax highlighting/code completion
 	r.LoadHTMLGlob("templates/*")
+	r.Use(connectDatabase(db))
 
+	// TODO: middleware for User "authentication", generating UserID for requests without a session cookie
 	r.GET("/", func(c *gin.Context) {
-		seeds, err := seedsDatabase.MostRecent(10)
+		seeds, err := db.MostRecent(10)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -169,6 +245,21 @@ func main() {
 	r.GET("/download/:filehash", downloadSeed)
 
 	r.POST("/uploadseed", uploadSeed)
+	r.POST("/vote/:filehash", voteOnSeed)
+}
+
+func main() {
+	db, setupErr := SetUpDBAndStorage(sqliteDbFileName, spoilerLogDir)
+	if setupErr != nil {
+		log.Fatal(setupErr)
+	}
+
+	f, _ := os.Create("oot-rando.log")
+	// Write to logfile and stdout
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+
+	r := gin.Default()
+	SetupRouter(r, db)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

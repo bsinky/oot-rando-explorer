@@ -8,22 +8,23 @@
         </h1>
         <h2>Seed</h2>
         <h2 class="hash-icons-2x">
-            {{ range fileHashIcons .FileHash }}
+            {{ range fileHashIcons .Seed.FileHash }}
                 <img src="{{.}}"/>
             {{end}}
         </h2>
-        <a class="button download-button" href="/download/{{ .FileHash }}">Download</a>
-        <div>Uploaded {{ .UploadTime }}</div>
-        <div>{{ .Version }}</div>
+        <a class="button download-button" href="/download/{{ .Seed.FileHash }}">Download</a>
+        <div>Uploaded {{ .Seed.UploadTime }}</div>
+        <div>{{ .Seed.Version }}</div>
+        {{ template "seedrank" . }}
         <div class="randoSettings">
-            {{ .Logic }},
-            Shopsanity {{ .Shopsanity }},
-            Tokensanity {{ .Tokensanity }},
-            Scrubsanity {{ .Scrubsanity }}
+            {{ .Seed.Logic }},
+            Shopsanity {{ .Seed.Shopsanity }},
+            Tokensanity {{ .Seed.Tokensanity }},
+            Scrubsanity {{ .Seed.Scrubsanity }}
         </div>
         <div>
             <div>All settings:</div>
-            <textarea class="raw-settings" disabled rows="30" cols="80">{{ .RawSettings }}</textarea>
+            <textarea class="raw-settings" disabled rows="30" cols="80">{{ .Seed.RawSettings }}</textarea>
         </div>
     </body>
 </html>
