@@ -164,21 +164,38 @@ func voteOnSeed(c *gin.Context) {
 		return
 	}
 
+	userID := "TODO"
+	var rank *randoseed.SeedRank
+
+	if existingRank, getErr := db.GetUserRank(filehash, userID); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, getErr)
+		return
+	} else if existingRank != nil {
+		rank = existingRank
+	} else {
+		rank = &randoseed.SeedRank{}
+		rank.DBSeedId = seed.Id
+		rank.UserID = userID
+	}
+
 	// TODO: CAPTCHA
 
-	// TODO: prevent user from voting multiple times
-	// TODO: if the user has already voted, update their vote
-
-	rank := &randoseed.SeedRank{}
 	if err := c.Bind(rank); err != nil {
 		return
 	}
-	rank.UserID = "TODO"
-	rank.DBSeedId = seed.Id
 
-	if _, err := db.CreateRank(*rank, nil); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+	if rank == nil || rank.Id == 0 {
+		// User has not yet voted
+		if _, err := db.CreateRank(*rank, nil); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+	} else {
+		// User has already voted, update existing vote
+		if err := db.UpdateRank(rank); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 	}
 
 	avgRating, avgErr := db.GetAverageRank(filehash)

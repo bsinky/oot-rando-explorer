@@ -59,6 +59,14 @@ func (r *SQLiteRepository) Migrate() error {
 		return err
 	}
 
+	query = `
+	CREATE UNIQUE INDEX IF NOT EXISTS idx_user_id_seed_id
+	ON seed_ranks(user_id, seed_id);`
+
+	if _, err := r.db.Exec(query); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -198,10 +206,12 @@ func (r *SQLiteRepository) CreateRank(rank SeedRank, tx *sql.Tx) (*SeedRank, err
 	}
 
 	res, err := execFunc(`INSERT INTO seed_ranks(
+		user_id,
 		seed_id,
 		difficulty,
 		fun)
-		values(?,?,?)`,
+		values(?,?,?,?)`,
+		rank.UserID,
 		rank.DBSeedId,
 		rank.Difficulty,
 		rank.Fun)
@@ -247,6 +257,28 @@ func (r *SQLiteRepository) GetUserRank(fileHash string, userID string) (*SeedRan
 		return nil, err
 	}
 	return &rank, nil
+}
+
+func (r *SQLiteRepository) UpdateRank(rank *SeedRank) error {
+	if rank == nil {
+		return errors.New("rank cannot be nil")
+	}
+
+	if _, err := r.db.Exec(`UPDATE seed_ranks
+		SET user_id = ?,
+			seed_id = ?,
+			difficulty = ?,
+			fun = ?
+		WHERE id = ?`,
+		rank.UserID,
+		rank.DBSeedId,
+		rank.Difficulty,
+		rank.Fun,
+		rank.Id); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *SQLiteRepository) GetAverageRank(fileHash string) (*AvgSeedRank, error) {
