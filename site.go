@@ -97,7 +97,7 @@ func getSeed(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "seed.tmpl", ViewSeedModel{
+	c.HTML(http.StatusOK, "seed.html", ViewSeedModel{
 		Seed:      seed,
 		AvgRating: avgRating,
 		MyRating:  myRating,
@@ -280,7 +280,6 @@ func SetupRouter(r *gin.Engine, db *randoseed.SQLiteRepository) {
 	r.SetFuncMap(template.FuncMap{
 		"fileHashIcons": fileHashIcons,
 	})
-	// TODO: rename templates file extension to html for better syntax highlighting/code completion
 	r.LoadHTMLGlob("templates/*")
 	r.Use(connectDatabase(db))
 	r.Use(authenticateUser(db))
@@ -291,7 +290,7 @@ func SetupRouter(r *gin.Engine, db *randoseed.SQLiteRepository) {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{"seeds": seeds})
+		c.HTML(http.StatusOK, "index.html", gin.H{"seeds": seeds})
 	})
 
 	r.GET("/s/:filehash", getSeed)
