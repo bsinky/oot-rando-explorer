@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -15,6 +16,7 @@ import (
 	"text/template"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 const spoilerLogDir = "spoiler_logs"
@@ -32,6 +34,41 @@ func connectDatabase(db *randoseed.SQLiteRepository) gin.HandlerFunc {
 	}
 }
 
+func authenticateUser(db *randoseed.SQLiteRepository) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var user *randoseed.User
+		auth, err := c.Cookie("auth")
+		if err != nil {
+			// cookie not found, generate user
+			if newUserID, uuidErr := uuid.NewRandom(); uuidErr != nil {
+				c.AbortWithError(http.StatusInternalServerError, uuidErr)
+				return
+			} else {
+				auth = newUserID.String()
+				c.SetCookie("auth", auth, 60*60*24*30, "/", "localhost", false, false)
+			}
+		} else {
+			// Got an auth cookie from the client, check if it's valid
+			user, err = db.GetUser(auth)
+			if err != nil && !errors.Is(err, randoseed.ErrNotExists) {
+				c.AbortWithError(http.StatusInternalServerError, err)
+			}
+		}
+
+		if user == nil {
+			user = &randoseed.User{
+				Username: auth,
+			}
+			if err = db.CreateUser(user, nil); err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+		}
+
+		c.Set("user", user)
+	}
+}
+
 type ViewSeedModel struct {
 	Seed      *randoseed.DBSeed
 	AvgRating *randoseed.AvgSeedRank
@@ -40,6 +77,7 @@ type ViewSeedModel struct {
 
 func getSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
+	user := c.Value("user").(*randoseed.User)
 	db := c.Value("database").(*randoseed.SQLiteRepository)
 
 	seed, err := db.GetByFileHash(filehash)
@@ -48,14 +86,12 @@ func getSeed(c *gin.Context) {
 		return
 	}
 
-	userID := "TODO"
-
 	avgRating, avgErr := db.GetAverageRank(filehash)
 	if avgErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
 	}
-	myRating, myRatingErr := db.GetUserRank(filehash, userID)
+	myRating, myRatingErr := db.GetUserRank(filehash, user.ID)
 	if myRatingErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, myRatingErr)
 		return
@@ -156,6 +192,7 @@ func uploadSeed(c *gin.Context) {
 
 func voteOnSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
+	user := c.Value("user").(*randoseed.User)
 	db := c.Value("database").(*randoseed.SQLiteRepository)
 
 	seed, err := db.GetByFileHash(filehash)
@@ -164,18 +201,17 @@ func voteOnSeed(c *gin.Context) {
 		return
 	}
 
-	userID := "TODO"
 	var rank *randoseed.SeedRank
 
-	if existingRank, getErr := db.GetUserRank(filehash, userID); err != nil {
+	if existingRank, getErr := db.GetUserRank(filehash, user.ID); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, getErr)
 		return
 	} else if existingRank != nil {
 		rank = existingRank
 	} else {
 		rank = &randoseed.SeedRank{}
-		rank.DBSeedId = seed.Id
-		rank.UserID = userID
+		rank.DBSeedID = seed.Id
+		rank.UserID = user.ID
 	}
 
 	// TODO: CAPTCHA
@@ -184,7 +220,7 @@ func voteOnSeed(c *gin.Context) {
 		return
 	}
 
-	if rank == nil || rank.Id == 0 {
+	if rank == nil || rank.ID == 0 {
 		// User has not yet voted
 		if _, err := db.CreateRank(*rank, nil); err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -247,8 +283,8 @@ func SetupRouter(r *gin.Engine, db *randoseed.SQLiteRepository) {
 	// TODO: rename templates file extension to html for better syntax highlighting/code completion
 	r.LoadHTMLGlob("templates/*")
 	r.Use(connectDatabase(db))
+	r.Use(authenticateUser(db))
 
-	// TODO: middleware for User "authentication", generating UserID for requests without a session cookie
 	r.GET("/", func(c *gin.Context) {
 		seeds, err := db.MostRecent(10)
 		if err != nil {

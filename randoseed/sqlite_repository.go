@@ -47,11 +47,12 @@ func (r *SQLiteRepository) Migrate() error {
 	query = `
 	CREATE TABLE IF NOT EXISTS seed_ranks(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id TEXT,
+		user_id INTEGER,
 		seed_id INTEGER,
 		difficulty INTEGER,
 		fun	INTEGER,
 		FOREIGN KEY(seed_id) REFERENCES seeds(id)
+		FOREIGN KEY(user_id) REFERENCES users(id)
 	);
 	`
 
@@ -60,8 +61,26 @@ func (r *SQLiteRepository) Migrate() error {
 	}
 
 	query = `
+	CREATE TABLE IF NOT EXISTS users(
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		username TEXT
+	)`
+
+	if _, err := r.db.Exec(query); err != nil {
+		return err
+	}
+
+	query = `
 	CREATE UNIQUE INDEX IF NOT EXISTS idx_user_id_seed_id
 	ON seed_ranks(user_id, seed_id);`
+
+	if _, err := r.db.Exec(query); err != nil {
+		return err
+	}
+
+	query = `
+	CREATE UNIQUE INDEX IF NOT EXISTS idx_username
+	ON users(username);`
 
 	if _, err := r.db.Exec(query); err != nil {
 		return err
@@ -196,6 +215,54 @@ func (r *SQLiteRepository) GetByFileHash(fileHash string) (*DBSeed, error) {
 	return &seed, nil
 }
 
+func (r *SQLiteRepository) CreateUser(user *User, tx *sql.Tx) error {
+	var execFunc func(command string, args ...any) (sql.Result, error)
+
+	if tx != nil {
+		execFunc = tx.Exec
+	} else {
+		execFunc = r.db.Exec
+	}
+
+	res, err := execFunc(`INSERT INTO users(
+		username)
+		values(?)`,
+		user.Username)
+	if err != nil {
+		var sqliteErr sqlite3.Error
+		if errors.As(err, &sqliteErr) {
+			if errors.Is(sqliteErr.ExtendedCode, sqlite3.ErrConstraintUnique) {
+				return ErrDuplicate
+			}
+		}
+		return err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+	user.ID = id
+
+	return nil
+}
+
+func (r *SQLiteRepository) GetUser(username string) (*User, error) {
+	row := r.db.QueryRow(`SELECT
+		id,
+		username
+	FROM users WHERE username = ?`, username)
+	var user User
+	if err := row.Scan(&user.ID,
+		&user.Username); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotExists
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *SQLiteRepository) CreateRank(rank SeedRank, tx *sql.Tx) (*SeedRank, error) {
 	var execFunc func(command string, args ...any) (sql.Result, error)
 
@@ -212,7 +279,7 @@ func (r *SQLiteRepository) CreateRank(rank SeedRank, tx *sql.Tx) (*SeedRank, err
 		fun)
 		values(?,?,?,?)`,
 		rank.UserID,
-		rank.DBSeedId,
+		rank.DBSeedID,
 		rank.Difficulty,
 		rank.Fun)
 	if err != nil {
@@ -229,12 +296,12 @@ func (r *SQLiteRepository) CreateRank(rank SeedRank, tx *sql.Tx) (*SeedRank, err
 	if err != nil {
 		return nil, err
 	}
-	rank.Id = id
+	rank.ID = id
 
 	return &rank, nil
 }
 
-func (r *SQLiteRepository) GetUserRank(fileHash string, userID string) (*SeedRank, error) {
+func (r *SQLiteRepository) GetUserRank(fileHash string, userID int64) (*SeedRank, error) {
 	row := r.db.QueryRow(`SELECT
 		seed_ranks.id,
 		seed_ranks.user_id,
@@ -246,9 +313,9 @@ func (r *SQLiteRepository) GetUserRank(fileHash string, userID string) (*SeedRan
 	WHERE seeds.file_hash = ?
 	AND seed_ranks.user_id = ?`, fileHash, userID)
 	var rank SeedRank
-	if err := row.Scan(&rank.Id,
+	if err := row.Scan(&rank.ID,
 		&rank.UserID,
-		&rank.DBSeedId,
+		&rank.DBSeedID,
 		&rank.Difficulty,
 		&rank.Fun); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -271,10 +338,10 @@ func (r *SQLiteRepository) UpdateRank(rank *SeedRank) error {
 			fun = ?
 		WHERE id = ?`,
 		rank.UserID,
-		rank.DBSeedId,
+		rank.DBSeedID,
 		rank.Difficulty,
 		rank.Fun,
-		rank.Id); err != nil {
+		rank.ID); err != nil {
 		return err
 	}
 
@@ -292,7 +359,7 @@ func (r *SQLiteRepository) GetAverageRank(fileHash string) (*AvgSeedRank, error)
 	WHERE seeds.file_hash = ?
 	GROUP BY seeds.id`, fileHash)
 	var avgRank AvgSeedRank
-	if err := row.Scan(&avgRank.DBSeedId,
+	if err := row.Scan(&avgRank.DBSeedID,
 		&avgRank.TotalVotes,
 		&avgRank.Difficulty,
 		&avgRank.Fun); err != nil {

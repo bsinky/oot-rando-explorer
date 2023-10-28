@@ -17,6 +17,12 @@ type DBSeed struct {
 	RawSettings string
 }
 
+// TODO: add more settings columns, things that would be useful to
+// TODO: for filtering on in the future:
+// TODO:   - MQ Dungeons
+// TODO:   - Item Pool (Balanced, Scarce, etc.)
+// TODO:   - Entrance Rando
+
 func (seed DBSeed) FormattedUploadTime() string {
 	return seed.UploadTime.Format(time.RFC1123)
 }
