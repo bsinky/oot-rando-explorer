@@ -10,9 +10,10 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func freshDb(t *testing.T, path ...string) *randoseed.SQLiteRepository {
+func freshDb(t *testing.T, path ...string) *gorm.DB {
 	t.Helper()
 
 	var dbUri string
@@ -31,9 +32,6 @@ func freshDb(t *testing.T, path ...string) *randoseed.SQLiteRepository {
 	if err != nil {
 		t.Fatalf("Error opening memory db: %s", err)
 	}
-	if err := db.Migrate(); err != nil {
-		t.Fatalf("Error setting up db: %s", err)
-	}
 	return db
 }
 
@@ -46,7 +44,7 @@ func bodyHasFragments(t *testing.T, body string, fragments []string) {
 	}
 }
 
-func getHasStatus(t *testing.T, db *randoseed.SQLiteRepository, path string, status int) *httptest.ResponseRecorder {
+func getHasStatus(t *testing.T, db *gorm.DB, path string, status int) *httptest.ResponseRecorder {
 	t.Helper()
 
 	w := httptest.NewRecorder()
@@ -64,7 +62,7 @@ func getHasStatus(t *testing.T, db *randoseed.SQLiteRepository, path string, sta
 	return w
 }
 
-func postHasStatus(t *testing.T, db *randoseed.SQLiteRepository, path string, data *url.Values, status int) *httptest.ResponseRecorder {
+func postHasStatus(t *testing.T, db *gorm.DB, path string, data *url.Values, status int) *httptest.ResponseRecorder {
 	t.Helper()
 
 	w := httptest.NewRecorder()
@@ -82,11 +80,11 @@ func postHasStatus(t *testing.T, db *randoseed.SQLiteRepository, path string, da
 	return w
 }
 
-func createSeeds(t *testing.T, db *randoseed.SQLiteRepository, count int) []*randoseed.DBSeed {
-	seeds := []*randoseed.DBSeed{}
+func createSeeds(t *testing.T, db *gorm.DB, count int) []*randoseed.Seed {
+	seeds := []*randoseed.Seed{}
 	t.Helper()
 	for i := 0; i < count; i++ {
-		s := randoseed.DBSeed{
+		s := randoseed.Seed{
 			Version:     fmt.Sprintf("Test Case Version %d", i+1),
 			FileHash:    fmt.Sprintf("%02d-%02d-%02d-%02d-%02d", i, i+1, i+2, i+3, i+4),
 			Logic:       "Glitchless",
@@ -95,7 +93,7 @@ func createSeeds(t *testing.T, db *randoseed.SQLiteRepository, count int) []*ran
 			Scrubsanity: "Off",
 			RawSettings: "{}",
 		}
-		if _, err := db.CreateSeed(s, nil); err != nil {
+		if err := db.Save(&s).Error; err != nil {
 			t.Fatalf("error creating seed: %s", err)
 		}
 		seeds = append(seeds, &s)
@@ -119,7 +117,7 @@ func TestFileHashString(t *testing.T) {
 
 func TestEmptyDatabase(t *testing.T) {
 	db := freshDb(t)
-	seeds, err := db.MostRecent(10)
+	seeds, err := randoseed.MostRecent(db, 10)
 	if err != nil {
 		t.Fatalf("Error querying recent seeds from fresh db: %s", err)
 	}

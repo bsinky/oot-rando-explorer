@@ -13,7 +13,7 @@
             {{end}}
         </h2>
         <a class="button download-button" href="/download/{{ .Seed.FileHash }}">Download</a>
-        <div>Uploaded {{ .Seed.UploadTime }}</div>
+        <div>Uploaded {{ .Seed.CreatedAt }}</div>
         <div>{{ .Seed.Version }}</div>
         {{ template "seedrank" . }}
         <div class="randoSettings">

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -17,6 +16,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 const spoilerLogDir = "spoiler_logs"
@@ -28,13 +29,13 @@ func getSpoilerLogDest(fileHash string) string {
 
 // Middleware to connect the database for each request that uses this
 // middleware.
-func connectDatabase(db *randoseed.SQLiteRepository) gin.HandlerFunc {
+func connectDatabase(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("database", db)
 	}
 }
 
-func authenticateUser(db *randoseed.SQLiteRepository) gin.HandlerFunc {
+func authenticateUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var user *randoseed.User
 		auth, err := c.Cookie("auth")
@@ -49,9 +50,10 @@ func authenticateUser(db *randoseed.SQLiteRepository) gin.HandlerFunc {
 			}
 		} else {
 			// Got an auth cookie from the client, check if it's valid
-			user, err = db.GetUser(auth)
-			if err != nil && !errors.Is(err, randoseed.ErrNotExists) {
+			user, err = randoseed.GetUser(db, auth)
+			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 				c.AbortWithError(http.StatusInternalServerError, err)
+				return
 			}
 		}
 
@@ -59,7 +61,7 @@ func authenticateUser(db *randoseed.SQLiteRepository) gin.HandlerFunc {
 			user = &randoseed.User{
 				Username: auth,
 			}
-			if err = db.CreateUser(user, nil); err != nil {
+			if err = db.Save(user).Error; err != nil {
 				c.AbortWithError(http.StatusInternalServerError, err)
 				return
 			}
@@ -70,7 +72,7 @@ func authenticateUser(db *randoseed.SQLiteRepository) gin.HandlerFunc {
 }
 
 type ViewSeedModel struct {
-	Seed      *randoseed.DBSeed
+	Seed      *randoseed.Seed
 	AvgRating *randoseed.AvgSeedRank
 	MyRating  *randoseed.SeedRank
 }
@@ -78,20 +80,20 @@ type ViewSeedModel struct {
 func getSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
 	user := c.Value("user").(*randoseed.User)
-	db := c.Value("database").(*randoseed.SQLiteRepository)
+	db := c.Value("database").(*gorm.DB)
 
-	seed, err := db.GetByFileHash(filehash)
+	seed, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	avgRating, avgErr := db.GetAverageRank(filehash)
+	avgRating, avgErr := randoseed.GetAverageRank(db, seed.ID)
 	if avgErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
 	}
-	myRating, myRatingErr := db.GetUserRank(filehash, user.ID)
+	myRating, myRatingErr := randoseed.GetUserRank(db, seed.ID, user.ID)
 	if myRatingErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, myRatingErr)
 		return
@@ -106,9 +108,9 @@ func getSeed(c *gin.Context) {
 
 func downloadSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
-	db := c.Value("database").(*randoseed.SQLiteRepository)
+	db := c.Value("database").(*gorm.DB)
 
-	_, err := db.GetByFileHash(filehash)
+	_, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -119,7 +121,7 @@ func downloadSeed(c *gin.Context) {
 }
 
 func uploadSeed(c *gin.Context) {
-	db := c.Value("database").(*randoseed.SQLiteRepository)
+	db := c.Value("database").(*gorm.DB)
 
 	// TODO: some kind of CAPTCHA
 	form, err := c.MultipartForm()
@@ -136,7 +138,7 @@ func uploadSeed(c *gin.Context) {
 	uploadedFile := formData[0]
 	uploadedFilename := formData[0].Filename
 
-	if alreadyUploaded, _ := db.GetByFileHash(strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
+	if alreadyUploaded, _ := randoseed.GetByFileHash(db, strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
 		c.Redirect(http.StatusFound, "/s/"+alreadyUploaded.FileHash)
 		return
 	}
@@ -162,16 +164,11 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	tx, txErr := db.BeginTx()
-	if txErr != nil {
-		c.AbortWithError(http.StatusInternalServerError, txErr)
-		return
-	}
-	defer tx.Rollback()
-
-	newDbRecord := randoseed.MakeDatabaseRecord(spoilerLog)
-	if _, insertErr := db.CreateSeed(newDbRecord, tx); insertErr != nil {
-		c.AbortWithError(http.StatusInternalServerError, insertErr)
+	// TODO: need to use db.WithContext for proper transaction?
+	newDbRecord := randoseed.MakeDatabaseRecord(&spoilerLog)
+	createResult := db.Create(&newDbRecord)
+	if createResult.Error != nil {
+		c.AbortWithError(http.StatusInternalServerError, createResult.Error)
 		return
 	}
 
@@ -181,10 +178,11 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	if err = tx.Commit(); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
+	// TODO: use transaction again with gorm
+	// if err = createResult.Commit().Error; err != nil {
+	// 	c.AbortWithError(http.StatusInternalServerError, err)
+	// 	return
+	// }
 
 	redirectDest := "/s/" + newDbRecord.FileHash
 	c.Redirect(http.StatusFound, redirectDest)
@@ -193,9 +191,9 @@ func uploadSeed(c *gin.Context) {
 func voteOnSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
 	user := c.Value("user").(*randoseed.User)
-	db := c.Value("database").(*randoseed.SQLiteRepository)
+	db := c.Value("database").(*gorm.DB)
 
-	seed, err := db.GetByFileHash(filehash)
+	seed, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -203,14 +201,14 @@ func voteOnSeed(c *gin.Context) {
 
 	var rank *randoseed.SeedRank
 
-	if existingRank, getErr := db.GetUserRank(filehash, user.ID); err != nil {
+	if existingRank, getErr := randoseed.GetUserRank(db, seed.ID, user.ID); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, getErr)
 		return
 	} else if existingRank != nil {
 		rank = existingRank
 	} else {
 		rank = &randoseed.SeedRank{}
-		rank.DBSeedID = seed.Id
+		rank.SeedID = seed.ID
 		rank.UserID = user.ID
 	}
 
@@ -220,21 +218,12 @@ func voteOnSeed(c *gin.Context) {
 		return
 	}
 
-	if rank == nil || rank.ID == 0 {
-		// User has not yet voted
-		if _, err := db.CreateRank(*rank, nil); err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-	} else {
-		// User has already voted, update existing vote
-		if err := db.UpdateRank(rank); err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
+	if err = db.Save(&rank).Error; err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 
-	avgRating, avgErr := db.GetAverageRank(filehash)
+	avgRating, avgErr := randoseed.GetAverageRank(db, seed.ID)
 	if avgErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
@@ -257,14 +246,16 @@ func fileHashIcons(fileHash string) []string {
 	return hashIconUrls
 }
 
-func SetUpDBAndStorage(dbURI string, storageDir string) (*randoseed.SQLiteRepository, error) {
-	db, err := sql.Open("sqlite3", dbURI)
+func SetUpDBAndStorage(dbURI string, storageDir string) (*gorm.DB, error) {
+	db, err := gorm.Open(sqlite.Open(dbURI), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	repo := randoseed.NewSQLiteRepository(db)
-	if err := repo.Migrate(); err != nil {
+	if err := db.AutoMigrate(
+		&randoseed.Seed{},
+		&randoseed.SeedRank{},
+		&randoseed.User{}); err != nil {
 		return nil, err
 	}
 
@@ -272,10 +263,10 @@ func SetUpDBAndStorage(dbURI string, storageDir string) (*randoseed.SQLiteReposi
 		return nil, err
 	}
 
-	return repo, nil
+	return db, nil
 }
 
-func SetupRouter(r *gin.Engine, db *randoseed.SQLiteRepository) {
+func SetupRouter(r *gin.Engine, db *gorm.DB) {
 	r.StaticFS("/assets", http.Dir("assets"))
 	r.SetFuncMap(template.FuncMap{
 		"fileHashIcons": fileHashIcons,
@@ -285,7 +276,7 @@ func SetupRouter(r *gin.Engine, db *randoseed.SQLiteRepository) {
 	r.Use(authenticateUser(db))
 
 	r.GET("/", func(c *gin.Context) {
-		seeds, err := db.MostRecent(10)
+		seeds, err := randoseed.MostRecent(db, 10)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
