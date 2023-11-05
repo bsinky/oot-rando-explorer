@@ -1,9 +1,9 @@
-package main
+package randoseed
 
 import (
 	"encoding/json"
-	"ootrandoexplorer/site/randoseed"
 	"os"
+	"path"
 	"testing"
 
 	"github.com/go-playground/validator/v10"
@@ -16,12 +16,12 @@ func init() {
 }
 
 func testReadingSpoilerLog(t *testing.T, filePath string) {
-	fileBytes, err := os.ReadFile(filePath)
+	fileBytes, err := os.ReadFile(path.Join("..", "test", filePath))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	spoilerLog := randoseed.SpoilerLog{}
+	spoilerLog := SpoilerLog{}
 	jsonErr := json.Unmarshal(fileBytes, &spoilerLog)
 	if jsonErr != nil {
 		t.Fatal(jsonErr)

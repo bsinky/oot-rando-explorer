@@ -8,14 +8,17 @@ import (
 
 type Seed struct {
 	gorm.Model
-	Seed        string
-	Version     string
-	FileHash    string
-	Logic       string
-	Shopsanity  string
-	Tokensanity string
-	Scrubsanity string
-	RawSettings string
+	Seed          string
+	Version       string
+	FileHash      string
+	Logic         string
+	Shopsanity    string
+	Tokensanity   string
+	Scrubsanity   string
+	MQDungeons    string
+	ItemPool      string
+	EntranceRando string
+	RawSettings   string
 }
 
 // TODO: add more settings columns, things that would be useful to
@@ -26,19 +29,6 @@ type Seed struct {
 
 func (seed Seed) FormattedUploadTime() string {
 	return seed.CreatedAt.Format(time.RFC1123)
-}
-
-func MakeDatabaseRecord(s *SpoilerLog) Seed {
-	return Seed{
-		Seed:        s.Seed,
-		Version:     s.Version,
-		FileHash:    s.FileHashString(),
-		Logic:       s.Settings.Logic,
-		Shopsanity:  s.Settings.Shopsanity,
-		Tokensanity: s.Settings.Tokensanity,
-		Scrubsanity: s.Settings.Scrubsanity,
-		RawSettings: s.RawSettings,
-	}
 }
 
 func GetByFileHash(db *gorm.DB, fileHash string) (*Seed, error) {

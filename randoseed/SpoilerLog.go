@@ -1,7 +1,9 @@
 package randoseed
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"strconv"
 	"strings"
 )
@@ -68,4 +70,40 @@ func (s SpoilerLog) FileHashString() string {
 	}
 	ret := hashString.String()
 	return ret[:len(ret)-1] // remove trailing "-"
+}
+
+func (s *SpoilerLog) CreateDatabaseSeed() Seed {
+	seed := Seed{}
+	s.UpdateDatabaseSeed(&seed)
+	return seed
+}
+
+func (s *SpoilerLog) UpdateDatabaseSeed(seed *Seed) {
+	seed.Seed = s.Seed
+	seed.Version = s.Version
+	seed.FileHash = s.FileHashString()
+	seed.Logic = s.Settings.Logic
+	seed.Shopsanity = s.Settings.Shopsanity
+	seed.Tokensanity = s.Settings.Tokensanity
+	seed.Scrubsanity = s.Settings.Scrubsanity
+	seed.MQDungeons = s.Settings.MQDungeons
+	seed.ItemPool = s.Settings.ItemPool
+	seed.EntranceRando = s.Settings.EntranceRando
+	seed.RawSettings = s.RawSettings
+}
+
+func GetSpoilerLogFromJsonFile(spoilerlogFile io.Reader) (*SpoilerLog, error) {
+	spoilerLogBytes := bytes.NewBuffer(nil)
+	spoilerLogSize, err := io.Copy(spoilerLogBytes, spoilerlogFile)
+	if err != nil || spoilerLogSize == 0 {
+		return nil, err
+	}
+
+	spoilerLog := &SpoilerLog{}
+	jsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), spoilerLog)
+	if jsonErr != nil {
+		return nil, jsonErr
+	}
+
+	return spoilerLog, nil
 }

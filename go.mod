@@ -1,4 +1,4 @@
-module ootrandoexplorer/site
+module github.com/bsinky/sohrando
 
 go 1.21.3
 

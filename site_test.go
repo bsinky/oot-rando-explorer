@@ -5,35 +5,14 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"ootrandoexplorer/site/randoseed"
 	"strings"
 	"testing"
+
+	"github.com/bsinky/sohrando/randoseed"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
-
-func freshDb(t *testing.T, path ...string) *gorm.DB {
-	t.Helper()
-
-	var dbUri string
-
-	// Note: path can be specified in an individual test for debugging
-	// purposes -- so the db file can be inspected after the test runs.
-	// Normally it should be left off so that a truly fresh memory db is
-	// used every time.
-	if len(path) == 0 {
-		dbUri = ":memory:"
-	} else {
-		dbUri = path[0]
-	}
-
-	db, err := SetUpDBAndStorage(dbUri, "test/spoiler_logs")
-	if err != nil {
-		t.Fatalf("Error opening memory db: %s", err)
-	}
-	return db
-}
 
 func bodyHasFragments(t *testing.T, body string, fragments []string) {
 	t.Helper()
@@ -116,7 +95,7 @@ func TestFileHashString(t *testing.T) {
 }
 
 func TestEmptyDatabase(t *testing.T) {
-	db := freshDb(t)
+	db := FreshDb(t)
 	seeds, err := randoseed.MostRecent(db, 10)
 	if err != nil {
 		t.Fatalf("Error querying recent seeds from fresh db: %s", err)
@@ -129,7 +108,7 @@ func TestEmptyDatabase(t *testing.T) {
 func TestMainPage(t *testing.T) {
 	t.Parallel()
 
-	db := freshDb(t)
+	db := FreshDb(t)
 
 	createSeeds(t, db, 2)
 
@@ -146,11 +125,11 @@ func TestMainPage(t *testing.T) {
 func TestSeedPage(t *testing.T) {
 	t.Parallel()
 
-	db := freshDb(t)
+	db := FreshDb(t)
 
 	createSeeds(t, db, 3)
 
-	w := getHasStatus(t, db, "/vote/00-01-02-03-04", http.StatusOK)
+	w := getHasStatus(t, db, "/s/00-01-02-03-04", http.StatusOK)
 	body := w.Body.String()
 	bodyHasFragments(t, body, []string{"Test Case Version 1"})
 }
@@ -158,7 +137,7 @@ func TestSeedPage(t *testing.T) {
 func TestVoteOnSeed(t *testing.T) {
 	t.Parallel()
 
-	db := freshDb(t)
+	db := FreshDb(t)
 
 	createSeeds(t, db, 1)
 

@@ -2,17 +2,18 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"ootrandoexplorer/site/randoseed"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/bsinky/sohrando/migration"
+	"github.com/bsinky/sohrando/randoseed"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -150,28 +151,25 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	spoilerLogBytes := bytes.NewBuffer(nil)
-	spoilerLogSize, err := io.Copy(spoilerLogBytes, spoilerlogFile)
-	if err != nil || spoilerLogSize == 0 {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	spoilerLog := randoseed.SpoilerLog{}
-	jsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), &spoilerLog)
+	spoilerLog, jsonErr := randoseed.GetSpoilerLogFromJsonFile(spoilerlogFile)
 	if jsonErr != nil {
 		c.AbortWithError(http.StatusBadRequest, jsonErr)
 		return
 	}
 
 	// TODO: need to use db.WithContext for proper transaction?
-	newDbRecord := randoseed.MakeDatabaseRecord(&spoilerLog)
+	newDbRecord := spoilerLog.CreateDatabaseSeed()
 	createResult := db.Create(&newDbRecord)
 	if createResult.Error != nil {
 		c.AbortWithError(http.StatusInternalServerError, createResult.Error)
 		return
 	}
 
+	spoilerLogBytes := bytes.NewBuffer(nil)
+	if _, err := io.Copy(spoilerLogBytes, spoilerlogFile); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 	writeErr := os.WriteFile(getSpoilerLogDest(newDbRecord.FileHash), spoilerLogBytes.Bytes(), 0777)
 	if writeErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, writeErr)
@@ -252,13 +250,6 @@ func SetUpDBAndStorage(dbURI string, storageDir string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	if err := db.AutoMigrate(
-		&randoseed.Seed{},
-		&randoseed.SeedRank{},
-		&randoseed.User{}); err != nil {
-		return nil, err
-	}
-
 	if err := os.MkdirAll(storageDir, 0777); err != nil {
 		return nil, err
 	}
@@ -295,6 +286,10 @@ func main() {
 	db, setupErr := SetUpDBAndStorage(sqliteDbFileName, spoilerLogDir)
 	if setupErr != nil {
 		log.Fatal(setupErr)
+	}
+
+	if err := migration.MigrateDB(db, spoilerLogDir); err != nil {
+		log.Fatal(err)
 	}
 
 	f, _ := os.Create("oot-rando.log")
