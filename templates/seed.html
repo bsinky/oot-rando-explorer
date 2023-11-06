@@ -1,23 +1,18 @@
 <html>
     {{ template "head" }}
     <body>
-        <h1>
-            <a href="/">
-            OOT Rando Explorer
-            </a>
-        </h1>
-        <h2>Seed</h2>
+        {{ template "banner.html" }}
+        <h2>Version: {{ .Seed.Version }}</h2>
         <h2 class="hash-icons-2x">
             {{ range fileHashIcons .Seed.FileHash }}
                 <img src="{{.}}"/>
             {{end}}
         </h2>
-        <section>
-            <a class="button download-button" href="/download/{{ .Seed.FileHash }}">Download</a>
+        <section class="center-text">
+            <div class="uploadTime">Uploaded {{ .Seed.CreatedAt }}</div>
         </section>
         <section>
-            <div>Uploaded {{ .Seed.CreatedAt }}</div>
-            <div>{{ .Seed.Version }}</div>
+            <a class="button download-button" href="/download/{{ .Seed.FileHash }}">Download</a>
         </section>
         {{ template "seedrank" . }}
         <h2>Settings</h2>

@@ -14,6 +14,7 @@ import (
 
 	"github.com/bsinky/sohrando/migration"
 	"github.com/bsinky/sohrando/randoseed"
+	"github.com/bsinky/sohrando/search"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -70,6 +71,66 @@ func authenticateUser(db *gorm.DB) gin.HandlerFunc {
 
 		c.Set("user", user)
 	}
+}
+
+func searchPage(c *gin.Context) {
+	db := c.Value("database").(*gorm.DB)
+
+	allFilters, err := search.AllFilters(db)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "search.html", search.SearchModel{
+		Filters: allFilters,
+	})
+}
+
+type SearchResultModel struct {
+	Result *search.Result
+}
+
+func runSearch(c *gin.Context) {
+	db := c.Value("database").(*gorm.DB)
+
+	allFilters, err := search.AllFilters(db)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	reqFields := make(map[string]string)
+	if err := c.BindQuery(reqFields); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	var reqFilters []search.SearchFilterValue
+
+	for k, v := range reqFields {
+		// Remove invalid field names or blank values
+		if fieldFilter, ok := allFilters[k]; !ok || v == "" {
+			continue
+		} else if !fieldFilter.IsValidOption(v) {
+			continue
+		}
+
+		reqFilters = append(reqFilters, search.SearchFilterValue{
+			FieldName: k,
+			Value:     v,
+		})
+	}
+
+	result, err := search.RunSearch(db, reqFilters)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "searchresult", SearchResultModel{
+		Result: result,
+	})
 }
 
 type ViewSeedModel struct {
@@ -275,6 +336,8 @@ func SetupRouter(r *gin.Engine, db *gorm.DB) {
 		c.HTML(http.StatusOK, "index.html", gin.H{"seeds": seeds})
 	})
 
+	r.GET("/search", searchPage)
+	r.GET("/search/run", runSearch)
 	r.GET("/s/:filehash", getSeed)
 	r.GET("/download/:filehash", downloadSeed)
 

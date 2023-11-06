@@ -19,6 +19,32 @@ body {
     }
 }
 
+.menu {
+    background-color: #1c2d3e;
+}
+
+.menu, .menu ul {
+    display: inline;
+    margin: 0;
+    padding: 4px;
+}
+
+.menu li {
+    list-style: none;
+    display: inline-block;
+    padding: 0px 10px;
+}
+
+.menu li a {
+    color:#eb802b;
+    text-decoration-color: #eb802b;
+}
+
+.menu li a:hover {
+    color:#bd5c0d;
+    text-decoration-color: #bd5c0d;
+}
+
 a {
     color: #5fa4ff;
 }
@@ -42,6 +68,15 @@ h1, h2, h3, h1 a {
     color:#eb802b;
     text-decoration-color: #eb802b;
     font-family: "Righteous",sans-serif;
+}
+
+section {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.center-text {
+    text-align: center;
 }
 
 .seed-form {
@@ -93,6 +128,10 @@ button, .button {
     color: #0e3e6d;
 }
 
+.uploadTime {
+    font-style: italic;
+}
+
 .raw-settings {
     color: white;
     background-color: #2d2d2d;
@@ -114,7 +153,6 @@ button, .button {
     font-size: 1.1em;
 }
 
-section {
-    margin-top: 10px;
-    margin-bottom: 10px;
+.searchFilter select {
+    display: block;
 }

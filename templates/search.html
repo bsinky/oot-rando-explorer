@@ -1,0 +1,45 @@
+<html>
+    {{ template "head" }}
+    <body>
+        {{ template "banner.html" }}
+        <h2>Settings</h2>
+        <form id="search-form" hx-get="/search/run"
+            hx-target="#search-results"
+            hx-swap="innerHTML"
+            hx-indicator="#search-loading"
+            hx-disabled-elt="#search-button">
+            <div class="randoSettings">
+                {{ range .Filters }}
+                <div class="seedSetting searchFilter">
+                    <label>{{ .Label }}</label>
+                    <select name="{{ .FieldName }}">
+                        <option value=""></option>
+                        {{ range .Options }}
+                            <option value="{{ . }}">{{ . }}</option>
+                        {{ end }}
+                    </select>
+                </div>
+                {{ end }}
+            </div>
+            <button type="submit" id="search-button">Search</button>
+        </form>
+        <div id="search-loading" class="htmx-indicator">Loading...</div>
+        <div id="search-results">
+        </div>
+    </body>
+</html>
+{{ define "searchresult" }}
+<h3>Results</h3>
+{{ range .Result.Seeds }}
+    <div>
+        <a href="/s/{{ .FileHash }}" class="hash-icons">
+            {{ range fileHashIcons .FileHash }}
+                <img src="{{.}}"/>
+            {{end}}
+        <span class="recent-seed-info">
+            {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
+        </span>
+        </a>
+    </div>
+{{ end }}
+{{ end }}
