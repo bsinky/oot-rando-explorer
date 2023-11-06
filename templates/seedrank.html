@@ -1,38 +1,42 @@
 {{ define "seedrank" }}
 <div id="seed_rank" class="ranking">
-    <div>Current Rating</div>
-    {{ if .AvgRating }}
-    <label>Difficulty</label>
-    <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Difficulty }}"/>
-    <label>Fun</label>
-    <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Fun }}"/>
-    <div>{{ .AvgRating.TotalVotes }} total votes</div>
-    {{ else }}
-    <div>No votes yet.</div>
-    {{ end }}
-    <form hx-post="/vote/{{ .Seed.FileHash }}"
-        hx-target="#seed_rank"
-        hx-swap="outerHTML">
-        <div>
+    <section>
+        <div>Current Rating</div>
+        {{ if .AvgRating }}
+        <label>Difficulty</label>
+        <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Difficulty }}"/>
+        <label>Fun</label>
+        <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Fun }}"/>
+        <div>{{ .AvgRating.TotalVotes }} total votes</div>
+        {{ else }}
+        <div>No votes yet.</div>
+        {{ end }}
+    </section>
+    <section>
+        <form hx-post="/vote/{{ .Seed.FileHash }}"
+            hx-target="#seed_rank"
+            hx-swap="outerHTML">
+            <div>
+                {{ if .MyRating }}
+                Your rating:
+                {{ else }}
+                Rate this seed:
+                {{ end }}
+            </div>
+            <label for="difficulty">Difficulty</label>
             {{ if .MyRating }}
-            Your rating:
+            <input type="range" min="0" max="5" step="1" name="difficulty" value="{{ .MyRating.Difficulty }}"/>
             {{ else }}
-            Rate this seed:
+            <input type="range" min="0" max="5" step="1" name="difficulty" value="3"/>
             {{ end }}
-        </div>
-        <label for="difficulty">Difficulty</label>
-        {{ if .MyRating }}
-        <input type="range" min="0" max="5" step="1" name="difficulty" value="{{ .MyRating.Difficulty }}"/>
-        {{ else }}
-        <input type="range" min="0" max="5" step="1" name="difficulty" value="3"/>
-        {{ end }}
-        <label for="fun">Fun</label>
-        {{ if .MyRating }}
-        <input type="range" min="0" max="5" step="1" name="fun" value="{{ .MyRating.Fun }}"/>
-        {{ else }}
-        <input type="range" min="0" max="5" step="1" name="fun" value="3"/>
-        {{ end }}
-        <button type="submit">Vote</button>
-    </form>
+            <label for="fun">Fun</label>
+            {{ if .MyRating }}
+            <input type="range" min="0" max="5" step="1" name="fun" value="{{ .MyRating.Fun }}"/>
+            {{ else }}
+            <input type="range" min="0" max="5" step="1" name="fun" value="3"/>
+            {{ end }}
+            <button type="submit">Vote</button>
+        </form>
+    </section>
 </div>
 {{ end }}

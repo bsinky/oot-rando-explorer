@@ -4,7 +4,7 @@
         <h1>
             <a href="/">
             OOT Rando Explorer
-        </a>
+            </a>
         </h1>
         <h2>Seed</h2>
         <h2 class="hash-icons-2x">
@@ -12,18 +12,22 @@
                 <img src="{{.}}"/>
             {{end}}
         </h2>
-        <a class="button download-button" href="/download/{{ .Seed.FileHash }}">Download</a>
-        <div>Uploaded {{ .Seed.CreatedAt }}</div>
-        <div>{{ .Seed.Version }}</div>
+        <section>
+            <a class="button download-button" href="/download/{{ .Seed.FileHash }}">Download</a>
+        </section>
+        <section>
+            <div>Uploaded {{ .Seed.CreatedAt }}</div>
+            <div>{{ .Seed.Version }}</div>
+        </section>
         {{ template "seedrank" . }}
+        <h2>Settings</h2>
         <div class="randoSettings">
-            {{ .Seed.Logic }},
-            Shopsanity {{ .Seed.Shopsanity }},
-            Tokensanity {{ .Seed.Tokensanity }},
-            Scrubsanity {{ .Seed.Scrubsanity }},
-            MQ Dungeons {{ .Seed.MQDungeons }},
-            Item Pool {{ .Seed.ItemPool }},
-            Entrance Rando {{ .Seed.EntranceRando }}
+            {{ range .Seed.Settings }}
+                <div class="seedSetting">
+                    <label>{{ .Label }}</label>
+                    <div class="settingValue">{{ .Value }}</div>
+                </div>
+            {{ end}}
         </div>
         <div>
             <div>All settings:</div>

@@ -21,14 +21,46 @@ type Seed struct {
 	RawSettings   string
 }
 
-// TODO: add more settings columns, things that would be useful to
-// TODO: for filtering on in the future:
-// TODO:   - MQ Dungeons
-// TODO:   - Item Pool (Balanced, Scarce, etc.)
-// TODO:   - Entrance Rando
+type Setting struct {
+	Label string
+	Value string
+}
 
 func (seed Seed) FormattedUploadTime() string {
 	return seed.CreatedAt.Format(time.RFC1123)
+}
+
+func (seed Seed) Settings() []Setting {
+	return []Setting{
+		{
+			Label: "Logic",
+			Value: seed.Logic,
+		},
+		{
+			Label: "Shopsanity",
+			Value: seed.Shopsanity,
+		},
+		{
+			Label: "Tokensanity",
+			Value: seed.Tokensanity,
+		},
+		{
+			Label: "Scrubsanity",
+			Value: seed.Scrubsanity,
+		},
+		{
+			Label: "MQ Dungeons",
+			Value: seed.MQDungeons,
+		},
+		{
+			Label: "Item Pool",
+			Value: seed.ItemPool,
+		},
+		{
+			Label: "Entrance Rando",
+			Value: seed.EntranceRando,
+		},
+	}
 }
 
 func GetByFileHash(db *gorm.DB, fileHash string) (*Seed, error) {

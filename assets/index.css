@@ -6,9 +6,17 @@ html {
 
 body {
     width: 50%;
-    min-width: 540px;
+    min-width: 600px;
     max-width: 750px;
     margin: auto;
+}
+
+@media only screen and (max-width: 750px) {
+    body {
+        width: 92%;
+        min-width: 400px;
+        max-width: 100%;
+    }
 }
 
 a {
@@ -17,6 +25,16 @@ a {
 
 h1 {
     font-size: 2.8em;
+}
+
+h1 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+h2, h3 {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 h1, h2, h3, h1 a {
@@ -54,7 +72,7 @@ h1, h2, h3, h1 a {
 
 button, .button {
     display: block;
-    margin: 10px auto;
+    margin: 20px auto;
     width: 10em;
     text-align: center;
     padding: 20px 10px;
@@ -78,4 +96,25 @@ button, .button {
 .raw-settings {
     color: white;
     background-color: #2d2d2d;
+}
+
+.randoSettings {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.seedSetting {
+    padding: 10px;
+    flex-basis: 20%;
+}
+
+.seedSetting label {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+section {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
