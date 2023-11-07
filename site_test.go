@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"path"
 	"strings"
 	"testing"
 
@@ -28,7 +32,7 @@ func getHasStatus(t *testing.T, db *gorm.DB, path string, status int) *httptest.
 
 	w := httptest.NewRecorder()
 	ctx, router := gin.CreateTestContext(w)
-	SetupRouter(router, db)
+	SetupRouter(router, db, SpoilerSeedsDir)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", path, nil)
 	if err != nil {
@@ -46,7 +50,7 @@ func postHasStatus(t *testing.T, db *gorm.DB, path string, data *url.Values, sta
 
 	w := httptest.NewRecorder()
 	ctx, router := gin.CreateTestContext(w)
-	SetupRouter(router, db)
+	SetupRouter(router, db, SpoilerSeedsDir)
 
 	req, err := http.NewRequestWithContext(ctx, "POST", path, strings.NewReader(data.Encode()))
 	if err != nil {
@@ -132,6 +136,63 @@ func TestSeedPage(t *testing.T) {
 	w := getHasStatus(t, db, "/s/00-01-02-03-04", http.StatusOK)
 	body := w.Body.String()
 	bodyHasFragments(t, body, []string{"Test Case Version 1"})
+}
+
+func TestUploadSeed(t *testing.T) {
+	db := FreshDb(t)
+
+	routePath := "/uploadseed"
+	status := http.StatusSeeOther
+
+	w := httptest.NewRecorder()
+	ctx, router := gin.CreateTestContext(w)
+	SetupRouter(router, db, SpoilerSeedsDir)
+
+	fileName := "04-94-01-69-66.json"
+	pr, pw := io.Pipe()
+	writer := multipart.NewWriter(pw)
+
+	go func() {
+		defer writer.Close()
+		part, err := writer.CreateFormFile("spoilerlog", fileName)
+		if err != nil {
+			t.Error(err)
+		}
+
+		file, err := os.Open("test/" + fileName)
+		if err != nil {
+			t.Error(err)
+		}
+		defer file.Close()
+
+		_, err = io.Copy(part, file)
+		if err != nil {
+			t.Error(err)
+		}
+	}()
+
+	req, err := http.NewRequestWithContext(ctx, "POST", routePath, pr)
+	if err != nil {
+		t.Fatalf("got error: %s", err)
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	router.ServeHTTP(w, req)
+	if status != w.Code {
+		t.Fatalf("expected response code %d, got %d", status, w.Code)
+	}
+	defer DeleteUploadedTestSeed(t, fileName)
+
+	uploadedFile, err := os.Open(path.Join(SpoilerSeedsDir, fileName))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer uploadedFile.Close()
+	uploadedFileStat, err := uploadedFile.Stat()
+	if err != nil {
+		t.Fatal(err)
+	} else if uploadedFileStat.Size() == 0 {
+		t.Fatal("Uploaded file was not the expected size")
+	}
 }
 
 func TestVoteOnSeed(t *testing.T) {

@@ -32,12 +32,14 @@ func copySpoilerLogToTestDir(t *testing.T, spoilerFile string) {
 	if err != nil {
 		t.Fatalf("Error opening %s: %s", spoilerFile, err)
 	}
+	defer srcFile.Close()
 
 	dstFileName := path.Join(SpoilerSeedsDir, spoilerFile)
 	dstFile, err := os.Create(dstFileName)
 	if err != nil {
 		t.Fatalf("Unable to create file %s: %s", dstFileName, err)
 	}
+	defer dstFile.Close()
 
 	if _, err := io.Copy(dstFile, srcFile); err != nil {
 		t.Fatalf("Error copying to %s: %s", dstFile.Name(), err)
@@ -84,10 +86,12 @@ func TestAddingSettingsColumnsMigratesProperly(t *testing.T) {
 	}
 
 	for _, seed := range newSeeds {
-		copySpoilerLogToTestDir(t, seed.FileHash+".json")
+		uploadedFileName := seed.FileHash + ".json"
+		copySpoilerLogToTestDir(t, uploadedFileName)
 		if err := db.Table("seeds").Save(seed).Error; err != nil {
 			t.Fatalf("Error saving seed before migration %s", err)
 		}
+		defer DeleteUploadedTestSeed(t, uploadedFileName)
 	}
 
 	if err := migration.MigrateDB(db, SpoilerSeedsDir); err != nil {

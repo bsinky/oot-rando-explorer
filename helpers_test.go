@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path"
 	"testing"
 
 	"github.com/bsinky/sohrando/migration"
@@ -8,6 +10,14 @@ import (
 )
 
 var SpoilerSeedsDir string = "test/spoiler_logs/"
+
+func DeleteUploadedTestSeed(t *testing.T, fileName string) {
+	t.Helper()
+
+	if err := os.Remove(path.Join(SpoilerSeedsDir, fileName)); err != nil {
+		t.Fatal(err)
+	}
+}
 
 func FreshDb(t *testing.T, path ...string) *gorm.DB {
 	t.Helper()

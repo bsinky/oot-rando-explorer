@@ -92,18 +92,18 @@ func (s *SpoilerLog) UpdateDatabaseSeed(seed *Seed) {
 	seed.RawSettings = s.RawSettings
 }
 
-func GetSpoilerLogFromJsonFile(spoilerlogFile io.Reader) (*SpoilerLog, error) {
-	spoilerLogBytes := bytes.NewBuffer(nil)
+func GetSpoilerLogFromJsonFile(spoilerlogFile io.Reader) (*SpoilerLog, *bytes.Buffer, error) {
+	spoilerLogBytes := new(bytes.Buffer)
 	spoilerLogSize, err := io.Copy(spoilerLogBytes, spoilerlogFile)
 	if err != nil || spoilerLogSize == 0 {
-		return nil, err
+		return nil, nil, err
 	}
 
 	spoilerLog := &SpoilerLog{}
 	jsonErr := json.Unmarshal(spoilerLogBytes.Bytes(), spoilerLog)
 	if jsonErr != nil {
-		return nil, jsonErr
+		return nil, nil, jsonErr
 	}
 
-	return spoilerLog, nil
+	return spoilerLog, spoilerLogBytes, nil
 }

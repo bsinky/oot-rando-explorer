@@ -80,8 +80,9 @@ func UpdateAllSeedsFromStoredSpoilerLogs(db *gorm.DB, storageDir string) error {
 			if fileErr != nil {
 				return fileErr
 			}
+			defer jsonFile.Close()
 
-			spoilerLog, spoilerErr := randoseed.GetSpoilerLogFromJsonFile(jsonFile)
+			spoilerLog, _, spoilerErr := randoseed.GetSpoilerLogFromJsonFile(jsonFile)
 			if spoilerErr != nil {
 				return spoilerErr
 			} else if spoilerLog == nil {

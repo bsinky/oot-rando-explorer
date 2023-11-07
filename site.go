@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -22,9 +21,8 @@ import (
 	"gorm.io/gorm"
 )
 
-const spoilerLogDir = "spoiler_logs"
-
-func getSpoilerLogDest(fileHash string) string {
+func getSpoilerLogDest(c *gin.Context, fileHash string) string {
+	spoilerLogDir := c.Value("filestore").(string)
 	fileName := fileHash + ".json"
 	return filepath.Join(spoilerLogDir, fileName)
 }
@@ -34,6 +32,12 @@ func getSpoilerLogDest(fileHash string) string {
 func connectDatabase(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("database", db)
+	}
+}
+
+func connectFilestore(spoilerLogDir string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set("filestore", spoilerLogDir)
 	}
 }
 
@@ -171,6 +175,7 @@ func getSeed(c *gin.Context) {
 func downloadSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
 	db := c.Value("database").(*gorm.DB)
+	spoilerLogDir := c.Value("filestore").(string)
 
 	_, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
@@ -212,7 +217,7 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	spoilerLog, jsonErr := randoseed.GetSpoilerLogFromJsonFile(spoilerlogFile)
+	spoilerLog, spoilerLogBytes, jsonErr := randoseed.GetSpoilerLogFromJsonFile(spoilerlogFile)
 	if jsonErr != nil {
 		c.AbortWithError(http.StatusBadRequest, jsonErr)
 		return
@@ -226,12 +231,7 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	spoilerLogBytes := bytes.NewBuffer(nil)
-	if _, err := io.Copy(spoilerLogBytes, spoilerlogFile); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	writeErr := os.WriteFile(getSpoilerLogDest(newDbRecord.FileHash), spoilerLogBytes.Bytes(), 0777)
+	writeErr := os.WriteFile(getSpoilerLogDest(c, newDbRecord.FileHash), spoilerLogBytes.Bytes(), 0777)
 	if writeErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, writeErr)
 		return
@@ -244,7 +244,7 @@ func uploadSeed(c *gin.Context) {
 	// }
 
 	redirectDest := "/s/" + newDbRecord.FileHash
-	c.Redirect(http.StatusFound, redirectDest)
+	c.Redirect(http.StatusSeeOther, redirectDest)
 }
 
 func voteOnSeed(c *gin.Context) {
@@ -318,13 +318,14 @@ func SetUpDBAndStorage(dbURI string, storageDir string) (*gorm.DB, error) {
 	return db, nil
 }
 
-func SetupRouter(r *gin.Engine, db *gorm.DB) {
+func SetupRouter(r *gin.Engine, db *gorm.DB, spoilerLogDir string) {
 	r.StaticFS("/assets", http.Dir("assets"))
 	r.SetFuncMap(template.FuncMap{
 		"fileHashIcons": fileHashIcons,
 	})
 	r.LoadHTMLGlob("templates/*")
 	r.Use(connectDatabase(db))
+	r.Use(connectFilestore(spoilerLogDir))
 	r.Use(authenticateUser(db))
 
 	r.GET("/", func(c *gin.Context) {
@@ -346,6 +347,7 @@ func SetupRouter(r *gin.Engine, db *gorm.DB) {
 }
 
 func main() {
+	spoilerLogDir := "spoiler_logs"
 	db, setupErr := SetUpDBAndStorage(sqliteDbFileName, spoilerLogDir)
 	if setupErr != nil {
 		log.Fatal(setupErr)
@@ -360,7 +362,7 @@ func main() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
 	r := gin.Default()
-	SetupRouter(r, db)
+	SetupRouter(r, db, spoilerLogDir)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
