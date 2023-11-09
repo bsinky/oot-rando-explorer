@@ -4,6 +4,7 @@
         {{ template "banner.html" . }}
         <h1>OOT Rando Explorer</h1>
         <h2>Upload or check a seed</h2>
+        {{ if .User }}
         <div class="seed-form">
             <form id="seed-form" action="/uploadseed" method="POST" enctype="multipart/form-data">
                 <input name="spoilerlog" type="file" required=""/>
@@ -11,6 +12,9 @@
                 <label id="upload-errors"></label>
             </form>
         </div>
+        {{ else }}
+            <div>You must be <a href="/login">logged in</a> to upload</div>
+        {{ end }}
         <h3>Most Recent Seeds</h3>
         {{ range .seeds }}
         <div>

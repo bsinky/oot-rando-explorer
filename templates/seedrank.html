@@ -13,6 +13,7 @@
         {{ end }}
     </section>
     <section>
+        {{ if .User }}
         <form hx-post="/vote/{{ .Seed.FileHash }}"
             hx-target="#seed_rank"
             hx-swap="outerHTML">
@@ -37,6 +38,9 @@
             {{ end }}
             <button type="submit">Vote</button>
         </form>
+        {{ else }}
+            <div>You must be <a href="/login">logged in</a> to vote</div>
+        {{ end }}
     </section>
 </div>
 {{ end }}
