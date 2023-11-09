@@ -1,0 +1,42 @@
+<html>
+    {{ template "head" }}
+    <body>
+        {{ template "banner.html" . }}
+        <h1>Sign In</h1>
+        <div class="login-form">
+            <form id="login-form" action="/login/auth" method="POST">
+                <div>
+                    <label for="username">Username</label>
+                    <input name="username" type="text" required=""/>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input name="password" type="password" required=""/>
+                </div>
+                <button type="submit">Sign In</button>
+                <label id="errors"></label>
+            </form>
+        </div>
+
+        <hr/>
+        <h2>Or</h2>
+        <hr/>
+
+        <h1>Sign Up</h1>
+        <div class="signup-form">
+            <form id="signup-form" action="/signup/register" method="POST">
+                <div>
+                    <label for="username">Username</label>
+                    <input name="username" type="text" required=""/>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input name="password" type="password" required=""/>
+                </div>
+                <!-- TODO: CAPTCHA -->
+                <button type="submit">Sign Up</button>
+                <label id="errors"></label>
+            </form>
+        </div>
+    </body>
+</html>

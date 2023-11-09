@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -11,12 +10,14 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/bsinky/sohrando/authentication"
 	"github.com/bsinky/sohrando/migration"
 	"github.com/bsinky/sohrando/randoseed"
 	"github.com/bsinky/sohrando/search"
 
+	"github.com/gin-contrib/sessions"
+	gormsessions "github.com/gin-contrib/sessions/gorm"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -41,41 +42,53 @@ func connectFilestore(spoilerLogDir string) gin.HandlerFunc {
 	}
 }
 
-func authenticateUser(db *gorm.DB) gin.HandlerFunc {
+func authRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var user *randoseed.User
-		auth, err := c.Cookie("auth")
-		if err != nil {
-			// cookie not found, generate user
-			if newUserID, uuidErr := uuid.NewRandom(); uuidErr != nil {
-				c.AbortWithError(http.StatusInternalServerError, uuidErr)
-				return
-			} else {
-				auth = newUserID.String()
-				c.SetCookie("auth", auth, 60*60*24*30, "/", "localhost", false, false)
-			}
-		} else {
-			// Got an auth cookie from the client, check if it's valid
-			user, err = randoseed.GetUser(db, auth)
-			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-		}
+		user := getCurrentUser(c)
 
 		if user == nil {
-			user = &randoseed.User{
-				Username: auth,
-			}
-			if err = db.Save(user).Error; err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
+			c.AbortWithStatus(http.StatusUnauthorized)
 		}
-
-		c.Set("user", user)
 	}
 }
+
+// func authenticateUser(db *gorm.DB) gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+
+// 		var user *authentication.User
+// 		auth, err := c.Cookie("auth")
+// 		if err != nil {
+// 			// cookie not found, generate user
+// 			if newUserID, uuidErr := uuid.NewRandom(); uuidErr != nil {
+// 				c.AbortWithError(http.StatusInternalServerError, uuidErr)
+// 				return
+// 			} else {
+// 				auth = newUserID.String()
+// 				// TODO: use gin-sessions
+// 				c.SetCookie("auth", auth, 60*60*24*30, "/", "localhost", false, false)
+// 			}
+// 		} else {
+// 			// Got an auth cookie from the client, check if it's valid
+// 			user, err = authentication.GetUser(db, auth)
+// 			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+// 				c.AbortWithError(http.StatusInternalServerError, err)
+// 				return
+// 			}
+// 		}
+
+// 		if user == nil {
+// 			user = &authentication.User{
+// 				Username: auth,
+// 			}
+// 			if err = db.Save(user).Error; err != nil {
+// 				c.AbortWithError(http.StatusInternalServerError, err)
+// 				return
+// 			}
+// 		}
+
+// 		c.Set("user", user)
+// 	}
+//
 
 func searchPage(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
@@ -138,6 +151,7 @@ func runSearch(c *gin.Context) {
 }
 
 type ViewSeedModel struct {
+	ViewModel
 	Seed      *randoseed.Seed
 	AvgRating *randoseed.AvgSeedRank
 	MyRating  *randoseed.SeedRank
@@ -145,8 +159,8 @@ type ViewSeedModel struct {
 
 func getSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
-	user := c.Value("user").(*randoseed.User)
 	db := c.Value("database").(*gorm.DB)
+	user := getCurrentUser(c)
 
 	seed, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
@@ -159,13 +173,18 @@ func getSeed(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
 	}
-	myRating, myRatingErr := randoseed.GetUserRank(db, seed.ID, user.ID)
-	if myRatingErr != nil {
-		c.AbortWithError(http.StatusInternalServerError, myRatingErr)
-		return
+	var myRating *randoseed.SeedRank
+	if user != nil {
+		myRating, err = randoseed.GetUserRank(db, seed.ID, user.ID)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 	}
-
 	c.HTML(http.StatusOK, "seed.html", ViewSeedModel{
+		ViewModel: ViewModel{
+			User: user,
+		},
 		Seed:      seed,
 		AvgRating: avgRating,
 		MyRating:  myRating,
@@ -249,8 +268,13 @@ func uploadSeed(c *gin.Context) {
 
 func voteOnSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
-	user := c.Value("user").(*randoseed.User)
 	db := c.Value("database").(*gorm.DB)
+	user := getCurrentUser(c)
+
+	if user == nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
 
 	seed, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
@@ -289,13 +313,144 @@ func voteOnSeed(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "seedrank", ViewSeedModel{
+		ViewModel: ViewModel{
+			User: user,
+		},
 		Seed:      seed,
 		AvgRating: avgRating,
 		MyRating:  rank,
 	})
 }
 
+func loginPage(c *gin.Context) {
+	if getCurrentUser(c) != nil {
+		c.Redirect(http.StatusSeeOther, "/")
+		return
+	}
+
+	c.HTML(http.StatusOK, "login.html", nil)
+}
+
+func logoutAction(c *gin.Context) {
+	if err := logoutCurrentUser(c); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, "/")
+}
+
+func getCurrentUser(c *gin.Context) *authentication.UserDisplay {
+	session := sessions.Default(c)
+	maybeID := session.Get("User.ID")
+	maybeUsername := session.Get("User.Username")
+	maybeAvatar := session.Get("User.Avatar")
+	if maybeUsername == nil || maybeAvatar == nil || maybeID == nil {
+		return nil
+	}
+	return &authentication.UserDisplay{
+		ID:       maybeID.(uint),
+		Username: maybeUsername.(string),
+		Avatar:   maybeAvatar.(string),
+	}
+}
+
+func setCurrentUser(c *gin.Context, user *authentication.User) error {
+	session := sessions.Default(c)
+	session.Set("User.ID", user.ID)
+	session.Set("User.Username", user.Username)
+	session.Set("User.Avatar", user.Avatar)
+	return session.Save()
+}
+
+func logoutCurrentUser(c *gin.Context) error {
+	session := sessions.Default(c)
+	session.Clear()
+	return session.Save()
+}
+
+func loginGetAuthToken(c *gin.Context) {
+	db := c.Value("database").(*gorm.DB)
+
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+
+	if username == "" || password == "" {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	user, err := authentication.GetUser(db, username)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	ok, err := user.PasswordMatches(password)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	} else if !ok {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	if err := setCurrentUser(c, user); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// Login successful, redirect back to main page
+	c.Redirect(http.StatusSeeOther, "/")
+}
+
+func signupPage(c *gin.Context) {
+	if getCurrentUser(c) != nil {
+		c.Redirect(http.StatusSeeOther, "/")
+		return
+	}
+
+	c.HTML(http.StatusOK, "signup.html", nil)
+}
+
+func signupCreateUser(c *gin.Context) {
+	db := c.Value("database").(*gorm.DB)
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+
+	if username == "" || password == "" {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	user, err := authentication.CreateUser(db, username, password)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	} else if user == nil || user.ID == 0 {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	if err := setCurrentUser(c, user); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// Registration successful, redirect back to main page
+	c.Redirect(http.StatusSeeOther, "/")
+}
+
 const sqliteDbFileName = "sqlite.db"
+
+type ViewModel struct {
+	User *authentication.UserDisplay
+}
+
+func viewData(c *gin.Context, data *gin.H) *gin.H {
+	(*data)["User"] = getCurrentUser(c)
+	return data
+}
 
 func fileHashIcons(fileHash string) []string {
 	hashIconUrls := make([]string, 5)
@@ -325,8 +480,12 @@ func SetupRouter(r *gin.Engine, db *gorm.DB, spoilerLogDir string) {
 	})
 	r.LoadHTMLGlob("templates/*")
 	r.Use(connectDatabase(db))
+
+	// TODO: better secret
+	store := gormsessions.NewStore(db, true, []byte("secret"))
+	r.Use(sessions.Sessions("mysession", store))
+
 	r.Use(connectFilestore(spoilerLogDir))
-	r.Use(authenticateUser(db))
 
 	r.GET("/", func(c *gin.Context) {
 		seeds, err := randoseed.MostRecent(db, 10)
@@ -334,16 +493,22 @@ func SetupRouter(r *gin.Engine, db *gorm.DB, spoilerLogDir string) {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		c.HTML(http.StatusOK, "index.html", gin.H{"seeds": seeds})
+		c.HTML(http.StatusOK, "index.html", viewData(c, &gin.H{"seeds": seeds}))
 	})
 
 	r.GET("/search", searchPage)
 	r.GET("/search/run", runSearch)
 	r.GET("/s/:filehash", getSeed)
 	r.GET("/download/:filehash", downloadSeed)
+	r.GET("/login", loginPage)
+	r.GET("/logout", logoutAction)
 
-	r.POST("/uploadseed", uploadSeed)
-	r.POST("/vote/:filehash", voteOnSeed)
+	r.POST("/login/auth", loginGetAuthToken)
+	r.POST("/signup/register", signupCreateUser)
+
+	authGroup := r.Group("/", authRequired())
+	authGroup.POST("/uploadseed", uploadSeed)
+	authGroup.POST("/vote/:filehash", voteOnSeed)
 }
 
 func main() {

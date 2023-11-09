@@ -3,13 +3,14 @@ package randoseed
 import (
 	"errors"
 
+	"github.com/bsinky/sohrando/authentication"
 	"gorm.io/gorm"
 )
 
 type SeedRank struct {
 	ID         uint
 	UserID     uint `validate:"required"`
-	User       *User
+	User       *authentication.User
 	SeedID     uint `validate:"required"`
 	Seed       *Seed
 	Difficulty uint8 `validate:"required,gte=0,lte=5" form:"difficulty"`

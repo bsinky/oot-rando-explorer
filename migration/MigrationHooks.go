@@ -1,6 +1,7 @@
 package migration
 
 import (
+	"github.com/bsinky/sohrando/authentication"
 	"github.com/bsinky/sohrando/randoseed"
 	"gorm.io/gorm"
 )
@@ -42,7 +43,7 @@ func MigrateDB(db *gorm.DB, storageDir string) error {
 	if err := db.AutoMigrate(
 		&randoseed.Seed{},
 		&randoseed.SeedRank{},
-		&randoseed.User{}); err != nil {
+		&authentication.User{}); err != nil {
 		return err
 	}
 

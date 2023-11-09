@@ -1,7 +1,7 @@
 <html>
     {{ template "head" }}
     <body>
-        {{ template "banner.html" }}
+        {{ template "banner.html" . }}
         <h2>Version: {{ .Seed.Version }}</h2>
         <h2 class="hash-icons-2x">
             {{ range fileHashIcons .Seed.FileHash }}
