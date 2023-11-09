@@ -9,15 +9,15 @@ import (
 type Seed struct {
 	gorm.Model
 	Seed          string
-	Version       string
-	FileHash      string
-	Logic         string
-	Shopsanity    string
-	Tokensanity   string
-	Scrubsanity   string
-	MQDungeons    string
-	ItemPool      string
-	EntranceRando string
+	Version       string `gorm:"index"`
+	FileHash      string `gorm:"uniqueIndex"`
+	Logic         string `gorm:"index"`
+	Shopsanity    string `gorm:"index"`
+	Tokensanity   string `gorm:"index"`
+	Scrubsanity   string `gorm:"index"`
+	MQDungeons    string `gorm:"index"`
+	ItemPool      string `gorm:"index"`
+	EntranceRando string `gorm:"index"`
 	RawSettings   string
 }
 

@@ -1,3 +1,17 @@
+{{ define "userform" }}
+    <div>
+        <label for="username">Username</label>
+        <input name="username" type="text" required="" maxlength="30"/>
+        <label class="username-errors"></label>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input name="password" type="password" required="" maxlength="100"/>
+        <label class="password-errors"></label>
+    </div>
+    <!-- TODO: CAPTCHA -->
+{{ end }}
+
 <html>
     {{ template "head" }}
     <body>
@@ -5,16 +19,8 @@
         <h1>Sign In</h1>
         <div class="login-form">
             <form id="login-form" action="/login/auth" method="POST">
-                <div>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" required=""/>
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" required=""/>
-                </div>
-                <button type="submit">Sign In</button>
-                <label id="errors"></label>
+                {{ template "userform" }}
+                <button type="submit">Login</button>
             </form>
         </div>
 
@@ -25,17 +31,8 @@
         <h1>Sign Up</h1>
         <div class="signup-form">
             <form id="signup-form" action="/signup/register" method="POST">
-                <div>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" required=""/>
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" required=""/>
-                </div>
-                <!-- TODO: CAPTCHA -->
+                {{ template "userform" }}
                 <button type="submit">Sign Up</button>
-                <label id="errors"></label>
             </form>
         </div>
     </body>

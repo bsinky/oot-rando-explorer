@@ -372,21 +372,19 @@ func logoutCurrentUser(c *gin.Context) error {
 func loginGetAuthToken(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
 
-	username := c.PostForm("username")
-	password := c.PostForm("password")
-
-	if username == "" || password == "" {
-		c.AbortWithStatus(http.StatusBadRequest)
+	userForm := &authentication.UserForm{}
+	if err := c.Bind(userForm); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	user, err := authentication.GetUser(db, username)
+	user, err := authentication.GetUser(db, userForm.Username)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	ok, err := user.PasswordMatches(password)
+	ok, err := user.PasswordMatches(userForm.Password)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -415,15 +413,14 @@ func signupPage(c *gin.Context) {
 
 func signupCreateUser(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
-	username := c.PostForm("username")
-	password := c.PostForm("password")
 
-	if username == "" || password == "" {
-		c.AbortWithStatus(http.StatusBadRequest)
+	userForm := &authentication.UserForm{}
+	if err := c.Bind(userForm); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	user, err := authentication.CreateUser(db, username, password)
+	user, err := authentication.CreateUser(db, userForm)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return

@@ -9,9 +9,9 @@ import (
 
 type SeedRank struct {
 	ID         uint
-	UserID     uint `validate:"required"`
+	UserID     uint `validate:"required" gorm:"index:idx_seed_id_user_id,priority:2"`
 	User       *authentication.User
-	SeedID     uint `validate:"required"`
+	SeedID     uint `validate:"required" gorm:"index:idx_seed_id_user_id,priority:1"`
 	Seed       *Seed
 	Difficulty uint8 `validate:"required,gte=0,lte=5" form:"difficulty"`
 	Fun        uint8 `validate:"required,gte=0,lte=5" form:"fun"`
@@ -37,6 +37,7 @@ func GetUserRank(db *gorm.DB, seedID uint, userID uint) (*SeedRank, error) {
 
 func GetAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {
 	var avgSeedRank AvgSeedRank
+	// TODO: replace Raw usage to make this portable to other dbs
 	res := db.Raw(`SELECT
 	    seed_ranks.seed_id,
 		COUNT(seed_ranks.id) AS total_votes,

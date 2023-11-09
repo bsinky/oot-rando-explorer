@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 
@@ -16,29 +17,41 @@ type UserDisplay struct {
 
 type User struct {
 	gorm.Model
-	Username       string
+	Username       string `gorm:"uniqueIndex"`
 	HashedPassword string
 	Avatar         string
 }
+
+type UserForm struct {
+	Username string `validate:"required,len=30" form:"username"`
+	Password string `validate:"required,len=100" form:"password"`
+}
+
+var (
+	ErrUsernameAlreadyExists = errors.New("This username is not available")
+)
 
 func getRandomHashIconAvatar() string {
 	hashIcon := rand.Intn(100) - 1
 	return fmt.Sprintf("%02d", hashIcon)
 }
 
-func CreateUser(db *gorm.DB, username string, password string) (*User, error) {
-	hashedPassword, err := argon2id.CreateHash(password, argon2id.DefaultParams)
+func CreateUser(db *gorm.DB, form *UserForm) (*User, error) {
+	hashedPassword, err := argon2id.CreateHash(form.Password, argon2id.DefaultParams)
 	if err != nil {
 		return nil, err
 	}
 
 	user := &User{
-		Username:       username,
+		Username:       form.Username,
 		HashedPassword: hashedPassword,
 		Avatar:         getRandomHashIconAvatar(),
 	}
 
 	if err = db.Save(user).Error; err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return nil, ErrUsernameAlreadyExists
+		}
 		return nil, err
 	}
 	return user, nil
