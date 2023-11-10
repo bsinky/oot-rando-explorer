@@ -89,7 +89,9 @@ func (s *SpoilerLog) UpdateDatabaseSeed(seed *Seed) {
 	seed.MQDungeons = s.Settings.MQDungeons
 	seed.ItemPool = s.Settings.ItemPool
 	seed.EntranceRando = s.Settings.EntranceRando
-	seed.RawSettings = s.RawSettings
+	seed.RawSettings = &RawSettings{
+		SettingsJSON: s.RawSettings,
+	}
 }
 
 func GetSpoilerLogFromJsonFile(spoilerlogFile io.Reader) (*SpoilerLog, *bytes.Buffer, error) {

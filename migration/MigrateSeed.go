@@ -53,14 +53,14 @@ func (m *MigrateSeed) Migrate(db *gorm.DB, storageDir string) error {
 
 	if m.columnsBeforeMigration != columnsAfterMigration {
 		// Column definitions have changed
-		return UpdateAllSeedsFromStoredSpoilerLogs(db, storageDir)
+		return updateAllSeedsFromStoredSpoilerLogs(db, storageDir)
 	}
 
 	return nil
 }
 
 // Scan stored SpoilerLogs and update all Seeds in the database
-func UpdateAllSeedsFromStoredSpoilerLogs(db *gorm.DB, storageDir string) error {
+func updateAllSeedsFromStoredSpoilerLogs(db *gorm.DB, storageDir string) error {
 	if dirEntries, err := os.ReadDir(storageDir); err != nil {
 		return err
 	} else {

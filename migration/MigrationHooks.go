@@ -43,7 +43,8 @@ func MigrateDB(db *gorm.DB, storageDir string) error {
 	if err := db.AutoMigrate(
 		&randoseed.Seed{},
 		&randoseed.SeedRank{},
-		&authentication.User{}); err != nil {
+		&authentication.User{},
+		&randoseed.RawSettings{}); err != nil {
 		return err
 	}
 

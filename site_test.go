@@ -74,7 +74,7 @@ func createSeeds(t *testing.T, db *gorm.DB, count int) []*randoseed.Seed {
 			Shopsanity:  "Off",
 			Tokensanity: "Off",
 			Scrubsanity: "Off",
-			RawSettings: "{}",
+			RawSettings: &randoseed.RawSettings{SettingsJSON: "{}"},
 		}
 		if err := db.Save(&s).Error; err != nil {
 			t.Fatalf("error creating seed: %s", err)

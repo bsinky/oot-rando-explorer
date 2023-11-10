@@ -28,13 +28,12 @@ func validateVersion(fl validator.FieldLevel) bool {
 	return false
 }
 
-// TODO: move RawSettings to a separate table so seeds is less wide
-// TODO: possibly move Version to a separate table as well?
+// TODO: possibly move Version to a separate table to better normalize data and save storage?
 type Seed struct {
 	gorm.Model
 	Seed          string
-	Version       string `gorm:"index" validate:"required"`
-	FileHash      string `gorm:"uniqueIndex" validate:"required,validVersion"`
+	Version       string `gorm:"index" validate:"required,validVersion"`
+	FileHash      string `gorm:"uniqueIndex" validate:"required"`
 	Logic         string `gorm:"index"`
 	Shopsanity    string `gorm:"index"`
 	Tokensanity   string `gorm:"index"`
@@ -42,7 +41,13 @@ type Seed struct {
 	MQDungeons    string `gorm:"index"`
 	ItemPool      string `gorm:"index"`
 	EntranceRando string `gorm:"index"`
-	RawSettings   string
+	RawSettings   *RawSettings
+}
+
+type RawSettings struct {
+	ID           uint
+	SettingsJSON string
+	SeedID       uint `gorm:"uniqueIndex" validate:"required"`
 }
 
 type Setting struct {
@@ -90,6 +95,15 @@ func (seed Seed) Settings() []Setting {
 func GetByFileHash(db *gorm.DB, fileHash string) (*Seed, error) {
 	var seed Seed
 	if err := db.First(&seed, "file_hash = ?", fileHash).Error; err != nil {
+		return nil, err
+	}
+
+	return &seed, nil
+}
+
+func GetByFileHashWithRawSettings(db *gorm.DB, fileHash string) (*Seed, error) {
+	var seed Seed
+	if err := db.Preload("RawSettings").First(&seed, "file_hash = ?", fileHash).Error; err != nil {
 		return nil, err
 	}
 

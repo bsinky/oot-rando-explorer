@@ -173,7 +173,7 @@ func getSeed(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
 	user := getCurrentUser(c)
 
-	seed, err := randoseed.GetByFileHash(db, filehash)
+	seed, err := randoseed.GetByFileHashWithRawSettings(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
