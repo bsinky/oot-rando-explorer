@@ -72,9 +72,9 @@ func (s SpoilerLog) FileHashString() string {
 	return ret[:len(ret)-1] // remove trailing "-"
 }
 
-func (s *SpoilerLog) CreateDatabaseSeed() Seed {
-	seed := Seed{}
-	s.UpdateDatabaseSeed(&seed)
+func (s *SpoilerLog) CreateDatabaseSeed() *Seed {
+	seed := &Seed{}
+	s.UpdateDatabaseSeed(seed)
 	return seed
 }
 

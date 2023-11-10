@@ -2,6 +2,8 @@ package search
 
 import (
 	"errors"
+	"slices"
+	"sync"
 
 	"github.com/bsinky/sohrando/randoseed"
 	"gorm.io/gorm"
@@ -27,10 +29,6 @@ type SearchFilterValue struct {
 	Value     string
 }
 
-type SearchModel struct {
-	Filters map[string]*SearchFilter
-}
-
 type Result struct {
 	Seeds []randoseed.Seed
 }
@@ -39,28 +37,18 @@ type ResultModel struct {
 	Result Result
 }
 
-func getVersionOptions(db *gorm.DB) ([]string, error) {
-	var versions []string
-	if err := db.Raw(`SELECT
-		seeds.Version
-	FROM seeds
-	WHERE deleted_at IS NULL
-	GROUP BY seeds.Version`).Scan(&versions).Error; err != nil {
-		return nil, err
-	}
-
-	return versions, nil
-}
+var versionsMostRecentFirst = sync.OnceValue(func() []string {
+	versionsCopy := make([]string, len(randoseed.Versions))
+	copy(versionsCopy, randoseed.Versions)
+	slices.Reverse(versionsCopy)
+	return versionsCopy
+})
 
 func AllFilters(db *gorm.DB) (map[string]*SearchFilter, error) {
-	versionOptions, err := getVersionOptions(db)
-	if err != nil {
-		return nil, err
-	}
 	filterMap := map[string]*SearchFilter{
 		"Version": {
 			Label:   "Version",
-			Options: versionOptions,
+			Options: versionsMostRecentFirst(),
 		},
 		"Logic": {
 			Label: "Logic",

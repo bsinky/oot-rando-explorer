@@ -14,10 +14,12 @@ import (
 	"github.com/bsinky/sohrando/migration"
 	"github.com/bsinky/sohrando/randoseed"
 	"github.com/bsinky/sohrando/search"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/gin-contrib/sessions"
 	gormsessions "github.com/gin-contrib/sessions/gorm"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -90,8 +92,14 @@ func authRequired() gin.HandlerFunc {
 // 	}
 //
 
+type SearchModel struct {
+	ViewModel
+	Filters map[string]*search.SearchFilter
+}
+
 func searchPage(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
+	user := getCurrentUser(c)
 
 	allFilters, err := search.AllFilters(db)
 	if err != nil {
@@ -99,7 +107,10 @@ func searchPage(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "search.html", search.SearchModel{
+	c.HTML(http.StatusOK, "search.html", SearchModel{
+		ViewModel: ViewModel{
+			User: user,
+		},
 		Filters: allFilters,
 	})
 }
@@ -242,8 +253,17 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	// TODO: need to use db.WithContext for proper transaction?
 	newDbRecord := spoilerLog.CreateDatabaseSeed()
+
+	v := binding.Validator.Engine().(*validator.Validate)
+	err = v.Struct(*newDbRecord)
+	if err != nil {
+		validationErrors := err.(validator.ValidationErrors)
+		c.AbortWithError(http.StatusBadRequest, validationErrors)
+		return
+	}
+
+	// TODO: need to use db.WithContext for proper transaction?
 	createResult := db.Create(&newDbRecord)
 	if createResult.Error != nil {
 		c.AbortWithError(http.StatusInternalServerError, createResult.Error)
@@ -476,6 +496,11 @@ func SetupRouter(r *gin.Engine, db *gorm.DB, spoilerLogDir string) {
 		"fileHashIcons": fileHashIcons,
 	})
 	r.LoadHTMLGlob("templates/*")
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		randoseed.RegisterValidation(v)
+	}
+
 	r.Use(connectDatabase(db))
 
 	// TODO: better secret

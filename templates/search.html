@@ -1,7 +1,7 @@
 <html>
     {{ template "head" }}
     <body>
-        {{ template "banner.html" }}
+        {{ template "banner.html" . }}
         <h2>Settings</h2>
         <form id="search-form" hx-get="/search/run"
             hx-target="#search-results"

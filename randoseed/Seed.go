@@ -1,16 +1,40 @@
 package randoseed
 
 import (
+	_ "embed"
+	"strings"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
+//go:embed versions.txt
+var versions string
+var Versions []string = strings.Split(strings.TrimSpace(versions), "\n")
+
+func RegisterValidation(v *validator.Validate) {
+	v.RegisterValidation("validVersion", validateVersion)
+}
+
+func validateVersion(fl validator.FieldLevel) bool {
+	val := fl.Field().String()
+	for _, version := range Versions {
+		if val == version {
+			return true
+		}
+	}
+
+	return false
+}
+
+// TODO: move RawSettings to a separate table so seeds is less wide
+// TODO: possibly move Version to a separate table as well?
 type Seed struct {
 	gorm.Model
 	Seed          string
-	Version       string `gorm:"index"`
-	FileHash      string `gorm:"uniqueIndex"`
+	Version       string `gorm:"index" validate:"required"`
+	FileHash      string `gorm:"uniqueIndex" validate:"required,validVersion"`
 	Logic         string `gorm:"index"`
 	Shopsanity    string `gorm:"index"`
 	Tokensanity   string `gorm:"index"`
