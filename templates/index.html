@@ -6,11 +6,8 @@
         <h2>Upload or check a seed</h2>
         {{ if .User }}
         <div class="seed-form">
-            <form id="seed-form" action="/uploadseed" method="POST" enctype="multipart/form-data">
-                <input name="spoilerlog" type="file" required=""/>
-                <button type="submit">Upload</button>
-                <label id="upload-errors"></label>
-            </form>
+            <input form="seed-form" name="spoilerlog" type="file" required=""/>
+            {{ template "uploadSeed" }}
         </div>
         {{ else }}
             <div>You must be <a href="/login">logged in</a> to upload</div>

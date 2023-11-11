@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -219,16 +218,28 @@ func downloadSeed(c *gin.Context) {
 
 func uploadSeed(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
+	validationError := func(err string) {
+		errModel := struct {
+			FieldName string
+			Error     string
+		}{
+			FieldName: "",
+			Error:     err,
+		}
+		c.HTML(http.StatusBadRequest, "uploadSeed", []any{
+			errModel,
+		})
+	}
 
 	// TODO: some kind of CAPTCHA
 	form, err := c.MultipartForm()
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		validationError("No file uploaded")
 		return
 	}
 	formData := form.File["spoilerlog"]
 	if len(formData) == 0 {
-		fmt.Println("multipart file has 0 parts")
+		validationError("No spoiler log file uploaded")
 		return
 	}
 
@@ -243,13 +254,13 @@ func uploadSeed(c *gin.Context) {
 	spoilerlogFile, err := uploadedFile.Open()
 	defer spoilerlogFile.Close()
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		validationError("File did not upload correctly")
 		return
 	}
 
 	spoilerLog, spoilerLogBytes, jsonErr := randoseed.GetSpoilerLogFromJsonFile(spoilerlogFile)
 	if jsonErr != nil {
-		c.AbortWithError(http.StatusBadRequest, jsonErr)
+		validationError("Spoiler Log JSON could not be read")
 		return
 	}
 
@@ -259,20 +270,20 @@ func uploadSeed(c *gin.Context) {
 	err = v.Struct(*newDbRecord)
 	if err != nil {
 		validationErrors := err.(validator.ValidationErrors)
-		c.AbortWithError(http.StatusBadRequest, validationErrors)
+		c.HTML(http.StatusOK, "uploadSeed", validationErrors)
 		return
 	}
 
 	// TODO: need to use db.WithContext for proper transaction?
 	createResult := db.Create(&newDbRecord)
 	if createResult.Error != nil {
-		c.AbortWithError(http.StatusInternalServerError, createResult.Error)
+		validationError("Seed could not be saved to database")
 		return
 	}
 
 	writeErr := os.WriteFile(getSpoilerLogDest(c, newDbRecord.FileHash), spoilerLogBytes.Bytes(), 0777)
 	if writeErr != nil {
-		c.AbortWithError(http.StatusInternalServerError, writeErr)
+		validationError("Spoiler log could not be uploaded to storage")
 		return
 	}
 
@@ -283,7 +294,7 @@ func uploadSeed(c *gin.Context) {
 	// }
 
 	redirectDest := "/s/" + newDbRecord.FileHash
-	c.Redirect(http.StatusSeeOther, redirectDest)
+	c.Redirect(http.StatusFound, redirectDest)
 }
 
 func voteOnSeed(c *gin.Context) {

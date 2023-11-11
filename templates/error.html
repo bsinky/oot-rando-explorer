@@ -1,0 +1,11 @@
+<ul>
+{{ range . }}
+    <li class="error">
+    {{ if .FieldName }}
+        {{ .FieldName }}:
+    {{ else }}
+        {{ .Error }}
+    {{ end }}
+    </li>
+{{ end }}
+</ul>

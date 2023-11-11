@@ -46,8 +46,8 @@ type Seed struct {
 
 type RawSettings struct {
 	ID           uint
-	SettingsJSON string
-	SeedID       uint `gorm:"uniqueIndex" validate:"required"`
+	SettingsJSON string `validate:"len:10000"`
+	SeedID       uint   `gorm:"uniqueIndex" validate:"required"`
 }
 
 type Setting struct {

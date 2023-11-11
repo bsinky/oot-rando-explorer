@@ -137,6 +137,10 @@ button, .button {
     font-style: italic;
 }
 
+.error {
+    color: red;
+}
+
 .raw-settings {
     color: white;
     background-color: #2d2d2d;
