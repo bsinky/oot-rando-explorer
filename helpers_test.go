@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/bsinky/sohrando/migration"
-	"gorm.io/gorm"
 )
 
 var SpoilerSeedsDir string = "test/spoiler_logs/"
@@ -19,17 +18,17 @@ func DeleteUploadedTestSeed(t *testing.T, fileName string) {
 	}
 }
 
-func FreshDb(t *testing.T, path ...string) *gorm.DB {
+func FreshDb(t *testing.T, path ...string) *App {
 	t.Helper()
 
-	db := FreshDbWithoutMigrations(t, path...)
-	if err := migration.MigrateDB(db, SpoilerSeedsDir); err != nil {
+	app := FreshDbWithoutMigrations(t, path...)
+	if err := migration.MigrateDB(app.DB, SpoilerSeedsDir); err != nil {
 		t.Fatalf("Failed to migrate db %s", err)
 	}
-	return db
+	return app
 }
 
-func FreshDbWithoutMigrations(t *testing.T, path ...string) *gorm.DB {
+func FreshDbWithoutMigrations(t *testing.T, path ...string) *App {
 	t.Helper()
 
 	var dbUri string
@@ -44,9 +43,9 @@ func FreshDbWithoutMigrations(t *testing.T, path ...string) *gorm.DB {
 		dbUri = path[0]
 	}
 
-	db, err := SetUpDBAndStorage(dbUri, SpoilerSeedsDir)
+	app, err := SetUpDBAndStorage(dbUri, SpoilerSeedsDir)
 	if err != nil {
 		t.Fatalf("Error opening memory db: %s", err)
 	}
-	return db
+	return app
 }

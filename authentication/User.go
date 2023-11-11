@@ -6,6 +6,8 @@ import (
 	"math/rand"
 
 	"github.com/alexedwards/argon2id"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -73,4 +75,33 @@ func (user *User) PasswordMatches(password string) (bool, error) {
 	}
 
 	return match, nil
+}
+
+func GetCurrentUser(c *gin.Context) *UserDisplay {
+	session := sessions.Default(c)
+	maybeID := session.Get("User.ID")
+	maybeUsername := session.Get("User.Username")
+	maybeAvatar := session.Get("User.Avatar")
+	if maybeUsername == nil || maybeAvatar == nil || maybeID == nil {
+		return nil
+	}
+	return &UserDisplay{
+		ID:       maybeID.(uint),
+		Username: maybeUsername.(string),
+		Avatar:   maybeAvatar.(string),
+	}
+}
+
+func SetCurrentUser(c *gin.Context, user *User) error {
+	session := sessions.Default(c)
+	session.Set("User.ID", user.ID)
+	session.Set("User.Username", user.Username)
+	session.Set("User.Avatar", user.Avatar)
+	return session.Save()
+}
+
+func LogoutCurrentUser(c *gin.Context) error {
+	session := sessions.Default(c)
+	session.Clear()
+	return session.Save()
 }

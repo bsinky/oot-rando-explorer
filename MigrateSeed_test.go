@@ -47,7 +47,8 @@ func copySpoilerLogToTestDir(t *testing.T, spoilerFile string) {
 }
 
 func TestAddingSettingsColumnsMigratesProperly(t *testing.T) {
-	db := FreshDbWithoutMigrations(t)
+	app := FreshDbWithoutMigrations(t)
+	db := app.DB
 	clearSeedsUploadDir(t)
 
 	type OldSeedDefinition struct {

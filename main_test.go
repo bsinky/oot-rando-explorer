@@ -27,12 +27,12 @@ func bodyHasFragments(t *testing.T, body string, fragments []string) {
 	}
 }
 
-func getHasStatus(t *testing.T, db *gorm.DB, path string, status int) *httptest.ResponseRecorder {
+func getHasStatus(t *testing.T, app *App, path string, status int) *httptest.ResponseRecorder {
 	t.Helper()
 
 	w := httptest.NewRecorder()
 	ctx, router := gin.CreateTestContext(w)
-	SetupRouter(router, db, SpoilerSeedsDir)
+	SetupRouter(router, app)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", path, nil)
 	if err != nil {
@@ -45,12 +45,12 @@ func getHasStatus(t *testing.T, db *gorm.DB, path string, status int) *httptest.
 	return w
 }
 
-func postHasStatus(t *testing.T, db *gorm.DB, path string, data *url.Values, status int) *httptest.ResponseRecorder {
+func postHasStatus(t *testing.T, app *App, path string, data *url.Values, status int) *httptest.ResponseRecorder {
 	t.Helper()
 
 	w := httptest.NewRecorder()
 	ctx, router := gin.CreateTestContext(w)
-	SetupRouter(router, db, SpoilerSeedsDir)
+	SetupRouter(router, app)
 
 	req, err := http.NewRequestWithContext(ctx, "POST", path, strings.NewReader(data.Encode()))
 	if err != nil {
@@ -99,8 +99,8 @@ func TestFileHashString(t *testing.T) {
 }
 
 func TestEmptyDatabase(t *testing.T) {
-	db := FreshDb(t)
-	seeds, err := randoseed.MostRecent(db, 10)
+	app := FreshDb(t)
+	seeds, err := randoseed.MostRecent(app.DB, 10)
 	if err != nil {
 		t.Fatalf("Error querying recent seeds from fresh db: %s", err)
 	}
@@ -112,11 +112,11 @@ func TestEmptyDatabase(t *testing.T) {
 func TestMainPage(t *testing.T) {
 	t.Parallel()
 
-	db := FreshDb(t)
+	app := FreshDb(t)
 
-	createSeeds(t, db, 2)
+	createSeeds(t, app.DB, 2)
 
-	w := getHasStatus(t, db, "/", http.StatusOK)
+	w := getHasStatus(t, app, "/", http.StatusOK)
 
 	body := w.Body.String()
 
@@ -129,24 +129,24 @@ func TestMainPage(t *testing.T) {
 func TestSeedPage(t *testing.T) {
 	t.Parallel()
 
-	db := FreshDb(t)
+	app := FreshDb(t)
 
-	createSeeds(t, db, 3)
+	createSeeds(t, app.DB, 3)
 
-	w := getHasStatus(t, db, "/s/00-01-02-03-04", http.StatusOK)
+	w := getHasStatus(t, app, "/s/00-01-02-03-04", http.StatusOK)
 	body := w.Body.String()
 	bodyHasFragments(t, body, []string{"Test Case Version 1"})
 }
 
 func TestUploadSeed(t *testing.T) {
-	db := FreshDb(t)
+	app := FreshDb(t)
 
 	routePath := "/uploadseed"
 	status := http.StatusSeeOther
 
 	w := httptest.NewRecorder()
 	ctx, router := gin.CreateTestContext(w)
-	SetupRouter(router, db, SpoilerSeedsDir)
+	SetupRouter(router, app)
 
 	fileName := "04-94-01-69-66.json"
 	pr, pw := io.Pipe()
@@ -198,15 +198,15 @@ func TestUploadSeed(t *testing.T) {
 func TestVoteOnSeed(t *testing.T) {
 	t.Parallel()
 
-	db := FreshDb(t)
+	app := FreshDb(t)
 
-	createSeeds(t, db, 1)
+	createSeeds(t, app.DB, 1)
 
 	data := url.Values{}
 	data.Add("difficulty", "1")
 	data.Add("fun", "5")
 
-	w := postHasStatus(t, db, "/vote/00-01-02-03-04", &data, http.StatusOK)
+	w := postHasStatus(t, app, "/vote/00-01-02-03-04", &data, http.StatusOK)
 	body := w.Body.String()
 	bodyHasFragments(t, body, []string{"Difficulty", "value=\"5\""})
 }
