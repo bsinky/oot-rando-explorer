@@ -173,6 +173,10 @@ textarea.comment {
     border: none;
 }
 
+.charactersRemaining-few {
+    color: #ff4646;;
+}
+
 .error {
     color: red;
 }

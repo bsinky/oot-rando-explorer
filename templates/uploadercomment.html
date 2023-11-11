@@ -21,10 +21,9 @@
             <span class="error">{{ .Error }}</span>
         {{ end }}
         <div>
-            <textarea class="comment" name="uploaderComment" rows="8" cols="50">
+            <textarea class="comment js-charactersRemaining" name="uploaderComment" rows="8" cols="50" maxlength="500">
                 {{- .Seed.UploaderComment -}}
             </textarea>
-            {{/* TODO: characters remaining JS */}}
         </div>
         <div class="inline-buttons">
             <button class="small-btn" hx-get="/s/{{ .Seed.FileHash }}/uploadercomment">Cancel</button>

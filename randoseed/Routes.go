@@ -144,9 +144,9 @@ func editUploaderComment(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "uploaderComment", gin.H{
-		"Seed": seed,
-		"User": user,
+	c.HTML(http.StatusOK, "uploaderComment", ViewUploaderCommentModel{
+		Seed: seed,
+		User: user,
 	})
 }
 
