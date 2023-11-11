@@ -4,10 +4,7 @@
         <li><a href="/search">Search</a></li>
         <li>
         {{ if .User }}
-        <span class="user-card">
-            <img src="/assets/hash/{{ .User.Avatar }}.png"/>
-            <div>{{ .User.Username }}</div>
-        </span>
+            {{ template "usercard.html" . }}
             <a href="/logout">Logout</a>
         {{ else }}
             <a href="/login">Login</a>

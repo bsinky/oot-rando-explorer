@@ -6,6 +6,8 @@ import (
 	"io"
 	"strconv"
 	"strings"
+
+	"github.com/bsinky/sohrando/authentication"
 )
 
 type SpoilerLog struct {
@@ -72,8 +74,10 @@ func (s SpoilerLog) FileHashString() string {
 	return ret[:len(ret)-1] // remove trailing "-"
 }
 
-func (s *SpoilerLog) CreateDatabaseSeed() *Seed {
+func (s *SpoilerLog) CreateDatabaseSeed(user *authentication.UserDisplay, comment string) *Seed {
 	seed := &Seed{}
+	seed.UserIDUploader = user.ID
+	seed.UploaderComment = comment
 	s.UpdateDatabaseSeed(seed)
 	return seed
 }

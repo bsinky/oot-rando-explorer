@@ -9,7 +9,12 @@
             {{end}}
         </h2>
         <section class="center-text">
-            <div class="uploadTime">Uploaded {{ .Seed.CreatedAt }}</div>
+            <div class="uploadUser">
+                Uploaded by
+                {{ template "usercard.html" .Seed }}
+            </div>
+            <div class="uploadTime">{{ .Seed.CreatedAt }}</div>
+            {{ template "uploaderComment" . }}
         </section>
         <section>
             <a class="button download-button" href="/download/{{ .Seed.FileHash }}">Download</a>

@@ -80,6 +80,15 @@ section {
     margin-bottom: 10px;
 }
 
+blockquote {
+    width: 50%;
+    margin: auto;
+    padding: 1em;
+    border-left: 2px solid #324960;
+    color: #bfd3e7;
+    word-wrap: break-word;
+}
+
 .center-text {
     text-align: center;
 }
@@ -122,6 +131,15 @@ button, .button {
     cursor: pointer;
 }
 
+button.primary {
+    background-color:#eb802b;
+}
+
+button.small-btn {
+    margin:5px auto;
+    padding: 8px 5px;
+}
+
 .download-button {
     background-color: #b6cde5;
     color: #1f568c;
@@ -133,8 +151,26 @@ button, .button {
     color: #0e3e6d;
 }
 
+.inline-buttons button {
+    display: inline;
+}
+
 .uploadTime {
     font-style: italic;
+}
+
+.uploaderCommentLabel {
+    text-align: left;
+    display: block;
+    margin-left: 15%;
+    padding: 10px;
+    font-style: italic;
+}
+
+textarea.comment {
+    background-color: #2d445b;
+    color: white;
+    border: none;
 }
 
 .error {

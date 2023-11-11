@@ -1,12 +1,12 @@
 package main
 
 import (
+	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
-	"text/template"
 
 	"github.com/bsinky/sohrando/authentication"
 	"github.com/bsinky/sohrando/migration"
@@ -38,6 +38,10 @@ func fileHashIcons(fileHash string) []string {
 	return hashIconUrls
 }
 
+func preserveLinebreaks(text string) template.HTML {
+	return template.HTML(strings.Replace(template.HTMLEscapeString(text), "\n", "<br>", -1))
+}
+
 func SetUpDBAndStorage(dbURI string, storageDir string) (*App, error) {
 	db, err := gorm.Open(sqlite.Open(dbURI), &gorm.Config{})
 	if err != nil {
@@ -57,7 +61,8 @@ func SetUpDBAndStorage(dbURI string, storageDir string) (*App, error) {
 func SetupRouter(r *gin.Engine, app *App) {
 	r.StaticFS("/assets", http.Dir("assets"))
 	r.SetFuncMap(template.FuncMap{
-		"fileHashIcons": fileHashIcons,
+		"fileHashIcons":      fileHashIcons,
+		"preserveLinebreaks": preserveLinebreaks,
 	})
 	r.LoadHTMLGlob("templates/*")
 

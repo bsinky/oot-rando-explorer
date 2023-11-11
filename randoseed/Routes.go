@@ -3,7 +3,6 @@ package randoseed
 import (
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/bsinky/sohrando/authentication"
@@ -21,13 +20,24 @@ type ViewSeedModel struct {
 	MyRating  *SeedRank
 }
 
+// TODO: any way to combine this with ViewUploadCommentModel? Generics maybe?
+func (v ViewSeedModel) UserCanEdit() bool {
+	return v.User != nil &&
+		v.Seed != nil &&
+		v.Seed.User != nil &&
+		v.User.ID == v.Seed.User.ID
+}
+
 func AddRoutes(r *gin.Engine) {
 	r.GET("/s/:filehash", getSeed)
 	r.GET("/download/:filehash", downloadSeed)
+	r.GET("/s/:filehash/uploadercomment", getUploaderComment)
 
 	authGroup := r.Group("/", authRequired())
 	authGroup.POST("/uploadseed", uploadSeed)
 	authGroup.POST("/vote/:filehash", voteOnSeed)
+	authGroup.GET("/s/:filehash/uploadercomment/edit", editUploaderCommentUI)
+	authGroup.POST("/s/:filehash/uploadercomment", editUploaderComment)
 }
 
 func authRequired() gin.HandlerFunc {
@@ -45,7 +55,7 @@ func getSeed(c *gin.Context) {
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
-	seed, err := GetByFileHashWithRawSettings(db, filehash)
+	seed, err := GetByFileHashWithRelationships(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -74,10 +84,92 @@ func getSeed(c *gin.Context) {
 	})
 }
 
+type ViewUploaderCommentModel struct {
+	Seed  *Seed
+	User  *authentication.UserDisplay
+	Error string
+}
+
+func (v ViewUploaderCommentModel) UserCanEdit() bool {
+	return v.User != nil &&
+		v.Seed != nil &&
+		v.Seed.User != nil &&
+		v.User.ID == v.Seed.User.ID
+}
+
+func getUploaderComment(c *gin.Context) {
+	filehash := c.Param("filehash")
+	db := util.GetDatabase(c)
+	user := authentication.GetCurrentUser(c)
+
+	seed, err := GetByFileHashWithRelationships(db, filehash)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "uploaderComment", ViewUploaderCommentModel{
+		Seed: seed,
+		User: user,
+	})
+}
+
+func editUploaderComment(c *gin.Context) {
+	filehash := c.Param("filehash")
+	db := util.GetDatabase(c)
+	user := authentication.GetCurrentUser(c)
+
+	seed, err := GetByFileHashWithRelationships(db, filehash)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	// TODO: validation working?
+	if err := c.Bind(seed); err != nil {
+		c.HTML(http.StatusOK, "editUploaderComment", ViewUploaderCommentModel{
+			Seed:  seed,
+			User:  user,
+			Error: "Failed validation",
+		})
+		return
+	}
+
+	if err := db.Save(seed).Error; err != nil {
+		c.HTML(http.StatusOK, "editUploaderComment", ViewUploaderCommentModel{
+			Seed:  seed,
+			User:  user,
+			Error: "Invalid comment",
+		})
+		return
+	}
+
+	c.HTML(http.StatusOK, "uploaderComment", gin.H{
+		"Seed": seed,
+		"User": user,
+	})
+}
+
+func editUploaderCommentUI(c *gin.Context) {
+	filehash := c.Param("filehash")
+	db := util.GetDatabase(c)
+	user := authentication.GetCurrentUser(c)
+
+	seed, err := GetByFileHashWithRelationships(db, filehash)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "editUploaderComment", ViewUploaderCommentModel{
+		Seed: seed,
+		User: user,
+	})
+}
+
 func downloadSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
-	db := c.Value("database").(*gorm.DB)
-	spoilerLogDir := c.Value("filestore").(string)
+	db := util.GetDatabase(c)
 
 	_, err := GetByFileHash(db, filehash)
 	if err != nil {
@@ -86,11 +178,12 @@ func downloadSeed(c *gin.Context) {
 	}
 
 	fileName := filehash + ".json"
-	c.FileAttachment(filepath.Join(spoilerLogDir, fileName), fileName)
+	c.FileAttachment(util.GetSpoilerLogDest(c, filehash), fileName)
 }
 
 func uploadSeed(c *gin.Context) {
-	db := c.Value("database").(*gorm.DB)
+	db := util.GetDatabase(c)
+	user := authentication.GetCurrentUser(c)
 	validationError := func(err string) {
 		errModel := struct {
 			FieldName string
@@ -137,7 +230,7 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	newDbRecord := spoilerLog.CreateDatabaseSeed()
+	newDbRecord := spoilerLog.CreateDatabaseSeed(user, "")
 
 	v := binding.Validator.Engine().(*validator.Validate)
 	err = v.Struct(*newDbRecord)

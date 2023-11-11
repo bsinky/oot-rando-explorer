@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bsinky/sohrando/authentication"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
@@ -31,22 +32,25 @@ func validateVersion(fl validator.FieldLevel) bool {
 // TODO: possibly move Version to a separate table to better normalize data and save storage?
 type Seed struct {
 	gorm.Model
-	Seed          string
-	Version       string `gorm:"index" validate:"required,validVersion"`
-	FileHash      string `gorm:"uniqueIndex" validate:"required"`
-	Logic         string `gorm:"index"`
-	Shopsanity    string `gorm:"index"`
-	Tokensanity   string `gorm:"index"`
-	Scrubsanity   string `gorm:"index"`
-	MQDungeons    string `gorm:"index"`
-	ItemPool      string `gorm:"index"`
-	EntranceRando string `gorm:"index"`
-	RawSettings   *RawSettings
+	Seed            string
+	Version         string `gorm:"index" validate:"required,validVersion"`
+	FileHash        string `gorm:"uniqueIndex" validate:"required"`
+	Logic           string `gorm:"index"`
+	Shopsanity      string `gorm:"index"`
+	Tokensanity     string `gorm:"index"`
+	Scrubsanity     string `gorm:"index"`
+	MQDungeons      string `gorm:"index"`
+	ItemPool        string `gorm:"index"`
+	EntranceRando   string `gorm:"index"`
+	RawSettings     *RawSettings
+	User            *authentication.User `gorm:"foreignKey:UserIDUploader"`
+	UserIDUploader  uint                 `gorm:"index" validate:"required"`
+	UploaderComment string               `validate:"len=500" form:"uploaderComment"`
 }
 
 type RawSettings struct {
 	ID           uint
-	SettingsJSON string `validate:"len:10000"`
+	SettingsJSON string `validate:"len=10000"`
 	SeedID       uint   `gorm:"uniqueIndex" validate:"required"`
 }
 
@@ -101,9 +105,9 @@ func GetByFileHash(db *gorm.DB, fileHash string) (*Seed, error) {
 	return &seed, nil
 }
 
-func GetByFileHashWithRawSettings(db *gorm.DB, fileHash string) (*Seed, error) {
+func GetByFileHashWithRelationships(db *gorm.DB, fileHash string) (*Seed, error) {
 	var seed Seed
-	if err := db.Preload("RawSettings").First(&seed, "file_hash = ?", fileHash).Error; err != nil {
+	if err := db.Preload("RawSettings").Preload("User").First(&seed, "file_hash = ?", fileHash).Error; err != nil {
 		return nil, err
 	}
 
