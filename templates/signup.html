@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    {{ template "head" }}
+    <body>
+        {{ template "banner.html" . }}
+        <h1>Sign Up</h1>
+        <div class="login-form">
+            {{ block "signupform" . }}
+            <form id="signup-form" hx-post="/signup/register" hx-target="this" hx-swap="outerHTML">
+                <div>
+                    <label for="username">Username</label>
+                    <input name="username" type="text" required="" maxlength="30" value="{{ .Username }}"/>
+                    <label class="username-errors"></label>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input name="password" type="password" required="" maxlength="100" value="{{ .Password }}"/>
+                    <label class="password-errors"></label>
+                </div>
+                <div>
+                    <label for="confirmPassword">Retype Password</label>
+                    <input name="confirmPassword" type="password" required="" maxlength="100" value="{{ .ConfirmPassword }}"/>
+                    <label class="confirmPassword-errors"></label>
+                </div>
+                {{ template "error.html" .Errors }}
+                <!-- TODO: CAPTCHA -->
+                <button type="submit">Sign Up</button>
+            </form>
+            {{ end }}
+        </div>
+    </body>
+</html>

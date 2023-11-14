@@ -3,9 +3,8 @@
     <li class="error">
     {{ if .FieldName }}
         {{ .FieldName }}:
-    {{ else }}
-        {{ .Error }}
     {{ end }}
+    {{ .Error }}
     </li>
 {{ end }}
 </ul>

@@ -8,6 +8,7 @@ import (
 	"github.com/alexedwards/argon2id"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
@@ -24,13 +25,35 @@ type User struct {
 	Avatar         string
 }
 
-type UserForm struct {
+type LoginUserForm struct {
 	Username string `validate:"required,len=30" form:"username"`
 	Password string `validate:"required,len=100" form:"password"`
+	Errors   []SimpleValidation
+}
+
+type RegisterUserForm struct {
+	LoginUserForm
+	ConfirmPassword string `validate:"required,len=100,eqField=Password" form:"confirmPassword"`
+}
+
+func (u *LoginUserForm) SetErrors(validationErr validator.ValidationErrors) {
+	u.Errors = make([]SimpleValidation, 0, len(validationErr))
+	for _, v := range validationErr {
+		u.Errors = append(u.Errors, SimpleValidation{
+			Message: v.Error(),
+		})
+	}
+}
+
+func (u *LoginUserForm) AddError(message string) {
+	u.Errors = append(u.Errors, SimpleValidation{
+		Message: message,
+	})
 }
 
 var (
-	ErrUsernameAlreadyExists = errors.New("This username is not available")
+	ErrUsernameAlreadyExists     = errors.New("this username is already in use")
+	ErrUsernameOrPasswordInvalid = errors.New("username or password does not match")
 )
 
 func getRandomHashIconAvatar() string {
@@ -38,7 +61,7 @@ func getRandomHashIconAvatar() string {
 	return fmt.Sprintf("%02d", hashIcon)
 }
 
-func CreateUser(db *gorm.DB, form *UserForm) (*User, error) {
+func CreateUser(db *gorm.DB, form *RegisterUserForm) (*User, error) {
 	hashedPassword, err := argon2id.CreateHash(form.Password, argon2id.DefaultParams)
 	if err != nil {
 		return nil, err
@@ -62,6 +85,9 @@ func CreateUser(db *gorm.DB, form *UserForm) (*User, error) {
 func GetUser(db *gorm.DB, username string) (*User, error) {
 	var user User
 	if err := db.First(&user, "username = ?", username).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

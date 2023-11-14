@@ -7,7 +7,7 @@ require (
 	github.com/gin-contrib/sessions v0.0.5
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.15.5
-	gorm.io/driver/sqlite v1.5.4
+	gorm.io/driver/sqlite v1.5.1
 	gorm.io/gorm v1.25.5
 )
 
@@ -34,7 +34,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
-	github.com/wader/gormstore/v2 v2.0.0 // indirect
+	github.com/wader/gormstore/v2 v2.0.3 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.10.0 // indirect

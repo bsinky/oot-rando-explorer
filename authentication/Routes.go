@@ -4,12 +4,26 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
+
+type SimpleValidation struct {
+	Message string
+}
+
+func (u *SimpleValidation) Error() string {
+	return u.Message
+}
+
+func (u *SimpleValidation) FieldName() string {
+	return ""
+}
 
 func AddRoutes(r *gin.Engine) {
 	r.GET("/login", loginPage)
 	r.GET("/logout", logoutAction)
+	r.GET("/signup", signupPage)
 
 	r.POST("/login/auth", loginGetAuthToken)
 	r.POST("/signup/register", signupCreateUser)
@@ -36,9 +50,22 @@ func logoutAction(c *gin.Context) {
 func loginGetAuthToken(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
 
-	userForm := &UserForm{}
+	userForm := &LoginUserForm{
+		Errors: make([]SimpleValidation, 0),
+	}
+
+	renderErrors := func() {
+		c.HTML(http.StatusOK, "loginform", &userForm)
+	}
+
 	if err := c.Bind(userForm); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		userForm.SetErrors(validationErrors)
+		renderErrors()
 		return
 	}
 
@@ -46,14 +73,19 @@ func loginGetAuthToken(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
+	} else if user == nil {
+		userForm.AddError(ErrUsernameOrPasswordInvalid.Error())
+		renderErrors()
+		return
 	}
 
 	ok, err := user.PasswordMatches(userForm.Password)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	} else if !ok {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		userForm.AddError(ErrUsernameOrPasswordInvalid.Error())
+		renderErrors()
 		return
 	}
 
@@ -63,7 +95,9 @@ func loginGetAuthToken(c *gin.Context) {
 	}
 
 	// Login successful, redirect back to main page
-	c.Redirect(http.StatusSeeOther, "/")
+	// c.Redirect(http.StatusSeeOther, "/")
+	c.Status(http.StatusOK)
+	c.Header("HX-Location", "/")
 }
 
 func signupPage(c *gin.Context) {
@@ -78,18 +112,27 @@ func signupPage(c *gin.Context) {
 func signupCreateUser(c *gin.Context) {
 	db := c.Value("database").(*gorm.DB)
 
-	userForm := &UserForm{}
+	userForm := &RegisterUserForm{}
+
+	renderErrors := func() {
+		c.HTML(http.StatusOK, "signupform", &userForm)
+	}
+
 	if err := c.Bind(userForm); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		validationErrors, ok := err.(validator.ValidationErrors)
+		if !ok {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		userForm.SetErrors(validationErrors)
+		renderErrors()
 		return
 	}
 
 	user, err := CreateUser(db, userForm)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	} else if user == nil || user.ID == 0 {
-		c.AbortWithStatus(http.StatusBadRequest)
+		userForm.AddError(err.Error())
+		renderErrors()
 		return
 	}
 
@@ -99,5 +142,6 @@ func signupCreateUser(c *gin.Context) {
 	}
 
 	// Registration successful, redirect back to main page
-	c.Redirect(http.StatusSeeOther, "/")
+	c.Status(http.StatusOK)
+	c.Header("HX-Location", "/")
 }
