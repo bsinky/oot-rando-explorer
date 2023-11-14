@@ -42,6 +42,35 @@ func preserveLinebreaks(text string) template.HTML {
 	return template.HTML(strings.Replace(template.HTMLEscapeString(text), "\n", "<br>", -1))
 }
 
+// TODO: better name and move to different package
+type Err1 struct {
+	FieldName string
+	Error     string
+}
+
+func toErrors(errors any) []Err1 {
+	errs := make([]Err1, 0)
+	switch v := errors.(type) {
+	case string:
+		if len(v) > 0 {
+			return []Err1{
+				{
+					Error: v,
+				},
+			}
+		}
+	case validator.ValidationErrors:
+		for _, vErr := range v {
+			errs = append(errs, Err1{
+				FieldName: vErr.Field(),
+				Error:     vErr.Error(),
+			})
+		}
+	}
+
+	return errs
+}
+
 func SetUpDBAndStorage(dbURI string, storageDir string) (*App, error) {
 	db, err := gorm.Open(sqlite.Open(dbURI), &gorm.Config{})
 	if err != nil {
@@ -63,6 +92,7 @@ func SetupRouter(r *gin.Engine, app *App) {
 	r.SetFuncMap(template.FuncMap{
 		"fileHashIcons":      fileHashIcons,
 		"preserveLinebreaks": preserveLinebreaks,
+		"toErrors":           toErrors,
 	})
 	r.LoadHTMLGlob("templates/*")
 

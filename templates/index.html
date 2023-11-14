@@ -8,7 +8,15 @@
         {{ if .User }}
         <div class="seed-form">
             <input form="seed-form" name="spoilerlog" type="file" required=""/>
-            {{ template "uploadSeed" }}
+            {{ block "uploadSeed" toErrors . }}
+            <form id="seed-form" hx-post="/uploadseed"
+                hx-encoding="multipart/form-data"
+                hx-swap="outerHTML"
+                hx-target="#seed-form">
+                <button type="submit">Upload</button>
+                {{ template "error.html" . }}
+            </form>
+            {{ end }}
         </div>
         {{ else }}
             <div>You must be <a href="/login">logged in</a> to upload</div>

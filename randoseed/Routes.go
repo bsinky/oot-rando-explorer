@@ -192,7 +192,7 @@ func uploadSeed(c *gin.Context) {
 			FieldName: "",
 			Error:     err,
 		}
-		c.HTML(http.StatusBadRequest, "uploadSeed", []any{
+		c.HTML(http.StatusOK, "uploadSeed", []any{
 			errModel,
 		})
 	}
@@ -213,16 +213,16 @@ func uploadSeed(c *gin.Context) {
 	uploadedFilename := formData[0].Filename
 
 	if alreadyUploaded, _ := GetByFileHash(db, strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
-		c.Redirect(http.StatusFound, "/s/"+alreadyUploaded.FileHash)
+		util.HtmxRedirect(c, "/s/"+alreadyUploaded.FileHash)
 		return
 	}
 
 	spoilerlogFile, err := uploadedFile.Open()
-	defer spoilerlogFile.Close()
 	if err != nil {
 		validationError("File did not upload correctly")
 		return
 	}
+	defer spoilerlogFile.Close()
 
 	spoilerLog, spoilerLogBytes, jsonErr := GetSpoilerLogFromJsonFile(spoilerlogFile)
 	if jsonErr != nil {
@@ -233,8 +233,7 @@ func uploadSeed(c *gin.Context) {
 	newDbRecord := spoilerLog.CreateDatabaseSeed(user, "")
 
 	v := binding.Validator.Engine().(*validator.Validate)
-	err = v.Struct(*newDbRecord)
-	if err != nil {
+	if err = v.Struct(*newDbRecord); err != nil {
 		validationErrors := err.(validator.ValidationErrors)
 		c.HTML(http.StatusOK, "uploadSeed", validationErrors)
 		return
@@ -260,7 +259,7 @@ func uploadSeed(c *gin.Context) {
 	// }
 
 	redirectDest := "/s/" + newDbRecord.FileHash
-	c.Redirect(http.StatusFound, redirectDest)
+	util.HtmxRedirect(c, redirectDest)
 }
 
 func voteOnSeed(c *gin.Context) {

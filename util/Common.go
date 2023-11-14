@@ -1,6 +1,7 @@
 package util
 
 import (
+	"net/http"
 	"path/filepath"
 
 	"github.com/bsinky/sohrando/authentication"
@@ -37,4 +38,9 @@ func GetSpoilerLogDest(c *gin.Context, fileHash string) string {
 	spoilerLogDir := c.Value("filestore").(string)
 	fileName := fileHash + ".json"
 	return filepath.Join(spoilerLogDir, fileName)
+}
+
+func HtmxRedirect(c *gin.Context, dst string) {
+	c.Status(http.StatusOK)
+	c.Header("HX-Location", dst)
 }

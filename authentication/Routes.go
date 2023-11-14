@@ -8,6 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type ViewWithUser interface {
+	User() *UserDisplay
+}
+
 type SimpleValidation struct {
 	Message string
 }

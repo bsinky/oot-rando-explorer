@@ -1,9 +1,0 @@
-{{ define "uploadSeed" }}
-<form id="seed-form" method="POST" action="/uploadseed"
-    enctype="multipart/form-data"
-    hx-swap="outerHTML"
-    hx-target="#seed-form">
-    <button type="submit">Upload</button>
-    {{ template "error.html" . }}
-</form>
-{{ end }}
