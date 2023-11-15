@@ -206,7 +206,7 @@ func TestVoteOnSeed(t *testing.T) {
 	data.Add("difficulty", "1")
 	data.Add("fun", "5")
 
-	w := postHasStatus(t, app, "/vote/00-01-02-03-04", &data, http.StatusOK)
+	w := postHasStatus(t, app, "/s/00-01-02-03-04/vote", &data, http.StatusOK)
 	body := w.Body.String()
 	bodyHasFragments(t, body, []string{"Difficulty", "value=\"5\""})
 }

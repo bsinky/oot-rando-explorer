@@ -8,10 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/bsinky/sohrando/authentication"
 	"github.com/bsinky/sohrando/migration"
 	"github.com/bsinky/sohrando/randoseed"
-	"github.com/bsinky/sohrando/search"
+	"github.com/bsinky/sohrando/routes"
 	"github.com/bsinky/sohrando/util"
 	"github.com/go-playground/validator/v10"
 
@@ -117,9 +116,9 @@ func SetupRouter(r *gin.Engine, app *App) {
 		c.HTML(http.StatusOK, "index.html", util.ViewData(c, &gin.H{"seeds": seeds}))
 	})
 
-	randoseed.AddRoutes(r)
-	search.AddRoutes(r)
-	authentication.AddRoutes(r)
+	routes.AddSeedRoutes(r)
+	routes.AddSearchRoutes(r)
+	routes.AddUserRoutes(r)
 }
 
 func main() {

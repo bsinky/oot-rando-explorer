@@ -14,7 +14,7 @@
     </section>
     <section>
         {{ if .User }}
-        <form hx-post="/vote/{{ .Seed.FileHash }}"
+        <form hx-post="/s/{{ .Seed.FileHash }}/vote"
             hx-target="#seed_rank"
             hx-swap="outerHTML">
             <div>

@@ -1,28 +1,30 @@
-package search
+package routes
 
 import (
 	"net/http"
 
 	"github.com/bsinky/sohrando/authentication"
+	"github.com/bsinky/sohrando/search"
 	"github.com/bsinky/sohrando/util"
 	"github.com/gin-gonic/gin"
 )
 
-func AddRoutes(r *gin.Engine) {
-	r.GET("/search", searchPage)
-	r.GET("/search/run", runSearch)
+func AddSearchRoutes(r *gin.Engine) {
+	search := r.Group("/search")
+	search.GET("/", searchPage)
+	search.GET("/run", runSearch)
 }
 
 type SearchModel struct {
 	util.ViewModel
-	Filters map[string]*SearchFilter
+	Filters map[string]*search.SearchFilter
 }
 
 func searchPage(c *gin.Context) {
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
-	allFilters, err := AllFilters(db)
+	allFilters, err := search.AllFilters(db)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -37,13 +39,13 @@ func searchPage(c *gin.Context) {
 }
 
 type SearchResultModel struct {
-	Result *Result
+	Result *search.Result
 }
 
 func runSearch(c *gin.Context) {
 	db := util.GetDatabase(c)
 
-	allFilters, err := AllFilters(db)
+	allFilters, err := search.AllFilters(db)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -55,7 +57,7 @@ func runSearch(c *gin.Context) {
 		return
 	}
 
-	var reqFilters []SearchFilterValue
+	var reqFilters []search.SearchFilterValue
 
 	for k, v := range reqFields {
 		// Remove invalid field names or blank values
@@ -65,13 +67,13 @@ func runSearch(c *gin.Context) {
 			continue
 		}
 
-		reqFilters = append(reqFilters, SearchFilterValue{
+		reqFilters = append(reqFilters, search.SearchFilterValue{
 			FieldName: k,
 			Value:     v,
 		})
 	}
 
-	result, err := RunSearch(db, reqFilters)
+	result, err := search.RunSearch(db, reqFilters)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

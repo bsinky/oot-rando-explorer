@@ -1,12 +1,12 @@
-package randoseed
+package routes
 
 import (
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/bsinky/sohrando/authentication"
+	"github.com/bsinky/sohrando/randoseed"
 	"github.com/bsinky/sohrando/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -16,9 +16,9 @@ import (
 
 type ViewSeedModel struct {
 	util.ViewModel
-	Seed      *Seed
-	AvgRating *AvgSeedRank
-	MyRating  *SeedRank
+	Seed      *randoseed.Seed
+	AvgRating *randoseed.AvgSeedRank
+	MyRating  *randoseed.SeedRank
 }
 
 // TODO: any way to combine this with ViewUploadCommentModel? Generics maybe?
@@ -29,19 +29,18 @@ func (v ViewSeedModel) UserCanEdit() bool {
 		v.User.ID == v.Seed.User.ID
 }
 
-func AddRoutes(r *gin.Engine) {
-	r.GET("/s/:filehash", getSeed)
-	r.GET("/download/:filehash", downloadSeed)
-	r.GET("/s/:filehash/uploadercomment", getUploaderComment)
-
-	// TODO: this would make more sense in authentication package but causes a cyclic dependency
-	r.GET("/user/:id", userProfile)
+func AddSeedRoutes(r *gin.Engine) {
+	noAuthRoutes := r.Group("/s/:filehash")
+	noAuthRoutes.GET("/", getSeed)
+	noAuthRoutes.GET("/download", downloadSeed)
+	noAuthRoutes.GET("/uploadercomment", getUploaderComment)
 
 	authGroup := r.Group("/", authRequired())
 	authGroup.POST("/uploadseed", uploadSeed)
-	authGroup.POST("/vote/:filehash", voteOnSeed)
-	authGroup.GET("/s/:filehash/uploadercomment/edit", editUploaderCommentUI)
-	authGroup.POST("/s/:filehash/uploadercomment", editUploaderComment)
+	authGroupWithFilehash := r.Group("/s/:filehash", authRequired())
+	authGroupWithFilehash.POST("/vote", voteOnSeed)
+	authGroupWithFilehash.GET("/uploadercomment/edit", editUploaderCommentUI)
+	authGroupWithFilehash.POST("/uploadercomment", editUploaderComment)
 }
 
 func authRequired() gin.HandlerFunc {
@@ -59,20 +58,20 @@ func getSeed(c *gin.Context) {
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
-	seed, err := GetByFileHashWithRelationships(db, filehash)
+	seed, err := randoseed.GetByFileHashWithRelationships(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	avgRating, avgErr := GetAverageRank(db, seed.ID)
+	avgRating, avgErr := randoseed.GetAverageRank(db, seed.ID)
 	if avgErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
 	}
-	var myRating *SeedRank
+	var myRating *randoseed.SeedRank
 	if user != nil {
-		myRating, err = GetUserRank(db, seed.ID, user.ID)
+		myRating, err = randoseed.GetUserRank(db, seed.ID, user.ID)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -89,7 +88,7 @@ func getSeed(c *gin.Context) {
 }
 
 type ViewUploaderCommentModel struct {
-	Seed  *Seed
+	Seed  *randoseed.Seed
 	User  *authentication.UserDisplay
 	Error string
 }
@@ -106,7 +105,7 @@ func getUploaderComment(c *gin.Context) {
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
-	seed, err := GetByFileHashWithRelationships(db, filehash)
+	seed, err := randoseed.GetByFileHashWithRelationships(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -123,7 +122,7 @@ func editUploaderComment(c *gin.Context) {
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
-	seed, err := GetByFileHashWithRelationships(db, filehash)
+	seed, err := randoseed.GetByFileHashWithRelationships(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -159,7 +158,7 @@ func editUploaderCommentUI(c *gin.Context) {
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
-	seed, err := GetByFileHashWithRelationships(db, filehash)
+	seed, err := randoseed.GetByFileHashWithRelationships(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -175,7 +174,7 @@ func downloadSeed(c *gin.Context) {
 	filehash := c.Param("filehash")
 	db := util.GetDatabase(c)
 
-	_, err := GetByFileHash(db, filehash)
+	_, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -216,7 +215,7 @@ func uploadSeed(c *gin.Context) {
 	uploadedFile := formData[0]
 	uploadedFilename := formData[0].Filename
 
-	if alreadyUploaded, _ := GetByFileHash(db, strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
+	if alreadyUploaded, _ := randoseed.GetByFileHash(db, strings.Replace(uploadedFilename, ".json", "", 1)); alreadyUploaded != nil {
 		util.HtmxRedirect(c, "/s/"+alreadyUploaded.FileHash)
 		return
 	}
@@ -228,7 +227,7 @@ func uploadSeed(c *gin.Context) {
 	}
 	defer spoilerlogFile.Close()
 
-	spoilerLog, spoilerLogBytes, jsonErr := GetSpoilerLogFromJsonFile(spoilerlogFile)
+	spoilerLog, spoilerLogBytes, jsonErr := randoseed.GetSpoilerLogFromJsonFile(spoilerlogFile)
 	if jsonErr != nil {
 		validationError("Spoiler Log JSON could not be read")
 		return
@@ -276,21 +275,21 @@ func voteOnSeed(c *gin.Context) {
 		return
 	}
 
-	seed, err := GetByFileHash(db, filehash)
+	seed, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	var rank *SeedRank
+	var rank *randoseed.SeedRank
 
-	if existingRank, getErr := GetUserRank(db, seed.ID, user.ID); err != nil {
+	if existingRank, getErr := randoseed.GetUserRank(db, seed.ID, user.ID); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, getErr)
 		return
 	} else if existingRank != nil {
 		rank = existingRank
 	} else {
-		rank = &SeedRank{}
+		rank = &randoseed.SeedRank{}
 		rank.SeedID = seed.ID
 		rank.UserID = user.ID
 	}
@@ -306,7 +305,7 @@ func voteOnSeed(c *gin.Context) {
 		return
 	}
 
-	avgRating, avgErr := GetAverageRank(db, seed.ID)
+	avgRating, avgErr := randoseed.GetAverageRank(db, seed.ID)
 	if avgErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
@@ -319,52 +318,5 @@ func voteOnSeed(c *gin.Context) {
 		Seed:      seed,
 		AvgRating: avgRating,
 		MyRating:  rank,
-	})
-}
-
-func userProfile(c *gin.Context) {
-	db := util.GetDatabase(c)
-	user := authentication.GetCurrentUser(c)
-	id := c.Param("id")
-
-	if id == "" {
-		c.AbortWithStatus(http.StatusNotFound)
-		return
-	}
-
-	idValue, err := strconv.ParseUint(id, 10, 64)
-	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-		return
-	}
-
-	var viewedUser *authentication.UserDisplay
-	viewingOwnProfile := false
-	if user != nil && user.ID == uint(idValue) {
-		// signed in user viewing their own profile
-		viewedUser = user
-		viewingOwnProfile = true
-	} else {
-		viewedUser, err = authentication.GetUserDisplayByID(db, uint(idValue))
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		} else if viewedUser == nil {
-			c.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-	}
-
-	uploadedSeeds, err := UserUploadedSeeds(db, viewedUser.ID)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.HTML(http.StatusOK, "user.html", gin.H{
-		"User":              user,
-		"Viewed":            gin.H{"User": viewedUser},
-		"ViewingOwnProfile": viewingOwnProfile,
-		"UploadedSeeds":     uploadedSeeds,
 	})
 }
