@@ -45,9 +45,20 @@ body {
     text-decoration-color: #bd5c0d;
 }
 
-.user-card, .user-card > * {
+.user-card, .user-card * {
     display: inline;
     vertical-align: middle;
+}
+
+.user-card > a {
+    text-decoration: none;
+}
+
+.username-large {
+    font-size: 2.5em;
+    font-weight: bold;
+    vertical-align: text-bottom;
+    display: inline-block;
 }
 
 a {

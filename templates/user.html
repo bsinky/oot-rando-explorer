@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    {{ template "head" }}
+    <body>
+        {{ template "banner.html" . }}
+        <section>
+            <div class="hash-icons-2x">
+                <img src="/assets/hash/{{ .Viewed.User.Avatar }}.png"/>
+                <div class="username-large">{{ .Viewed.User.Username }}</div>
+            </div>
+            <div>
+                {{ if .ViewingOwnProfile }}
+                    <!-- IDEA: option to change avatar -->
+                {{ end }}
+            </div>
+            <h2>Uploaded Seeds</h2>
+            {{ range .UploadedSeeds }}
+                {{ template "seedwithuploadtime" . }}
+            {{ else }}
+                <div>No uploaded seeds yet.</div>
+            {{ end }}
+        </section>
+    </body>
+</html>

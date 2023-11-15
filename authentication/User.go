@@ -94,6 +94,18 @@ func GetUser(db *gorm.DB, username string) (*User, error) {
 	return &user, nil
 }
 
+func GetUserDisplayByID(db *gorm.DB, id uint) (*UserDisplay, error) {
+	var user UserDisplay
+	if err := db.Table("users").First(&user, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func (user *User) PasswordMatches(password string) (bool, error) {
 	match, err := argon2id.ComparePasswordAndHash(password, user.HashedPassword)
 	if err != nil {

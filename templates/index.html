@@ -23,16 +23,7 @@
         {{ end }}
         <h3>Most Recent Seeds</h3>
         {{ range .seeds }}
-        <div>
-            <a href="/s/{{ .FileHash }}" class="hash-icons">
-                {{ range fileHashIcons .FileHash }}
-                    <img src="{{.}}"/>
-                {{end}}
-            <span class="recent-seed-info">
-                {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
-            </span>
-            </a>
-        </div>
+            {{ template "seedwithuploadtime" . }}
         {{ end }}
     </body>
 </html>

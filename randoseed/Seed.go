@@ -122,3 +122,13 @@ func MostRecent(db *gorm.DB, n int) ([]Seed, error) {
 
 	return seeds, nil
 }
+
+func UserUploadedSeeds(db *gorm.DB, userID uint) ([]Seed, error) {
+	batchSize := 10
+	seeds := make([]Seed, 0, batchSize)
+	if err := db.Order("ID DESC").Limit(batchSize).Find(&seeds, &Seed{UserIDUploader: userID}).Error; err != nil {
+		return nil, err
+	}
+
+	return seeds, nil
+}

@@ -3,6 +3,7 @@ package randoseed
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/bsinky/sohrando/authentication"
@@ -32,6 +33,9 @@ func AddRoutes(r *gin.Engine) {
 	r.GET("/s/:filehash", getSeed)
 	r.GET("/download/:filehash", downloadSeed)
 	r.GET("/s/:filehash/uploadercomment", getUploaderComment)
+
+	// TODO: this would make more sense in authentication package but causes a cyclic dependency
+	r.GET("/user/:id", userProfile)
 
 	authGroup := r.Group("/", authRequired())
 	authGroup.POST("/uploadseed", uploadSeed)
@@ -315,5 +319,52 @@ func voteOnSeed(c *gin.Context) {
 		Seed:      seed,
 		AvgRating: avgRating,
 		MyRating:  rank,
+	})
+}
+
+func userProfile(c *gin.Context) {
+	db := util.GetDatabase(c)
+	user := authentication.GetCurrentUser(c)
+	id := c.Param("id")
+
+	if id == "" {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	idValue, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	var viewedUser *authentication.UserDisplay
+	viewingOwnProfile := false
+	if user != nil && user.ID == uint(idValue) {
+		// signed in user viewing their own profile
+		viewedUser = user
+		viewingOwnProfile = true
+	} else {
+		viewedUser, err = authentication.GetUserDisplayByID(db, uint(idValue))
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		} else if viewedUser == nil {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+	}
+
+	uploadedSeeds, err := UserUploadedSeeds(db, viewedUser.ID)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.HTML(http.StatusOK, "user.html", gin.H{
+		"User":              user,
+		"Viewed":            gin.H{"User": viewedUser},
+		"ViewingOwnProfile": viewingOwnProfile,
+		"UploadedSeeds":     uploadedSeeds,
 	})
 }
