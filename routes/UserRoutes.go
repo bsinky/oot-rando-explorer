@@ -165,9 +165,7 @@ func loginGetAuthToken(c *gin.Context) {
 	}
 
 	// Login successful, redirect back to main page
-	// c.Redirect(http.StatusSeeOther, "/")
-	c.Status(http.StatusOK)
-	c.Header("HX-Location", "/")
+	util.HtmxRedirect(c, "/")
 }
 
 func signupPage(c *gin.Context) {
@@ -212,6 +210,5 @@ func signupCreateUser(c *gin.Context) {
 	}
 
 	// Registration successful, redirect back to main page
-	c.Status(http.StatusOK)
-	c.Header("HX-Location", "/")
+	util.HtmxRedirect(c, "/")
 }
