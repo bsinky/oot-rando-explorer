@@ -3,6 +3,8 @@
 
 touch ./randoseed/versions.txt
 outfile=`realpath ./randoseed/versions.txt`
+# truncate current file
+: > $outfile
 
 if [[ $1 ]]; then
 	cd "$1"
@@ -12,6 +14,11 @@ echo "Generating $outfile..."
 
 # Pre 4.0.0, build version was coded differently
 for version in `git tag -l`; do
+	# 3.0.0 was the first release with Randomizer
+	# https://www.shipofharkinian.com/changelog#rachael-alfa-3-0-0
+	if [[ "$version" == "1.0.0" ]] || [[ "$version" == "2.0.0" ]]; then
+		continue
+	fi
 	build_name=`git grep gBuildVersion $version -- soh/src/boot/build.c | grep -Poh "\".+\""`
 	if [[ $build_name ]]; then 
 		build_name_stripped=`echo $build_name | sed s/\"//g | sed s/\;//g`
