@@ -188,14 +188,10 @@ func uploadSeed(c *gin.Context) {
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 	validationError := func(err string) {
-		errModel := struct {
-			FieldName string
-			Error     string
-		}{
-			FieldName: "",
-			Error:     err,
+		errModel := util.SimpleValidation{
+			Message: err,
 		}
-		c.HTML(http.StatusOK, "uploadSeed", []any{
+		c.HTML(http.StatusOK, "uploadSeed", []util.SimpleValidation{
 			errModel,
 		})
 	}

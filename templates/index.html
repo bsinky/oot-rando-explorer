@@ -7,7 +7,7 @@
         <h2>Upload or check a seed</h2>
         {{ if .User }}
         <div class="seed-form">
-            <input form="seed-form" name="spoilerlog" type="file" required=""/>
+            <input form="seed-form" name="spoilerlog" type="file" required="" accept=".json"/>
             {{ block "uploadSeed" toErrors . }}
             <form id="seed-form" hx-post="/uploadseed"
                 hx-encoding="multipart/form-data"

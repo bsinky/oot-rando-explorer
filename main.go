@@ -13,9 +13,11 @@ import (
 	"github.com/bsinky/sohrando/routes"
 	"github.com/bsinky/sohrando/util"
 	"github.com/go-playground/validator/v10"
+	"github.com/inhies/go-bytesize"
 
 	"github.com/gin-contrib/sessions"
 	gormsessions "github.com/gin-contrib/sessions/gorm"
+	limits "github.com/gin-contrib/size"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/driver/sqlite"
@@ -70,6 +72,8 @@ func SetupRouter(r *gin.Engine, app *App) {
 		randoseed.RegisterValidation(v)
 	}
 
+	// Limit requests to 5MB, uploaded seeds should all be well below that
+	r.Use(limits.RequestSizeLimiter(int64(bytesize.MB * 5)))
 	r.Use(util.ConnectDatabase(app.DB))
 
 	// TODO: better secret
