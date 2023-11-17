@@ -30,6 +30,13 @@ func (v ViewSeedModel) UserCanEdit() bool {
 }
 
 func AddSeedRoutes(r *gin.Engine) {
+	topSeedRoutes := r.Group("/top")
+	topSeedRoutes.GET("/", topSeeds)
+	topSeedRoutes.GET("/difficulty/easy", nextTopSeeds(randoseed.EasiestSeeds, "/difficulty/easy", avgSeedDifficulty))
+	topSeedRoutes.GET("/difficulty/hard", nextTopSeeds(randoseed.HardestSeeds, "/difficulty/hard", avgSeedDifficulty))
+	topSeedRoutes.GET("/fun", nextTopSeeds(randoseed.MostFunSeeds, "/fun", avgSeedFun))
+	// No route for most boring seeds...who would want that?
+
 	noAuthRoutes := r.Group("/s/:filehash")
 	noAuthRoutes.GET("/", getSeed)
 	noAuthRoutes.GET("/download", downloadSeed)
@@ -64,7 +71,7 @@ func getSeed(c *gin.Context) {
 		return
 	}
 
-	avgRating, avgErr := randoseed.GetAverageRank(db, seed.ID)
+	avgRating, avgErr := randoseed.UpdateAverageRank(db, seed.ID)
 	if avgErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
@@ -301,7 +308,7 @@ func voteOnSeed(c *gin.Context) {
 		return
 	}
 
-	avgRating, avgErr := randoseed.GetAverageRank(db, seed.ID)
+	avgRating, avgErr := randoseed.UpdateAverageRank(db, seed.ID)
 	if avgErr != nil {
 		c.AbortWithError(http.StatusInternalServerError, avgErr)
 		return
@@ -315,4 +322,60 @@ func voteOnSeed(c *gin.Context) {
 		AvgRating: avgRating,
 		MyRating:  rank,
 	})
+}
+
+func topSeeds(c *gin.Context) {
+	c.HTML(http.StatusOK, "top.html", util.ViewData(c, &gin.H{}))
+}
+
+type topSeedFunc func(*gorm.DB, int, *float64, *uint) ([]randoseed.AvgSeedRank, error)
+type lastValueFunc func(*randoseed.AvgSeedRank) float64
+
+func avgSeedDifficulty(s *randoseed.AvgSeedRank) float64 {
+	return s.Difficulty
+}
+
+func avgSeedFun(s *randoseed.AvgSeedRank) float64 {
+	return s.Fun
+}
+
+type lastDisplayed struct {
+	ID    *uint    `form:"lastid"`
+	Value *float64 `form:"lastvalue"`
+}
+
+const seedsPerBatch = 10
+
+func nextTopSeeds(topSeeds topSeedFunc, loadMoreAction string, getLastValue lastValueFunc) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := util.GetDatabase(c)
+		lastDisplayed := lastDisplayed{}
+		if err := c.ShouldBindQuery(&lastDisplayed); err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		avgSeedRanks, err := topSeeds(db, seedsPerBatch, lastDisplayed.Value, lastDisplayed.ID)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		if len(avgSeedRanks) > 0 {
+			lastShown := &avgSeedRanks[len(avgSeedRanks)-1]
+			val := getLastValue(lastShown)
+			lastDisplayed.Value = &val
+			lastDisplayed.ID = &lastShown.ID
+		} else {
+			lastDisplayed.Value = nil
+			lastDisplayed.ID = nil
+		}
+
+		c.HTML(http.StatusOK, "topseeds", gin.H{
+			"AvgSeedRanks":   avgSeedRanks,
+			"LoadMoreAction": "/top" + loadMoreAction,
+			"LastValue":      lastDisplayed.Value,
+			"LastID":         lastDisplayed.ID,
+		})
+	}
 }

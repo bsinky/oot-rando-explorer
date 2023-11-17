@@ -18,10 +18,12 @@ type SeedRank struct {
 }
 
 type AvgSeedRank struct {
-	SeedID     uint
+	ID         uint
+	SeedID     uint `gorm:"uniqueIndex,index:idx_difficulty,priority:2,index:idx_fun,priority2"`
+	Seed       *Seed
 	TotalVotes uint
-	Difficulty float64
-	Fun        float64
+	Difficulty float64 `gorm:"index:idx_difficulty,priority:1"`
+	Fun        float64 `gorm:"index:idx_fun,priority:1"`
 }
 
 func GetUserRank(db *gorm.DB, seedID uint, userID uint) (*SeedRank, error) {
@@ -35,8 +37,8 @@ func GetUserRank(db *gorm.DB, seedID uint, userID uint) (*SeedRank, error) {
 	return &seedRank, nil
 }
 
-func GetAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {
-	var avgSeedRank AvgSeedRank
+func UpdateAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {
+	var calcAvgRank AvgSeedRank
 	// TODO: replace Raw usage to make this portable to other dbs
 	res := db.Raw(`SELECT
 	    seed_ranks.seed_id,
@@ -45,7 +47,7 @@ func GetAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {
 		AVG(seed_ranks.fun) AS fun
 	FROM seed_ranks
 	WHERE seed_ranks.seed_id = ?
-	GROUP BY seed_ranks.seed_id`, seedID).First(&avgSeedRank)
+	GROUP BY seed_ranks.seed_id`, seedID).First(&calcAvgRank)
 	if err := res.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -53,5 +55,60 @@ func GetAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {
 		return nil, err
 	}
 
+	avgSeedRank := AvgSeedRank{}
+	if err := db.Where(&AvgSeedRank{SeedID: seedID}).Assign(AvgSeedRank{
+		SeedID:     calcAvgRank.SeedID,
+		TotalVotes: calcAvgRank.TotalVotes,
+		Difficulty: calcAvgRank.Difficulty,
+		Fun:        calcAvgRank.Fun}).FirstOrInit(&avgSeedRank).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Save(&avgSeedRank).Error; err != nil {
+		return nil, err
+	}
+
 	return &avgSeedRank, nil
+}
+
+func topAvgSeedRanks(db *gorm.DB, n int, sortField string, sortDirection string, prevValue *float64, prevID *uint) ([]AvgSeedRank, error) {
+	seeds := make([]AvgSeedRank, 0, n)
+
+	query := db.Preload("Seed").Order(sortField + " " + sortDirection).Order("id ASC").Limit(n)
+
+	if prevValue != nil && prevID != nil {
+		var operation string
+		if sortDirection == "DESC" {
+			operation = "<"
+		} else {
+			operation = ">"
+		}
+		if err := query.Where(sortField+" "+operation+" ?", prevValue).Or(sortField+" = ? AND id > ?", prevValue, prevID).Find(&seeds).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, nil
+			}
+			return nil, err
+		}
+	} else {
+		if err := query.Find(&seeds).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, nil
+			}
+			return nil, err
+		}
+	}
+
+	return seeds, nil
+}
+
+func EasiestSeeds(db *gorm.DB, n int, prevValue *float64, prevID *uint) ([]AvgSeedRank, error) {
+	return topAvgSeedRanks(db, n, "difficulty", "ASC", prevValue, prevID)
+}
+
+func HardestSeeds(db *gorm.DB, n int, prevValue *float64, prevID *uint) ([]AvgSeedRank, error) {
+	return topAvgSeedRanks(db, n, "difficulty", "DESC", prevValue, prevID)
+}
+
+func MostFunSeeds(db *gorm.DB, n int, prevValue *float64, prevID *uint) ([]AvgSeedRank, error) {
+	return topAvgSeedRanks(db, n, "fun", "DESC", prevValue, prevID)
 }
