@@ -60,6 +60,7 @@ func SetUpDBAndStorage(dbURI string, storageDir string) (*App, error) {
 }
 
 func SetupRouter(r *gin.Engine, app *App) {
+	randoseed.InitVersionCache(app.DB)
 	r.StaticFS("/assets", http.Dir("assets"))
 	r.SetFuncMap(template.FuncMap{
 		"fileHashIcons":      fileHashIcons,

@@ -2,22 +2,60 @@ package search
 
 import (
 	"errors"
-	"slices"
-	"sync"
+	"fmt"
+	"sort"
 
 	"github.com/bsinky/sohrando/randoseed"
+	"github.com/bsinky/sohrando/randoseed/entrancerando"
+	"github.com/bsinky/sohrando/randoseed/itempool"
+	"github.com/bsinky/sohrando/randoseed/logic"
+	"github.com/bsinky/sohrando/randoseed/mqdungeons"
+	"github.com/bsinky/sohrando/randoseed/scrubsanity"
+	"github.com/bsinky/sohrando/randoseed/shopsanity"
+	"github.com/bsinky/sohrando/randoseed/tokensanity"
 	"gorm.io/gorm"
 )
 
 type SearchFilter struct {
 	FieldName string
 	Label     string
-	Options   []string
+	Options   []FilterOption
+}
+
+type FilterOption struct {
+	Value string
+	Label string
+}
+
+type OptionsProvider interface {
+	ValueMap() map[int]string
+}
+
+func optionsFromProvider(provider OptionsProvider) []FilterOption {
+	options := make([]FilterOption, 0)
+	vMap := provider.ValueMap()
+	orderedKeys := make([]int, 0, len(vMap))
+	for k := range vMap {
+		orderedKeys = append(orderedKeys, k)
+	}
+	sort.Slice(orderedKeys, func(i, j int) bool {
+		return i < j
+	})
+
+	for k := range orderedKeys {
+		v := vMap[k]
+		options = append(options, FilterOption{
+			Value: fmt.Sprint(k),
+			Label: v,
+		})
+	}
+
+	return options
 }
 
 func (s *SearchFilter) IsValidOption(v string) bool {
 	for _, opt := range s.Options {
-		if opt == v {
+		if opt.Value == v {
 			return true
 		}
 	}
@@ -33,97 +71,62 @@ type Result struct {
 	Seeds []randoseed.Seed
 }
 
-type ResultModel struct {
-	Result Result
+var versionsMostRecentFirst = func(db *gorm.DB) ([]FilterOption, error) {
+	options := make([]FilterOption, 0, len(randoseed.VersionNames))
+
+	if versions, err := randoseed.VersionsMostRecentFirst(db); err != nil {
+		return nil, err
+	} else {
+		for _, v := range versions {
+			options = append(options, FilterOption{
+				Value: fmt.Sprint(v.ID),
+				Label: v.Name,
+			})
+		}
+	}
+	return options, nil
 }
 
-var versionsMostRecentFirst = sync.OnceValue(func() []string {
-	versionsCopy := make([]string, len(randoseed.Versions))
-	copy(versionsCopy, randoseed.Versions)
-	slices.Reverse(versionsCopy)
-	return versionsCopy
-})
-
 func AllFilters(db *gorm.DB) (map[string]*SearchFilter, error) {
+	var versions []FilterOption
+	var err error
+	if versions, err = versionsMostRecentFirst(db); err != nil {
+		return nil, err
+	}
+
 	filterMap := map[string]*SearchFilter{
-		"Version": {
-			Label:   "Version",
-			Options: versionsMostRecentFirst(),
+		"VersionID": {
+			FieldName: "VersionID",
+			Label:     "Version",
+			Options:   versions,
 		},
 		"Logic": {
-			Label: "Logic",
-			Options: []string{
-				"Glitchless",
-				"Glitched",
-				"No Logic",
-				"Vanilla",
-			},
+			Label:   "Logic",
+			Options: optionsFromProvider(logic.LogicEnum{}),
 		},
 		"Shopsanity": {
-			Label: "Shopsanity",
-			Options: []string{
-				"Off",
-				"0 Items",
-				"1 Item",
-				"2 Items",
-				"3 Items",
-				"4 Items",
-				"Random",
-			},
+			Label:   "Shopsanity",
+			Options: optionsFromProvider(shopsanity.ShopsanityEnum{}),
 		},
 		"Tokensanity": {
-			Label: "Tokensanity",
-			Options: []string{
-				"Off",
-				"Dungeons",
-				"Overworld",
-				"All Tokens",
-			},
+			Label:   "Tokensanity",
+			Options: optionsFromProvider(tokensanity.TokensanityEnum{}),
 		},
 		"Scrubsanity": {
-			Label: "Scrubsanity",
-			Options: []string{
-				"Off",
-				"Affordable",
-				"Expensive",
-				"Random Prices",
-			},
+			Label:   "Scrubsanity",
+			Options: optionsFromProvider(scrubsanity.ScrubsanityEnum{}),
 		},
 		"MQDungeons": {
-			Label: "MQ Dungeons",
-			Options: []string{
-				"Selection",
-				"Random",
-				"0",
-				"1",
-				"2",
-				"3",
-				"4",
-				"5",
-				"6",
-				"7",
-				"8",
-				"9",
-				"10",
-				"11",
-				"12",
-			},
+			Label:   "MQ Dungeons",
+			Options: optionsFromProvider(mqdungeons.MQDungeonsEnum{}),
 		},
 		"ItemPool": {
-			Label: "Item Pool",
-			Options: []string{
-				"Plentiful",
-				"Balanced",
-				"Scarce",
-				"Minimal",
-			},
+			Label:   "Item Pool",
+			Options: optionsFromProvider(itempool.ItemPoolEnum{}),
 		},
 		"EntranceRando": {
-			Label: "Entrance Rando",
-			Options: []string{
-				"Off",
-				"On",
-			},
+			Label:   "Entrance Rando",
+			Options: optionsFromProvider(entrancerando.EntranceRandoEnum{}),
 		},
 	}
 

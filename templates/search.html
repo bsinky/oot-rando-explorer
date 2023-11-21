@@ -16,7 +16,7 @@
                     <select name="{{ .FieldName }}">
                         <option value=""></option>
                         {{ range .Options }}
-                            <option value="{{ . }}">{{ . }}</option>
+                            <option value="{{ .Value }}">{{ .Label }}</option>
                         {{ end }}
                     </select>
                 </div>
@@ -38,7 +38,7 @@
                 <img src="{{.}}"/>
             {{end}}
         <span class="recent-seed-info">
-            {{ .Version }} <i>({{ .FormattedUploadTime }})</i>
+            {{ .CachedVersion }} <i>({{ .FormattedUploadTime }})</i>
         </span>
         </a>
     </div>

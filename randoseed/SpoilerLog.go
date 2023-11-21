@@ -83,16 +83,19 @@ func (s *SpoilerLog) CreateDatabaseSeed(user *authentication.UserDisplay, commen
 }
 
 func (s *SpoilerLog) UpdateDatabaseSeed(seed *Seed) {
+	if versionID, ok := VersionIDs[s.Version]; ok {
+		seed.VersionID = versionID
+	}
+
 	seed.Seed = s.Seed
-	seed.Version = s.Version
 	seed.FileHash = s.FileHashString()
-	seed.Logic = s.Settings.Logic
-	seed.Shopsanity = s.Settings.Shopsanity
-	seed.Tokensanity = s.Settings.Tokensanity
-	seed.Scrubsanity = s.Settings.Scrubsanity
-	seed.MQDungeons = s.Settings.MQDungeons
-	seed.ItemPool = s.Settings.ItemPool
-	seed.EntranceRando = s.Settings.EntranceRando
+	seed.Logic = s.Settings.LogicOrDefault()
+	seed.Shopsanity = s.Settings.ShopsanityOrDefault()
+	seed.Tokensanity = s.Settings.TokensanityOrDefault()
+	seed.Scrubsanity = s.Settings.ScrubsanityOrDefault()
+	seed.MQDungeons = s.Settings.MQDungeonsOrDefault()
+	seed.ItemPool = s.Settings.ItemPoolOrDefault()
+	seed.EntranceRando = s.Settings.EntranceRandoOrDefault()
 	seed.RawSettings = &RawSettings{
 		SettingsJSON: s.RawSettings,
 	}

@@ -45,7 +45,8 @@ func MigrateDB(db *gorm.DB, storageDir string) error {
 		&randoseed.SeedRank{},
 		&authentication.User{},
 		&randoseed.RawSettings{},
-		&randoseed.AvgSeedRank{}); err != nil {
+		&randoseed.AvgSeedRank{},
+		&randoseed.Version{}); err != nil {
 		return err
 	}
 

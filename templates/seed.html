@@ -4,7 +4,7 @@
     <script src="/assets/charactersRemaining.js" type="text/javascript"></script>
     <body>
         {{ template "banner.html" . }}
-        <h2>Version: {{ .Seed.Version }}</h2>
+        <h2>Version: {{ .Seed.CachedVersion }}</h2>
         <h2 class="hash-icons-2x">
             {{ range fileHashIcons .Seed.FileHash }}
                 <img src="{{.}}"/>

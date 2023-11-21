@@ -13,6 +13,10 @@ import (
 	"testing"
 
 	"github.com/bsinky/sohrando/randoseed"
+	"github.com/bsinky/sohrando/randoseed/logic"
+	"github.com/bsinky/sohrando/randoseed/scrubsanity"
+	"github.com/bsinky/sohrando/randoseed/shopsanity"
+	"github.com/bsinky/sohrando/randoseed/tokensanity"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -68,12 +72,12 @@ func createSeeds(t *testing.T, db *gorm.DB, count int) []*randoseed.Seed {
 	t.Helper()
 	for i := 0; i < count; i++ {
 		s := randoseed.Seed{
-			Version:     fmt.Sprintf("Test Case Version %d", i+1),
+			VersionID:   uint(i),
 			FileHash:    fmt.Sprintf("%02d-%02d-%02d-%02d-%02d", i, i+1, i+2, i+3, i+4),
-			Logic:       "Glitchless",
-			Shopsanity:  "Off",
-			Tokensanity: "Off",
-			Scrubsanity: "Off",
+			Logic:       logic.Glitchless,
+			Shopsanity:  shopsanity.Off,
+			Tokensanity: tokensanity.Off,
+			Scrubsanity: scrubsanity.Off,
 			RawSettings: &randoseed.RawSettings{SettingsJSON: "{}"},
 		}
 		if err := db.Save(&s).Error; err != nil {
