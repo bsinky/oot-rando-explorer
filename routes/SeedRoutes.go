@@ -48,6 +48,8 @@ func AddSeedRoutes(r *gin.Engine) {
 	authGroupWithFilehash.POST("/vote", voteOnSeed)
 	authGroupWithFilehash.GET("/uploadercomment/edit", editUploaderCommentUI)
 	authGroupWithFilehash.POST("/uploadercomment", editUploaderComment)
+	authGroupWithFilehash.GET("/confirmdelete", seedPredeleteCheck, confirmDelete)
+	authGroupWithFilehash.DELETE("/delete", seedPredeleteCheck, performDelete)
 }
 
 func authRequired() gin.HandlerFunc {
@@ -60,8 +62,12 @@ func authRequired() gin.HandlerFunc {
 	}
 }
 
+func fileHashParam(c *gin.Context) string {
+	return c.Param("filehash")
+}
+
 func getSeed(c *gin.Context) {
-	filehash := c.Param("filehash")
+	filehash := fileHashParam(c)
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
@@ -108,7 +114,7 @@ func (v ViewUploaderCommentModel) UserCanEdit() bool {
 }
 
 func getUploaderComment(c *gin.Context) {
-	filehash := c.Param("filehash")
+	filehash := fileHashParam(c)
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
@@ -125,7 +131,7 @@ func getUploaderComment(c *gin.Context) {
 }
 
 func editUploaderComment(c *gin.Context) {
-	filehash := c.Param("filehash")
+	filehash := fileHashParam(c)
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
@@ -161,7 +167,7 @@ func editUploaderComment(c *gin.Context) {
 }
 
 func editUploaderCommentUI(c *gin.Context) {
-	filehash := c.Param("filehash")
+	filehash := fileHashParam(c)
 	db := util.GetDatabase(c)
 	user := authentication.GetCurrentUser(c)
 
@@ -178,7 +184,7 @@ func editUploaderCommentUI(c *gin.Context) {
 }
 
 func downloadSeed(c *gin.Context) {
-	filehash := c.Param("filehash")
+	filehash := fileHashParam(c)
 	db := util.GetDatabase(c)
 
 	_, err := randoseed.GetByFileHash(db, filehash)
@@ -269,7 +275,7 @@ func uploadSeed(c *gin.Context) {
 }
 
 func voteOnSeed(c *gin.Context) {
-	filehash := c.Param("filehash")
+	filehash := fileHashParam(c)
 	db := c.Value("database").(*gorm.DB)
 	user := authentication.GetCurrentUser(c)
 
@@ -378,4 +384,51 @@ func nextTopSeeds(topSeeds topSeedFunc, loadMoreAction string, getLastValue last
 			"LastID":         lastDisplayed.ID,
 		})
 	}
+}
+
+func seedPredeleteCheck(c *gin.Context) {
+	db := util.GetDatabase(c)
+	user := authentication.GetCurrentUser(c)
+	filehash := fileHashParam(c)
+
+	if !user.CanDeleteSeeds() {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	seed, err := randoseed.GetByFileHash(db, filehash)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	} else if seed == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	c.Set("deleteseed", seed)
+}
+
+func confirmDelete(c *gin.Context) {
+	seed := c.Value("deleteseed").(*randoseed.Seed)
+
+	c.HTML(http.StatusOK, "seedconfirmdelete", gin.H{
+		"Seed": seed,
+	})
+}
+
+func performDelete(c *gin.Context) {
+	db := util.GetDatabase(c)
+	seed := c.Value("deleteseed").(*randoseed.Seed)
+
+	if seed == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	if err := db.Delete(seed).Error; err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	util.HtmxRedirect(c, "/")
 }

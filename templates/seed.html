@@ -18,6 +18,11 @@
             <div class="uploadTime">{{ .Seed.CreatedAt }}</div>
             {{ template "uploaderComment" . }}
         </section>
+        {{ if .User.CanDeleteSeeds }}
+        <section>
+            <button class="small-btn" hx-get="/s/{{ .Seed.FileHash }}/confirmdelete" hx-swap="outerHTML">Delete Seed</button>
+        </section>
+        {{ end }}
         <section>
             <a class="button download-button" href="/s/{{ .Seed.FileHash }}/download">Download</a>
         </section>
@@ -37,3 +42,9 @@
         </div>
     </body>
 </html>
+{{ define "seedconfirmdelete" }}
+<div style="text-align: center; font-weight: bold;">Really delete seed?</div>
+<div>
+    <button class="small-btn" hx-delete="/s/{{ .Seed.FileHash }}/delete">Yep, Delete it</button>
+</div>
+{{ end }}

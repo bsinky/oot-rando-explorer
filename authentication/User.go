@@ -12,9 +12,15 @@ import (
 )
 
 type UserDisplay struct {
-	ID       uint
-	Username string
-	Avatar   string
+	ID          uint
+	Username    string
+	Avatar      string
+	IsModerator bool
+	IsAdmin     bool
+}
+
+func (u *UserDisplay) CanDeleteSeeds() bool {
+	return u.IsAdmin
 }
 
 type User struct {
@@ -22,6 +28,8 @@ type User struct {
 	Username       string `gorm:"uniqueIndex"`
 	HashedPassword string
 	Avatar         string
+	IsModerator    bool
+	IsAdmin        bool
 }
 
 var (
@@ -93,13 +101,21 @@ func GetCurrentUser(c *gin.Context) *UserDisplay {
 	maybeID := session.Get("User.ID")
 	maybeUsername := session.Get("User.Username")
 	maybeAvatar := session.Get("User.Avatar")
+	maybeIsModerator := session.Get("User.IsModerator")
+	maybeIsAdmin := session.Get("User.IsAdmin")
 	if maybeUsername == nil || maybeAvatar == nil || maybeID == nil {
 		return nil
 	}
+
+	isModerator, modOk := maybeIsModerator.(bool)
+	isAdmin, admOk := maybeIsAdmin.(bool)
+
 	return &UserDisplay{
-		ID:       maybeID.(uint),
-		Username: maybeUsername.(string),
-		Avatar:   maybeAvatar.(string),
+		ID:          maybeID.(uint),
+		Username:    maybeUsername.(string),
+		Avatar:      maybeAvatar.(string),
+		IsModerator: modOk && isModerator,
+		IsAdmin:     admOk && isAdmin,
 	}
 }
 
@@ -108,6 +124,8 @@ func SetCurrentUser(c *gin.Context, user *User) error {
 	session.Set("User.ID", user.ID)
 	session.Set("User.Username", user.Username)
 	session.Set("User.Avatar", user.Avatar)
+	session.Set("User.IsModerator", user.IsModerator)
+	session.Set("User.IsAdmin", user.IsAdmin)
 	return session.Save()
 }
 

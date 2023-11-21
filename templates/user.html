@@ -7,6 +7,12 @@
             <div class="hash-icons-2x">
                 <img src="/assets/hash/{{ .Viewed.User.Avatar }}.png"/>
                 <div class="username-large">{{ .Viewed.User.Username }}</div>
+                {{ if .Viewed.User.IsAdmin }}
+                <i>Admin</i>
+                {{ end }}
+                {{ if .Viewed.User.IsModerator }}
+                <i>Moderator</i>
+                {{ end }}
             </div>
             <div>
                 {{ if .ViewingOwnProfile }}

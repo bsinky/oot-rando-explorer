@@ -74,7 +74,7 @@ func UpdateAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {
 func topAvgSeedRanks(db *gorm.DB, n int, sortField string, sortDirection string, prevValue *float64, prevID *uint) ([]AvgSeedRank, error) {
 	seeds := make([]AvgSeedRank, 0, n)
 
-	query := db.Preload("Seed").Order(sortField + " " + sortDirection).Order("id ASC").Limit(n)
+	query := db.Preload("Seed").Joins("INNER JOIN seeds ON avg_seed_ranks.seed_id = seeds.id AND seeds.deleted_at IS NULL").Order(sortField + " " + sortDirection).Order("avg_seed_ranks.id ASC").Limit(n)
 
 	if prevValue != nil && prevID != nil {
 		var operation string
@@ -83,7 +83,7 @@ func topAvgSeedRanks(db *gorm.DB, n int, sortField string, sortDirection string,
 		} else {
 			operation = ">"
 		}
-		if err := query.Where(sortField+" "+operation+" ?", prevValue).Or(sortField+" = ? AND id > ?", prevValue, prevID).Find(&seeds).Error; err != nil {
+		if err := query.Where(sortField+" "+operation+" ?", prevValue).Or(sortField+" = ? AND avg_seed_ranks.id > ?", prevValue, prevID).Find(&seeds).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, nil
 			}

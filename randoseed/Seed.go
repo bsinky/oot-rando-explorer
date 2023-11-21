@@ -87,13 +87,18 @@ func validateVersion(fl validator.FieldLevel) bool {
 	return false
 }
 
-// TODO: possibly move Version to a separate table to better normalize data and save storage?
 type Seed struct {
-	gorm.Model
+	//--gorm.Model fields
+	//-- not embedding since we want DeletedAt to be part of a composite index
+	ID        uint `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index:idx_file_hash_deleted_at,unique,priority:2"`
+	//---
 	Seed            string
 	VersionID       uint `gorm:"index" validate:"required,validVersion"`
 	Version         *Version
-	FileHash        string                      `gorm:"uniqueIndex" validate:"required"`
+	FileHash        string                      `gorm:"index:idx_file_hash_deleted_at,unique,priority:1" validate:"required"`
 	Logic           logic.Logic                 `gorm:"index"`
 	Shopsanity      shopsanity.Shopsanity       `gorm:"index"`
 	Tokensanity     tokensanity.Tokensanity     `gorm:"index"`
