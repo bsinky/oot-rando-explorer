@@ -1,0 +1,103 @@
+package routes
+
+import (
+	"html/template"
+	"net/http"
+	"os"
+	"path"
+	"strings"
+
+	"github.com/bsinky/sohrando/randoseed"
+	"github.com/bsinky/sohrando/util"
+	"github.com/gin-contrib/sessions"
+	gormsessions "github.com/gin-contrib/sessions/gorm"
+	limits "github.com/gin-contrib/size"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/glebarez/sqlite"
+	"github.com/go-playground/validator/v10"
+	"github.com/inhies/go-bytesize"
+	"gorm.io/gorm"
+)
+
+type App struct {
+	spoilerLogDir string
+	DB            *gorm.DB
+}
+
+func fileHashIcons(fileHash string) []string {
+	hashIconUrls := make([]string, 5)
+	for i, hash := range strings.Split(fileHash, "-") {
+		hashIconUrls[i] = "/assets/hash/" + hash + ".png"
+	}
+	return hashIconUrls
+}
+
+func preserveLinebreaks(text string) template.HTML {
+	return template.HTML(strings.Replace(template.HTMLEscapeString(text), "\n", "<br>", -1))
+}
+
+func SetUpDBAndStorage(dbURI string, storageDir string) (*App, error) {
+	db, err := gorm.Open(sqlite.Open(dbURI), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	if err := os.MkdirAll(storageDir, 0777); err != nil {
+		return nil, err
+	}
+
+	return &App{
+		spoilerLogDir: storageDir,
+		DB:            db,
+	}, nil
+}
+
+func getTemplatesDir() string {
+	var templatesDir string
+	if templatesDirFromEnv := os.Getenv("OOTRANDOTEMPLATESDIR"); templatesDirFromEnv != "" {
+		templatesDir = templatesDirFromEnv
+	} else {
+		templatesDir = "./templates"
+	}
+	return path.Join(templatesDir, "*")
+}
+
+func SetupRouter(r *gin.Engine, app *App) {
+	randoseed.InitVersionCache(app.DB)
+	r.StaticFS("/assets", http.Dir("assets"))
+	r.SetFuncMap(template.FuncMap{
+		"fileHashIcons":      fileHashIcons,
+		"preserveLinebreaks": preserveLinebreaks,
+		"toErrors":           util.ToErrors,
+	})
+
+	r.LoadHTMLGlob(getTemplatesDir())
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		randoseed.RegisterValidation(v)
+	}
+
+	// Limit requests to 5MB, uploaded seeds should all be well below that
+	r.Use(limits.RequestSizeLimiter(int64(bytesize.MB * 5)))
+	r.Use(util.ConnectDatabase(app.DB))
+
+	// TODO: better secret
+	store := gormsessions.NewStore(app.DB, true, []byte("secret"))
+	r.Use(sessions.Sessions("mysession", store))
+
+	r.Use(util.ConnectFilestore(app.spoilerLogDir))
+
+	r.GET("/", func(c *gin.Context) {
+		seeds, err := randoseed.MostRecent(app.DB, 10)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		c.HTML(http.StatusOK, "index.html", util.ViewData(c, &gin.H{"seeds": seeds}))
+	})
+
+	AddSeedRoutes(r)
+	AddSearchRoutes(r)
+	AddUserRoutes(r)
+}

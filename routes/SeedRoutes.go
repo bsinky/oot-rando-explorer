@@ -240,6 +240,9 @@ func uploadSeed(c *gin.Context) {
 	if jsonErr != nil {
 		validationError("Spoiler Log JSON could not be read")
 		return
+	} else if spoilerLog == nil {
+		validationError("Spoiler Log file could not be read")
+		return
 	}
 
 	newDbRecord := spoilerLog.CreateDatabaseSeed(user, "")

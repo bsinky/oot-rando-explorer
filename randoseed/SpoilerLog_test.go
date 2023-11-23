@@ -33,6 +33,20 @@ func testReadingSpoilerLog(t *testing.T, filePath string) {
 	}
 }
 
+func TestFileHashString(t *testing.T) {
+	s := SpoilerLog{
+		Seed:     "",
+		Version:  "",
+		FileHash: []uint{1, 2, 3, 4, 5},
+		Settings: RandoSettings{},
+	}
+	want := "01-02-03-04-05"
+	actual := s.FileHashString()
+	if want != actual {
+		t.Fatalf(`s.FileHashString() = %q, want %q`, actual, want)
+	}
+}
+
 // TODO: every 5.1.4 seed I generate gives "unexpected end of input" JSON errors,
 // TODO: but all the online validators I've tried say its valid. Something is causing
 // TODO: Go not to read the whole file maybe? Not sure what's going on.

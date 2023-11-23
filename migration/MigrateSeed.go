@@ -1,7 +1,6 @@
 package migration
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -86,7 +85,7 @@ func updateAllSeedsFromStoredSpoilerLogs(db *gorm.DB, storageDir string) error {
 			if spoilerErr != nil {
 				return spoilerErr
 			} else if spoilerLog == nil {
-				return errors.New(fmt.Sprintf("Unable to get SpoilerLog from %s", fileName))
+				return fmt.Errorf("unable to get SpoilerLog from %s", fileName)
 			}
 
 			spoilerLog.UpdateDatabaseSeed(seed)

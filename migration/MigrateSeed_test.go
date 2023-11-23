@@ -1,4 +1,4 @@
-package main
+package migration
 
 import (
 	"io"
@@ -7,23 +7,46 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bsinky/sohrando/migration"
 	"github.com/bsinky/sohrando/randoseed"
+	"github.com/bsinky/sohrando/routes"
 	"gorm.io/gorm"
 )
 
-func clearSeedsUploadDir(t *testing.T) {
+var SpoilerSeedsDir string
+
+// Not sure why I couldn't use these from routes package but...I couldn't
+func FreshDb(t *testing.T, path ...string) *routes.App {
+	t.Helper()
+	SpoilerSeedsDir = t.TempDir()
+
+	app := FreshDbWithoutMigrations(t, path...)
+	if err := MigrateDB(app.DB, SpoilerSeedsDir); err != nil {
+		t.Fatalf("Failed to migrate db %s", err)
+	}
+
+	return app
+}
+
+func FreshDbWithoutMigrations(t *testing.T, path ...string) *routes.App {
 	t.Helper()
 
-	if entries, err := os.ReadDir(SpoilerSeedsDir); err != nil {
-		t.Fatalf("Unable to clean up spoilerlog upload dir: %s", err)
+	var dbUri string
+
+	// Note: path can be specified in an individual test for debugging
+	// purposes -- so the db file can be inspected after the test runs.
+	// Normally it should be left off so that a truly fresh memory db is
+	// used every time.
+	if len(path) == 0 {
+		dbUri = ":memory:"
 	} else {
-		for _, file := range entries {
-			if err := os.Remove(path.Join(SpoilerSeedsDir, file.Name())); err != nil {
-				t.Fatalf("Unable to remove %s from spoilerlog upload dir: %s", file.Name(), err)
-			}
-		}
+		dbUri = path[0]
 	}
+
+	app, err := routes.SetUpDBAndStorage(dbUri, SpoilerSeedsDir)
+	if err != nil {
+		t.Fatalf("Error opening memory db: %s", err)
+	}
+	return app
 }
 
 func copySpoilerLogToTestDir(t *testing.T, spoilerFile string) {
@@ -49,7 +72,6 @@ func copySpoilerLogToTestDir(t *testing.T, spoilerFile string) {
 func TestAddingSettingsColumnsMigratesProperly(t *testing.T) {
 	app := FreshDbWithoutMigrations(t)
 	db := app.DB
-	clearSeedsUploadDir(t)
 
 	type OldSeedDefinition struct {
 		gorm.Model
@@ -92,10 +114,9 @@ func TestAddingSettingsColumnsMigratesProperly(t *testing.T) {
 		if err := db.Table("seeds").Save(seed).Error; err != nil {
 			t.Fatalf("Error saving seed before migration %s", err)
 		}
-		defer DeleteUploadedTestSeed(t, uploadedFileName)
 	}
 
-	if err := migration.MigrateDB(db, SpoilerSeedsDir); err != nil {
+	if err := MigrateDB(db, SpoilerSeedsDir); err != nil {
 		t.Fatal(err)
 	}
 
