@@ -1,10 +1,7 @@
 <ul>
-{{ range . }}
+{{ range toErrors . }}
     <li class="error">
-    {{ if .FieldName }}
-        {{ .FieldName }}:
-    {{ end }}
-    {{ .Error }}
+    {{ .Message }}
     </li>
 {{ end }}
 </ul>

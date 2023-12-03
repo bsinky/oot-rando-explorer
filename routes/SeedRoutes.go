@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"strings"
@@ -142,7 +143,7 @@ func editUploaderComment(c *gin.Context) {
 	}
 
 	// TODO: validation working?
-	if err := c.Bind(seed); err != nil {
+	if err := c.ShouldBind(seed); err != nil {
 		c.HTML(http.StatusOK, "editUploaderComment", ViewUploaderCommentModel{
 			Seed:  seed,
 			User:  user,
@@ -247,11 +248,12 @@ func uploadSeed(c *gin.Context) {
 
 	newDbRecord := spoilerLog.CreateDatabaseSeed(user, "")
 
-	v := binding.Validator.Engine().(*validator.Validate)
-	if err = v.Struct(*newDbRecord); err != nil {
-		validationErrors := err.(validator.ValidationErrors)
+	var validationErrors validator.ValidationErrors
+	if err = binding.Validator.ValidateStruct(newDbRecord); errors.As(err, &validationErrors) {
 		c.HTML(http.StatusOK, "uploadSeed", validationErrors)
 		return
+	} else if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
 	}
 
 	// TODO: need to use db.WithContext for proper transaction?

@@ -77,14 +77,10 @@ func RegisterValidation(v *validator.Validate) {
 }
 
 func validateVersion(fl validator.FieldLevel) bool {
-	val := fl.Field().String()
-	for _, version := range Versions {
-		if val == version {
-			return true
-		}
-	}
+	val := fl.Field().Uint()
+	_, ok := Versions[uint(val)]
 
-	return false
+	return ok
 }
 
 type Seed struct {
@@ -96,9 +92,9 @@ type Seed struct {
 	DeletedAt gorm.DeletedAt `gorm:"index:idx_file_hash_deleted_at,unique,priority:2"`
 	//---
 	Seed            string
-	VersionID       uint `gorm:"index" validate:"required,validVersion"`
+	VersionID       uint `gorm:"index" binding:"validVersion"`
 	Version         *Version
-	FileHash        string                      `gorm:"index:idx_file_hash_deleted_at,unique,priority:1" validate:"required"`
+	FileHash        string                      `gorm:"index:idx_file_hash_deleted_at,unique,priority:1" binding:"required"`
 	Logic           logic.Logic                 `gorm:"index"`
 	Shopsanity      shopsanity.Shopsanity       `gorm:"index"`
 	Tokensanity     tokensanity.Tokensanity     `gorm:"index"`
@@ -108,8 +104,8 @@ type Seed struct {
 	EntranceRando   entrancerando.EntranceRando `gorm:"index"`
 	RawSettings     *RawSettings
 	User            *authentication.User `gorm:"foreignKey:UserIDUploader"`
-	UserIDUploader  uint                 `gorm:"index" validate:"required"`
-	UploaderComment string               `validate:"len=500" form:"uploaderComment"`
+	UserIDUploader  uint                 `gorm:"index" binding:"required"`
+	UploaderComment string               `binding:"max=500" form:"uploaderComment"`
 }
 
 type Version struct {
@@ -119,7 +115,7 @@ type Version struct {
 
 type RawSettings struct {
 	ID           uint
-	SettingsJSON string `validate:"len=10000"`
+	SettingsJSON string `binding:"max=10000"`
 	SeedID       uint   `gorm:"uniqueIndex" validate:"required"`
 }
 

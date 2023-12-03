@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/bsinky/sohrando/randoseed"
+	"github.com/bsinky/sohrando/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -75,6 +76,7 @@ func TestSeedPage(t *testing.T) {
 }
 
 func TestUploadSeed(t *testing.T) {
+	t.Parallel()
 	app := FreshDb(t)
 
 	w := httptest.NewRecorder()
@@ -103,6 +105,7 @@ func TestUploadSeed(t *testing.T) {
 }
 
 func TestUploadRequiresLogIn(t *testing.T) {
+	t.Parallel()
 	app := FreshDb(t)
 
 	w := httptest.NewRecorder()
@@ -118,6 +121,27 @@ func TestUploadRequiresLogIn(t *testing.T) {
 		t.Fatal("File should not have been able to upload")
 	}
 	defer uploadedFile.Close()
+}
+
+func TestUploadSeedValidation(t *testing.T) {
+	t.Parallel()
+	app := FreshDb(t)
+
+	w := httptest.NewRecorder()
+	ctx, router := gin.CreateTestContext(w)
+	SetupRouter(router, &app.App)
+
+	testUploadSeed(t, app, "missing-version.json", w, ctx, router, http.StatusOK, app.TestUser2)
+	BodyHasFragments(t, w.Body.String(), []string{util.ValUnsupportedSeedVersion})
+
+	testUploadSeed(t, app, "bad-version.json", w, ctx, router, http.StatusOK, app.TestUser2)
+	BodyHasFragments(t, w.Body.String(), []string{util.ValUnsupportedSeedVersion})
+
+	// TODO: test properly formed JSON validation
+	testUploadSeed(t, app, "malformed-json.json", w, ctx, router, http.StatusOK, app.TestUser2)
+	BodyHasFragments(t, w.Body.String(), []string{"Spoiler Log JSON could not be read"})
+
+	// TODO: test uploading a non-JSON file
 }
 
 func TestVoteOnSeed(t *testing.T) {

@@ -11,11 +11,11 @@ import (
 )
 
 type SpoilerLog struct {
-	Seed        string `validate:"required_with=Version"`
-	Version     string `validate:"required_with=Seed"`
-	FileHash    []uint `validate:"len=5"`
+	Seed        string `binding:"required_with=Version"`
+	Version     string `binding:"required_with=Seed"`
+	FileHash    []uint `binding:"len=5"`
 	Settings    RandoSettings
-	RawSettings string `validate:"required"`
+	RawSettings string `binding:"required"`
 }
 
 func (spoilerLog *SpoilerLog) UnmarshalJSON(data []byte) error {

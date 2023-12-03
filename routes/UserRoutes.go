@@ -16,18 +16,13 @@ type ViewWithUser interface {
 }
 
 type LoginUserForm struct {
-	Username string `validate:"required,len=30" form:"username"`
-	Password string `validate:"required,len=100" form:"password"`
+	Username string `binding:"required,max=30" form:"username"`
+	Password string `binding:"required,max=100" form:"password"`
 	Errors   []util.SimpleValidation
 }
 
 func (u *LoginUserForm) SetErrors(validationErr validator.ValidationErrors) {
-	u.Errors = make([]util.SimpleValidation, 0, len(validationErr))
-	for _, v := range validationErr {
-		u.Errors = append(u.Errors, util.SimpleValidation{
-			Message: v.Error(),
-		})
-	}
+	u.Errors = util.ToErrors(validationErr)
 }
 
 func (u *LoginUserForm) AddError(message string) {
@@ -38,7 +33,7 @@ func (u *LoginUserForm) AddError(message string) {
 
 type RegisterUserForm struct {
 	LoginUserForm
-	ConfirmPassword string `validate:"required,len=100,eqField=Password" form:"confirmPassword"`
+	ConfirmPassword string `binding:"required,max=100,eqfield=Password" form:"confirmPassword"`
 }
 
 func AddUserRoutes(r *gin.Engine) {
@@ -128,7 +123,7 @@ func loginGetAuthToken(c *gin.Context) {
 		c.HTML(http.StatusOK, "loginform", &userForm)
 	}
 
-	if err := c.Bind(userForm); err != nil {
+	if err := c.ShouldBind(userForm); err != nil {
 		validationErrors, ok := err.(validator.ValidationErrors)
 		if !ok {
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -186,7 +181,7 @@ func signupCreateUser(c *gin.Context) {
 		c.HTML(http.StatusOK, "signupform", &userForm)
 	}
 
-	if err := c.Bind(userForm); err != nil {
+	if err := c.ShouldBind(userForm); err != nil {
 		validationErrors, ok := err.(validator.ValidationErrors)
 		if !ok {
 			c.AbortWithError(http.StatusInternalServerError, err)

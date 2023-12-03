@@ -1,6 +1,15 @@
 package util
 
-import "github.com/go-playground/validator/v10"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/go-playground/validator/v10"
+)
+
+const (
+	ValUnsupportedSeedVersion = "Unknown or unsupported Seed Version"
+)
 
 type SimpleValidation struct {
 	Message string
@@ -12,6 +21,20 @@ func (u *SimpleValidation) Error() string {
 
 func (u *SimpleValidation) FieldName() string {
 	return ""
+}
+
+func friendlyError(err validator.FieldError) string {
+	switch err.Tag() {
+	case "validVersion":
+		return ValUnsupportedSeedVersion
+	case "eqfield":
+		return "Passwords do not match"
+	}
+	fieldNameToUse := err.Field()
+	if strings.Contains(fieldNameToUse, "ID") {
+		fieldNameToUse = strings.ReplaceAll(fieldNameToUse, "ID", "")
+	}
+	return fmt.Sprintf("%s is %s", fieldNameToUse, err.Tag())
 }
 
 func ToErrors(errors any) []SimpleValidation {
@@ -28,9 +51,11 @@ func ToErrors(errors any) []SimpleValidation {
 	case validator.ValidationErrors:
 		for _, vErr := range v {
 			errs = append(errs, SimpleValidation{
-				Message: vErr.Error(),
+				Message: friendlyError(vErr),
 			})
 		}
+	case []SimpleValidation:
+		return v
 	}
 
 	return errs

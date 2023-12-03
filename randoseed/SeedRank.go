@@ -9,12 +9,12 @@ import (
 
 type SeedRank struct {
 	ID         uint
-	UserID     uint `validate:"required" gorm:"index:idx_seed_id_user_id,priority:2"`
+	UserID     uint `binding:"required" gorm:"index:idx_seed_id_user_id,priority:2"`
 	User       *authentication.User
-	SeedID     uint `validate:"required" gorm:"index:idx_seed_id_user_id,priority:1"`
+	SeedID     uint `binding:"required" gorm:"index:idx_seed_id_user_id,priority:1"`
 	Seed       *Seed
-	Difficulty uint8 `validate:"required,gte=0,lte=5" form:"difficulty"`
-	Fun        uint8 `validate:"required,gte=0,lte=5" form:"fun"`
+	Difficulty uint8 `binding:"required,gte=0,lte=5" form:"difficulty"`
+	Fun        uint8 `binding:"required,gte=0,lte=5" form:"fun"`
 }
 
 type AvgSeedRank struct {
