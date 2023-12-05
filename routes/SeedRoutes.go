@@ -3,7 +3,6 @@ package routes
 import (
 	"errors"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/bsinky/sohrando/authentication"
@@ -12,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -188,14 +188,27 @@ func downloadSeed(c *gin.Context) {
 	filehash := fileHashParam(c)
 	db := util.GetDatabase(c)
 
-	_, err := randoseed.GetByFileHash(db, filehash)
+	seed, err := randoseed.GetByFileHash(db, filehash)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
+	} else if seed == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
 	}
 
-	fileName := filehash + ".json"
-	c.FileAttachment(util.GetSpoilerLogDest(c, filehash), fileName)
+	file, err := randoseed.GetSpoilerLogFile(db, seed.ID)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	} else if file == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	// TODO: update for SpoilerLogFile
+	// fileName := filehash + ".json"
+	c.JSON(http.StatusOK, file.SpoilerLogJSON)
 }
 
 func uploadSeed(c *gin.Context) {
@@ -263,8 +276,12 @@ func uploadSeed(c *gin.Context) {
 		return
 	}
 
-	writeErr := os.WriteFile(util.GetSpoilerLogDest(c, newDbRecord.FileHash), spoilerLogBytes.Bytes(), 0777)
-	if writeErr != nil {
+	newDbSpoilerLogFile := &randoseed.SpoilerLogFile{
+		SeedID:         newDbRecord.ID,
+		SpoilerLogJSON: datatypes.JSON(spoilerLogBytes.Bytes()),
+	}
+
+	if err = db.Create(newDbSpoilerLogFile).Error; err != nil {
 		validationError("Spoiler log could not be uploaded to storage")
 		return
 	}

@@ -116,3 +116,13 @@ func GetSpoilerLogFromJsonFile(spoilerlogFile io.Reader) (*SpoilerLog, *bytes.Bu
 
 	return spoilerLog, spoilerLogBytes, nil
 }
+
+func GetSpoilerLogFromDBRecord(spoilerLogFile *SpoilerLogFile) (*SpoilerLog, error) {
+	spoilerLog := &SpoilerLog{}
+	jsonErr := json.Unmarshal([]byte(spoilerLogFile.SpoilerLogJSON), spoilerLog)
+	if jsonErr != nil {
+		return nil, jsonErr
+	}
+
+	return spoilerLog, nil
+}

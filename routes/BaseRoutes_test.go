@@ -27,9 +27,8 @@ type UserInfo struct {
 
 type TestData struct {
 	App
-	TestUser1       *UserInfo
-	TestUser2       *UserInfo
-	SpoilerSeedsDir string
+	TestUser1 *UserInfo
+	TestUser2 *UserInfo
 }
 
 func createUser(t *testing.T, data *TestData, userForm *UserInfo) {
@@ -48,7 +47,7 @@ func FreshDb(t *testing.T, path ...string) *TestData {
 	t.Helper()
 
 	app := FreshDbWithoutMigrations(t, path...)
-	if err := migration.MigrateDB(app.DB, app.SpoilerSeedsDir); err != nil {
+	if err := migration.MigrateDB(app.DB); err != nil {
 		t.Fatalf("Failed to migrate db %s", err)
 	}
 
@@ -86,11 +85,9 @@ func FreshDbWithoutMigrations(t *testing.T, path ...string) *TestData {
 		dbUri = path[0]
 	}
 
-	testData := &TestData{
-		SpoilerSeedsDir: t.TempDir(),
-	}
+	testData := &TestData{}
 
-	app, err := SetUpDBAndStorage(dbUri, testData.SpoilerSeedsDir)
+	app, err := SetUpDBAndStorage(dbUri)
 	if err != nil {
 		t.Fatalf("Error opening memory db: %s", err)
 	}

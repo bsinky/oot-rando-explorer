@@ -21,8 +21,7 @@ import (
 )
 
 type App struct {
-	spoilerLogDir string
-	DB            *gorm.DB
+	DB *gorm.DB
 }
 
 func fileHashIcons(fileHash string) []string {
@@ -37,19 +36,14 @@ func preserveLinebreaks(text string) template.HTML {
 	return template.HTML(strings.Replace(template.HTMLEscapeString(text), "\n", "<br>", -1))
 }
 
-func SetUpDBAndStorage(dbURI string, storageDir string) (*App, error) {
+func SetUpDBAndStorage(dbURI string) (*App, error) {
 	db, err := gorm.Open(sqlite.Open(dbURI), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	if err := os.MkdirAll(storageDir, 0777); err != nil {
-		return nil, err
-	}
-
 	return &App{
-		spoilerLogDir: storageDir,
-		DB:            db,
+		DB: db,
 	}, nil
 }
 
@@ -85,8 +79,6 @@ func SetupRouter(r *gin.Engine, app *App) {
 	// TODO: better secret
 	store := gormsessions.NewStore(app.DB, true, []byte("secret"))
 	r.Use(sessions.Sessions("mysession", store))
-
-	r.Use(util.ConnectFilestore(app.spoilerLogDir))
 
 	r.GET("/", func(c *gin.Context) {
 		seeds, err := randoseed.MostRecent(app.DB, 10)

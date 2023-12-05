@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"path"
 	"testing"
 
 	"github.com/bsinky/sohrando/randoseed"
@@ -86,18 +85,6 @@ func TestUploadSeed(t *testing.T) {
 	fileName := "04-94-01-69-66.json"
 	testUploadSeed(t, app, fileName, w, ctx, router, http.StatusOK, app.TestUser2)
 
-	uploadedFile, err := os.Open(path.Join(app.SpoilerSeedsDir, fileName))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer uploadedFile.Close()
-	uploadedFileStat, err := uploadedFile.Stat()
-	if err != nil {
-		t.Fatal(err)
-	} else if uploadedFileStat.Size() == 0 {
-		t.Fatal("Uploaded file was not the expected size")
-	}
-
 	redirectHeader := w.Result().Header.Get("Hx-Location")
 	if redirectHeader != "/s/04-94-01-69-66" {
 		t.Fatalf("Upload should have redirected to created seed page; got redirect header: %s", redirectHeader)
@@ -115,12 +102,6 @@ func TestUploadRequiresLogIn(t *testing.T) {
 	fileName := "04-94-01-69-66.json"
 	// passing nil user to try uploading a seed without signing in first
 	testUploadSeed(t, app, fileName, w, ctx, router, http.StatusUnauthorized, nil)
-
-	uploadedFile, err := os.Open(path.Join(app.SpoilerSeedsDir, fileName))
-	if !os.IsNotExist(err) {
-		t.Fatal("File should not have been able to upload")
-	}
-	defer uploadedFile.Close()
 }
 
 func TestUploadSeedValidation(t *testing.T) {

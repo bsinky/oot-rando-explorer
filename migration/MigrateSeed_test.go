@@ -1,26 +1,27 @@
 package migration
 
 import (
-	"io"
 	"os"
 	"path"
 	"reflect"
 	"testing"
 
 	"github.com/bsinky/sohrando/randoseed"
+	"github.com/bsinky/sohrando/randoseed/logic"
+	"github.com/bsinky/sohrando/randoseed/scrubsanity"
+	"github.com/bsinky/sohrando/randoseed/shopsanity"
+	"github.com/bsinky/sohrando/randoseed/tokensanity"
 	"github.com/bsinky/sohrando/routes"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
-
-var SpoilerSeedsDir string
 
 // Not sure why I couldn't use these from routes package but...I couldn't
 func FreshDb(t *testing.T, path ...string) *routes.App {
 	t.Helper()
-	SpoilerSeedsDir = t.TempDir()
 
 	app := FreshDbWithoutMigrations(t, path...)
-	if err := MigrateDB(app.DB, SpoilerSeedsDir); err != nil {
+	if err := MigrateDB(app.DB); err != nil {
 		t.Fatalf("Failed to migrate db %s", err)
 	}
 
@@ -42,30 +43,32 @@ func FreshDbWithoutMigrations(t *testing.T, path ...string) *routes.App {
 		dbUri = path[0]
 	}
 
-	app, err := routes.SetUpDBAndStorage(dbUri, SpoilerSeedsDir)
+	app, err := routes.SetUpDBAndStorage(dbUri)
 	if err != nil {
 		t.Fatalf("Error opening memory db: %s", err)
 	}
 	return app
 }
 
-func copySpoilerLogToTestDir(t *testing.T, spoilerFile string) {
+func copySpoilerLogToDB(t *testing.T, db *gorm.DB, spoilerFile string, seedID uint) {
 	t.Helper()
-	srcFile, err := os.Open(path.Join("test", spoilerFile))
+	srcFile, err := os.Open(path.Join("..", "test", spoilerFile))
 	if err != nil {
 		t.Fatalf("Error opening %s: %s", spoilerFile, err)
 	}
 	defer srcFile.Close()
 
-	dstFileName := path.Join(SpoilerSeedsDir, spoilerFile)
-	dstFile, err := os.Create(dstFileName)
-	if err != nil {
-		t.Fatalf("Unable to create file %s: %s", dstFileName, err)
+	_, spoilerLogBytes, jsonErr := randoseed.GetSpoilerLogFromJsonFile(srcFile)
+	if jsonErr != nil {
+		t.Fatalf("Error creating spoiler log from JSON %s", jsonErr)
 	}
-	defer dstFile.Close()
 
-	if _, err := io.Copy(dstFile, srcFile); err != nil {
-		t.Fatalf("Error copying to %s: %s", dstFile.Name(), err)
+	newDbSpoilerLogFile := &randoseed.SpoilerLogFile{
+		SeedID:         seedID,
+		SpoilerLogJSON: datatypes.JSON(spoilerLogBytes.Bytes()),
+	}
+	if err = db.Create(newDbSpoilerLogFile).Error; err != nil {
+		t.Fatalf("Error creating spoiler log file in db %s", err)
 	}
 }
 
@@ -78,45 +81,46 @@ func TestAddingSettingsColumnsMigratesProperly(t *testing.T) {
 		Seed        string
 		Version     string
 		FileHash    string
-		Logic       string
-		Shopsanity  string
-		Tokensanity string
-		Scrubsanity string
+		Logic       logic.Logic
+		Shopsanity  shopsanity.Shopsanity
+		Tokensanity tokensanity.Tokensanity
+		Scrubsanity scrubsanity.Scrubsanity
 	}
 
 	// Create seeds table without all the current columns
 	db.Table("seeds").AutoMigrate(&OldSeedDefinition{})
+	db.AutoMigrate(&randoseed.SpoilerLogFile{})
 
 	newSeeds := []*OldSeedDefinition{
 		{
 			Seed:        "1611283300",
 			Version:     "KHAN BRAVO (6.1.1)",
 			FileHash:    "04-94-01-69-66",
-			Logic:       "Glitchless",
-			Shopsanity:  "Random",
-			Tokensanity: "Off",
-			Scrubsanity: "Off",
+			Logic:       logic.Glitchless,
+			Shopsanity:  shopsanity.Random,
+			Tokensanity: tokensanity.Off,
+			Scrubsanity: scrubsanity.Off,
 		},
 		{
 			Seed:        "4391",
 			Version:     "Sulu Bravo (7.1.1)",
 			FileHash:    "27-46-32-77-65",
-			Logic:       "Glitchless",
-			Shopsanity:  "Random",
-			Tokensanity: "All Tokens",
-			Scrubsanity: "Off",
+			Logic:       logic.Glitchless,
+			Shopsanity:  shopsanity.Random,
+			Tokensanity: tokensanity.AllTokens,
+			Scrubsanity: scrubsanity.Off,
 		},
 	}
 
 	for _, seed := range newSeeds {
-		uploadedFileName := seed.FileHash + ".json"
-		copySpoilerLogToTestDir(t, uploadedFileName)
 		if err := db.Table("seeds").Save(seed).Error; err != nil {
 			t.Fatalf("Error saving seed before migration %s", err)
 		}
+		uploadedFileName := seed.FileHash + ".json"
+		copySpoilerLogToDB(t, db, uploadedFileName, seed.ID)
 	}
 
-	if err := MigrateDB(db, SpoilerSeedsDir); err != nil {
+	if err := MigrateDB(db); err != nil {
 		t.Fatal(err)
 	}
 
@@ -151,6 +155,10 @@ func TestAddingSettingsColumnsMigratesProperly(t *testing.T) {
 		rSeed := reflect.Indirect(reflect.ValueOf(seedFromDB))
 		for _, fieldName := range fieldsToCheck {
 			fieldValue := rSeed.FieldByName(fieldName)
+			if fieldName == "UploaderComment" {
+				// Comment doesn't migrate from the spoiler log file
+				continue
+			}
 			if fieldValue.String() == "" {
 				t.Fatalf("Seed %s didn't migrate %s", seed.FileHash, fieldName)
 			}

@@ -2,6 +2,7 @@ package randoseed
 
 import (
 	_ "embed"
+	"errors"
 	"strings"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/bsinky/sohrando/randoseed/shopsanity"
 	"github.com/bsinky/sohrando/randoseed/tokensanity"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -119,6 +121,13 @@ type RawSettings struct {
 	SeedID       uint   `gorm:"uniqueIndex" validate:"required"`
 }
 
+type SpoilerLogFile struct {
+	gorm.Model
+	SeedID         uint `gorm:"index" binding:"required"`
+	Seed           *Seed
+	SpoilerLogJSON datatypes.JSON
+}
+
 type Setting struct {
 	Label string
 	Value string
@@ -204,4 +213,16 @@ func UserUploadedSeeds(db *gorm.DB, userID uint) ([]Seed, error) {
 	}
 
 	return seeds, nil
+}
+
+func GetSpoilerLogFile(db *gorm.DB, seedID uint) (*SpoilerLogFile, error) {
+	file := &SpoilerLogFile{}
+	if err := db.First(file, &SpoilerLogFile{SeedID: seedID}).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return file, nil
 }

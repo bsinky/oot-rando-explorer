@@ -2,7 +2,6 @@ package util
 
 import (
 	"net/http"
-	"path/filepath"
 
 	"github.com/bsinky/sohrando/authentication"
 	"github.com/gin-gonic/gin"
@@ -26,18 +25,6 @@ func ConnectDatabase(db *gorm.DB) gin.HandlerFunc {
 
 func GetDatabase(c *gin.Context) *gorm.DB {
 	return c.Value("database").(*gorm.DB)
-}
-
-func ConnectFilestore(spoilerLogDir string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set("filestore", spoilerLogDir)
-	}
-}
-
-func GetSpoilerLogDest(c *gin.Context, fileHash string) string {
-	spoilerLogDir := c.Value("filestore").(string)
-	fileName := fileHash + ".json"
-	return filepath.Join(spoilerLogDir, fileName)
 }
 
 func HtmxRedirect(c *gin.Context, dst string) {

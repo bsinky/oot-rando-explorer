@@ -8,7 +8,7 @@ import (
 
 type MigrationHooks interface {
 	BeforeAutoMigrate(db *gorm.DB) error
-	Migrate(db *gorm.DB, storageDir string) error
+	Migrate(db *gorm.DB) error
 }
 
 func runAllBeforeHooks(db *gorm.DB, migrations []MigrationHooks) error {
@@ -21,9 +21,9 @@ func runAllBeforeHooks(db *gorm.DB, migrations []MigrationHooks) error {
 	return nil
 }
 
-func runAll(db *gorm.DB, storageDir string, migrations []MigrationHooks) error {
+func runAll(db *gorm.DB, migrations []MigrationHooks) error {
 	for _, migration := range migrations {
-		if err := migration.Migrate(db, storageDir); err != nil {
+		if err := migration.Migrate(db); err != nil {
 			return err
 		}
 	}
@@ -31,7 +31,7 @@ func runAll(db *gorm.DB, storageDir string, migrations []MigrationHooks) error {
 	return nil
 }
 
-func MigrateDB(db *gorm.DB, storageDir string) error {
+func MigrateDB(db *gorm.DB) error {
 	migrations := []MigrationHooks{
 		&MigrateSeed{},
 	}
@@ -46,11 +46,12 @@ func MigrateDB(db *gorm.DB, storageDir string) error {
 		&authentication.User{},
 		&randoseed.RawSettings{},
 		&randoseed.AvgSeedRank{},
-		&randoseed.Version{}); err != nil {
+		&randoseed.Version{},
+		&randoseed.SpoilerLogFile{}); err != nil {
 		return err
 	}
 
-	if err := runAll(db, storageDir, migrations); err != nil {
+	if err := runAll(db, migrations); err != nil {
 		return err
 	}
 

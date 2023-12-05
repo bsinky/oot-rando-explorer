@@ -14,13 +14,12 @@ import (
 const sqliteDbFileName = "sqlite.db"
 
 func main() {
-	spoilerLogDir := "spoiler_logs"
-	app, setupErr := routes.SetUpDBAndStorage(sqliteDbFileName, spoilerLogDir)
+	app, setupErr := routes.SetUpDBAndStorage(sqliteDbFileName)
 	if setupErr != nil {
 		log.Fatal(setupErr)
 	}
 
-	if err := migration.MigrateDB(app.DB, spoilerLogDir); err != nil {
+	if err := migration.MigrateDB(app.DB); err != nil {
 		log.Fatal(err)
 	}
 

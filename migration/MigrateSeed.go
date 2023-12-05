@@ -2,9 +2,6 @@ package migration
 
 import (
 	"fmt"
-	"os"
-	"path"
-	"strings"
 
 	"github.com/bsinky/sohrando/randoseed"
 
@@ -36,7 +33,7 @@ func (m *MigrateSeed) BeforeAutoMigrate(db *gorm.DB) error {
 	return nil
 }
 
-func (m *MigrateSeed) Migrate(db *gorm.DB, storageDir string) error {
+func (m *MigrateSeed) Migrate(db *gorm.DB) error {
 	if m.columnsBeforeMigration == 0 {
 		// Table didn't exist before, nothing to migrate
 		return nil
@@ -52,40 +49,31 @@ func (m *MigrateSeed) Migrate(db *gorm.DB, storageDir string) error {
 
 	if m.columnsBeforeMigration != columnsAfterMigration {
 		// Column definitions have changed
-		return updateAllSeedsFromStoredSpoilerLogs(db, storageDir)
+		return updateAllSeedsFromStoredSpoilerLogs(db)
 	}
 
 	return nil
 }
 
 // Scan stored SpoilerLogs and update all Seeds in the database
-func updateAllSeedsFromStoredSpoilerLogs(db *gorm.DB, storageDir string) error {
-	if dirEntries, err := os.ReadDir(storageDir); err != nil {
+func updateAllSeedsFromStoredSpoilerLogs(db *gorm.DB) error {
+	spoilerLogFiles := make([]randoseed.SpoilerLogFile, 0)
+	if err := db.Preload("Seed").Find(&spoilerLogFiles).Error; err != nil {
 		return err
 	} else {
-		for _, entry := range dirEntries {
-			fileName := entry.Name()
-			fileHash, isJsonFile := strings.CutSuffix(fileName, ".json")
-			if !isJsonFile {
-				continue
-			}
+		for _, entry := range spoilerLogFiles {
+			fileHash := entry.Seed.FileHash
 
 			seed, seedErr := randoseed.GetByFileHash(db, fileHash)
 			if seedErr != nil {
 				return seedErr
 			}
 
-			jsonFile, fileErr := os.Open(path.Join(storageDir, fileName))
-			if fileErr != nil {
-				return fileErr
-			}
-			defer jsonFile.Close()
-
-			spoilerLog, _, spoilerErr := randoseed.GetSpoilerLogFromJsonFile(jsonFile)
+			spoilerLog, spoilerErr := randoseed.GetSpoilerLogFromDBRecord(&entry)
 			if spoilerErr != nil {
 				return spoilerErr
 			} else if spoilerLog == nil {
-				return fmt.Errorf("unable to get SpoilerLog from %s", fileName)
+				return fmt.Errorf("unable to get SpoilerLog from %s", fileHash)
 			}
 
 			spoilerLog.UpdateDatabaseSeed(seed)
