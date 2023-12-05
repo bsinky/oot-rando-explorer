@@ -2,6 +2,7 @@ package routes
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -17,6 +18,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"github.com/go-playground/validator/v10"
 	"github.com/inhies/go-bytesize"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -37,7 +39,7 @@ func preserveLinebreaks(text string) template.HTML {
 }
 
 func SetUpDBAndStorage(dbURI string) (*App, error) {
-	db, err := gorm.Open(sqlite.Open(dbURI), &gorm.Config{})
+	db, err := gorm.Open(getDBProvider(dbURI), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +47,19 @@ func SetUpDBAndStorage(dbURI string) (*App, error) {
 	return &App{
 		DB: db,
 	}, nil
+}
+
+func getDBProvider(dbURI string) gorm.Dialector {
+	const envKey string = "OOTRANDODB"
+	switch strings.ToLower(os.Getenv(envKey)) {
+	case "sqlite":
+		return sqlite.Open(dbURI)
+	case "postgres":
+		return postgres.Open(dbURI)
+	default:
+		log.Default().Println(envKey + " not set, falling back to SQLite")
+		return sqlite.Open(dbURI)
+	}
 }
 
 func getTemplatesDir() string {

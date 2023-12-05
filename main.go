@@ -11,10 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const sqliteDbFileName = "sqlite.db"
+const DBURIENV string = "OOTRANDODBURI"
 
 func main() {
-	app, setupErr := routes.SetUpDBAndStorage(sqliteDbFileName)
+	dbURI := os.Getenv(DBURIENV)
+	if dbURI == "" {
+		log.Default().Println(DBURIENV + " not set, using default URI")
+		dbURI = "sqlite.db"
+	}
+
+	app, setupErr := routes.SetUpDBAndStorage(dbURI)
 	if setupErr != nil {
 		log.Fatal(setupErr)
 	}
