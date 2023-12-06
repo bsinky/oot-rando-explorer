@@ -72,6 +72,16 @@ func getTemplatesDir() string {
 	return path.Join(templatesDir, "*")
 }
 
+func getSessionSecret() string {
+	envKey := "OOTRANDOSESSIONSECRET"
+	secret := os.Getenv(envKey)
+	if secret == "" {
+		log.Default().Println(envKey + " not set, using default session secret")
+		return "secret"
+	}
+	return secret
+}
+
 func SetupRouter(r *gin.Engine, app *App) {
 	randoseed.InitVersionCache(app.DB)
 	r.StaticFS("/assets", http.Dir("assets"))
@@ -91,8 +101,7 @@ func SetupRouter(r *gin.Engine, app *App) {
 	r.Use(limits.RequestSizeLimiter(int64(bytesize.MB * 5)))
 	r.Use(util.ConnectDatabase(app.DB))
 
-	// TODO: better secret
-	store := gormsessions.NewStore(app.DB, true, []byte("secret"))
+	store := gormsessions.NewStore(app.DB, true, []byte(getSessionSecret()))
 	r.Use(sessions.Sessions("mysession", store))
 
 	r.GET("/", func(c *gin.Context) {
