@@ -269,28 +269,27 @@ func uploadSeed(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
 
-	// TODO: need to use db.WithContext for proper transaction?
-	createResult := db.Create(&newDbRecord)
-	if createResult.Error != nil {
+	err = db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&newDbRecord).Error; err != nil {
+			return err
+		}
+
+		newDbSpoilerLogFile := &randoseed.SpoilerLogFile{
+			SeedID:         newDbRecord.ID,
+			SpoilerLogJSON: datatypes.JSON(spoilerLogBytes.Bytes()),
+		}
+
+		if err = tx.Create(newDbSpoilerLogFile).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
 		validationError("Seed could not be saved to database")
 		return
 	}
-
-	newDbSpoilerLogFile := &randoseed.SpoilerLogFile{
-		SeedID:         newDbRecord.ID,
-		SpoilerLogJSON: datatypes.JSON(spoilerLogBytes.Bytes()),
-	}
-
-	if err = db.Create(newDbSpoilerLogFile).Error; err != nil {
-		validationError("Spoiler log could not be uploaded to storage")
-		return
-	}
-
-	// TODO: use transaction again with gorm
-	// if err = createResult.Commit().Error; err != nil {
-	// 	c.AbortWithError(http.StatusInternalServerError, err)
-	// 	return
-	// }
 
 	redirectDest := "/s/" + newDbRecord.FileHash
 	util.HtmxRedirect(c, redirectDest)
