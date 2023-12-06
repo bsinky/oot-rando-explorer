@@ -20,7 +20,7 @@ type UserDisplay struct {
 }
 
 func (u *UserDisplay) CanDeleteSeeds() bool {
-	return u.IsAdmin
+	return u != nil && u.IsAdmin
 }
 
 type User struct {
