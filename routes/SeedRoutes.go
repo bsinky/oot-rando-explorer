@@ -206,8 +206,8 @@ func downloadSeed(c *gin.Context) {
 		return
 	}
 
-	// TODO: update for SpoilerLogFile
-	// fileName := filehash + ".json"
+	fileName := filehash + ".json"
+	c.Writer.Header().Set("Content-Disposition", `attachment; filename="`+fileName+`"`)
 	c.JSON(http.StatusOK, file.SpoilerLogJSON)
 }
 
