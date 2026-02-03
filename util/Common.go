@@ -9,7 +9,8 @@ import (
 )
 
 type ViewModel struct {
-	User *authentication.UserDisplay
+	User  *authentication.UserDisplay
+	Error any
 }
 
 func ViewData(c *gin.Context, data *gin.H) *gin.H {

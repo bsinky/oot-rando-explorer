@@ -9,9 +9,9 @@ import (
 
 type SeedRank struct {
 	ID         uint
-	UserID     uint `binding:"required" gorm:"index:idx_seed_id_user_id,priority:2"`
+	UserID     uint `gorm:"index:idx_seed_id_user_id,priority:2"`
 	User       *authentication.User
-	SeedID     uint `binding:"required" gorm:"index:idx_seed_id_user_id,priority:1"`
+	SeedID     uint `gorm:"index:idx_seed_id_user_id,priority:1"`
 	Seed       *Seed
 	Difficulty uint8 `binding:"required,gte=0,lte=5" form:"difficulty"`
 	Fun        uint8 `binding:"required,gte=0,lte=5" form:"fun"`
@@ -35,6 +35,18 @@ func GetUserRank(db *gorm.DB, seedID uint, userID uint) (*SeedRank, error) {
 		return nil, err
 	}
 	return &seedRank, nil
+}
+
+func GetAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {
+	avgRank := &AvgSeedRank{}
+	if err := db.First(avgRank, &AvgSeedRank{SeedID: seedID}).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return avgRank, nil
 }
 
 func UpdateAverageRank(db *gorm.DB, seedID uint) (*AvgSeedRank, error) {

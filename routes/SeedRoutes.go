@@ -309,6 +309,21 @@ func voteOnSeed(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
+	} else if seed == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	render := func(rank *randoseed.SeedRank, avgRating *randoseed.AvgSeedRank, err error) {
+		c.HTML(http.StatusOK, "seedrank", ViewSeedModel{
+			ViewModel: util.ViewModel{
+				User:  user,
+				Error: err,
+			},
+			Seed:      seed,
+			AvgRating: avgRating,
+			MyRating:  rank,
+		})
 	}
 
 	var rank *randoseed.SeedRank
@@ -324,13 +339,18 @@ func voteOnSeed(c *gin.Context) {
 		rank.UserID = user.ID
 	}
 
-	// TODO: CAPTCHA
-
-	if err := c.Bind(rank); err != nil {
+	if err := c.ShouldBind(rank); err != nil {
+		var avgRating *randoseed.AvgSeedRank
+		var err2 error
+		if avgRating, err2 = randoseed.GetAverageRank(db, seed.ID); err2 != nil {
+			err = errors.Join(err, err2)
+			avgRating = &randoseed.AvgSeedRank{}
+		} else if avgRating == nil {
+			avgRating = &randoseed.AvgSeedRank{}
+		}
+		render(rank, avgRating, err)
 		return
-	}
-
-	if err = db.Save(&rank).Error; err != nil {
+	} else if err = db.Save(&rank).Error; err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -343,7 +363,8 @@ func voteOnSeed(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "seedrank", ViewSeedModel{
 		ViewModel: util.ViewModel{
-			User: user,
+			User:  user,
+			Error: err,
 		},
 		Seed:      seed,
 		AvgRating: avgRating,
