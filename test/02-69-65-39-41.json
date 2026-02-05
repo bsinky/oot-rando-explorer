@@ -1,0 +1,2383 @@
+{
+    "version": "Copper Bravo (9.1.1)",
+    "git_branch": "",
+    "git_commit": "4aaad85",
+    "seed": "14494",
+    "finalSeed": 3743524969,
+    "file_hash": [
+        2,
+        69,
+        65,
+        39,
+        41
+    ],
+    "settings": {
+        "Logic": "Glitchless",
+        "Closed Forest": "Off",
+        "Kakariko Gate": "Open",
+        "Door of Time": "Closed",
+        "Zora's Fountain": "Closed",
+        "Sleeping Waterfall": "Closed",
+        "Jabu-Jabu": "Closed",
+        "Starting Age": "Random",
+        "Selected Starting Age": "Child",
+        "Fortress Carpenters": "Fast",
+        "Rainbow Bridge": "Dungeon rewards",
+        "Bridge Stone Count": "3",
+        "Bridge Medallion Count": "6",
+        "Bridge Reward Count": "7",
+        "Bridge Dungeon Count": "8",
+        "Bridge Token Count": "100",
+        "Bridge Reward Options": "Standard Rewards",
+        "Ganon's Trials": "Set Number",
+        "Ganon's Trials Count": "4",
+        "Start with Ocarina": "Off",
+        "Shuffle Ocarinas": "On",
+        "Shuffle Ocarina Buttons": "Off",
+        "Shuffle Swim": "On",
+        "Start with Deku Shield": "Off",
+        "Start with Kokiri Sword": "Off",
+        "Start with Master Sword": "Off",
+        "Start with Zelda's Lullaby": "Off",
+        "Start with Epona's Song": "Off",
+        "Start with Saria's Song": "Off",
+        "Start with Sun's Song": "Off",
+        "Start with Song of Time": "Off",
+        "Start with Song of Storms": "Off",
+        "Start with Minuet of Forest": "Off",
+        "Start with Bolero of Fire": "Off",
+        "Start with Serenade of Water": "Off",
+        "Start with Requiem of Spirit": "Off",
+        "Start with Nocturne of Shadow": "Off",
+        "Start with Prelude of Light": "Off",
+        "Shuffle Kokiri Sword": "On",
+        "Shuffle Master Sword": "On",
+        "Shuffle Child's Wallet": "On",
+        "Include Tycoon Wallet": "On",
+        "Shuffle Dungeon Rewards": "Anywhere",
+        "Shuffle Songs": "Anywhere",
+        "Token Shuffle": "All Tokens",
+        "Shop Shuffle": "Random",
+        "Shops Item Count": "0",
+        "Shops Prices": "Balanced",
+        "Shops Fixed Price": "50",
+        "Shops Lower Bound": "50",
+        "Shops Upper Bound": "500",
+        "Shops No Wallet Weight": "10",
+        "Shops Child Wallet Weight": "10",
+        "Shops Adult Wallet Weight": "10",
+        "Shops Giant Wallet Weight": "10",
+        "Shops Tycoon Wallet Weight": "10",
+        "Shops Affordable Prices": "Off",
+        "Scrubs Shuffle": "One-Time Only",
+        "Scrubs Prices": "Vanilla",
+        "Scrubs Fixed Price": "50",
+        "Scrubs Lower Bound": "50",
+        "Scrubs Upper Bound": "500",
+        "Scrubs No Wallet Weight": "10",
+        "Scrubs Child Wallet Weight": "10",
+        "Scrubs Adult Wallet Weight": "10",
+        "Scrubs Giant Wallet Weight": "10",
+        "Scrubs Tycoon Wallet Weight": "10",
+        "Scrubs Affordable Prices": "Off",
+        "Shuffle Beehives": "Off",
+        "Shuffle Cows": "Off",
+        "Shuffle Weird Egg": "Off",
+        "Shuffle Gerudo Membership Card": "On",
+        "Shuffle Pots": "Off",
+        "Shuffle Crates": "Off",
+        "Shuffle Trees": "Off",
+        "Shuffle Frog Song Rupees": "Off",
+        "Item Pool": "Balanced",
+        "Ice Traps": "Normal",
+        "Gossip Stone Hints": "Need Nothing",
+        "ToT Altar Hint": "On",
+        "Ganondorf Hint": "On",
+        "Sheik Light Arrow Hint": "On",
+        "Dampe's Diary Hint": "On",
+        "Greg the Green Rupee Hint": "Off",
+        "Hyrule Loach Hint": "Off",
+        "Saria's Hint": "On",
+        "Mido's Hint": "Off",
+        "Frog Ocarina Game Hint": "On",
+        "Ocarina of Time Hint": "Off",
+        "10 GS Hint": "On",
+        "20 GS Hint": "On",
+        "30 GS Hint": "On",
+        "40 GS Hint": "On",
+        "50 GS Hint": "On",
+        "100 GS Hint": "Off",
+        "Mask Shop Hint": "Off",
+        "Biggoron's Hint": "Off",
+        "Big Poes Hint": "Off",
+        "Chickens Hint": "Off",
+        "Malon Hint": "Off",
+        "Horseback Archery Hint": "Off",
+        "Warp Song Hints": "On",
+        "Scrub Hint Text": "Off",
+        "Merchant Hint Text": "Off",
+        "Fishing Pole Hint": "Off",
+        "Hint Clarity": "Clear",
+        "Hint Distribution": "Balanced",
+        "Maps/Compasses": "Start With",
+        "Small Key Shuffle": "Own Dungeon",
+        "Gerudo Fortress Keys": "Vanilla",
+        "Boss Key Shuffle": "Anywhere",
+        "Ganon's Boss Key": "Anywhere",
+        "Skip Child Stealth": "Skip",
+        "Skip Child Zelda": "Don't Skip",
+        "Start with Stick Ammo": "No",
+        "Start with Nut Ammo": "No",
+        "Full Wallets": "No",
+        "Shuffle Chest Minigame": "Off",
+        "Big Poe Target Count": "0",
+        "Skip Epona Race": "Skip",
+        "Complete Mask Quest": "On",
+        "Skip Scarecrow's Song": "On",
+        "Night Skulltula's Expect Sun's Song": "Off",
+        "Shuffle Adult Trade": "Off",
+        "Shuffle Merchants": "Bean Merchant Only",
+        "Merchant Prices": "Cheap Balanced",
+        "Merchant Fixed Price": "50",
+        "Merchant Lower Bound": "50",
+        "Merchant Upper Bound": "500",
+        "Merchant No Wallet Weight": "10",
+        "Merchant Child Wallet Weight": "10",
+        "Merchant Adult Wallet Weight": "10",
+        "Merchant Giant Wallet Weight": "10",
+        "Merchant Tycoon Wallet Weight": "10",
+        "Merchant Affordable Prices": "Off",
+        "Blue Fire Arrows": "On",
+        "Sunlight Arrows": "Off",
+        "Slingshot/Bow Can Break Beehives": "Off",
+        "Bombchu Drops": "Yes",
+        "Bombchu Bag": "Off",
+        "Link's Pocket": "Anything",
+        "MQ Dungeon Setting": "None",
+        "MQ Dungeon Count": "0",
+        "Set Dungeon Quests": "Off",
+        "Deku Tree Quest": "Vanilla",
+        "Dodongo's Cavern Quest": "Vanilla",
+        "Jabu-Jabu's Belly Quest": "Vanilla",
+        "Forest Temple Quest": "Vanilla",
+        "Fire Temple Quest": "Vanilla",
+        "Water Temple Quest": "Vanilla",
+        "Spirit Temple Quest": "Vanilla",
+        "Shadow Temple Quest": "Vanilla",
+        "Bottom of the Well Quest": "Vanilla",
+        "Ice Cavern Quest": "Vanilla",
+        "Gerudo Training Ground Quest": "Vanilla",
+        "Ganon's Castle Quest": "Vanilla",
+        "GCBK Stone Count": "3",
+        "GCBK Medallion Count": "6",
+        "GCBK Reward Count": "9",
+        "GCBK Dungeon Count": "8",
+        "GCBK Token Count": "100",
+        "GCBK LACS Reward Options": "Standard Reward",
+        "Key Rings": "Random",
+        "Keyring Dungeon Count": "8",
+        "Gerudo Fortress Keyring": "No",
+        "Forest Temple Keyring": "No",
+        "Fire Temple Keyring": "No",
+        "Water Temple Keyring": "No",
+        "Spirit Temple Keyring": "Yes",
+        "Shadow Temple Keyring": "No",
+        "Bottom of the Well Keyring": "No",
+        "Gerudo Training Ground Keyring": "Yes",
+        "Ganon's Castle Keyring": "Yes",
+        "Shuffle Entrances": "On",
+        "Dungeon Entrances": "On",
+        "Overworld Entrances": "Off",
+        "Interior Entrances": "Off",
+        "Thieves' Hideout Entrances": "Off",
+        "Grottos Entrances": "On",
+        "Owl Drops": "On",
+        "Warp Songs": "On",
+        "Overworld Spawns": "On",
+        "Mixed Entrance Pools": "On",
+        "Mix Dungeons": "On",
+        "Mix Bosses": "On",
+        "Mix Overworld": "Off",
+        "Mix Interiors": "Off",
+        "Mix Thieves' Hideout": "Off",
+        "Mix Grottos": "On",
+        "Decouple Entrances": "Off",
+        "Gold Skulltula Tokens": "0",
+        "Starting Hearts": "3",
+        "Damage Multiplier": "x1",
+        "All Locations Reachable": "Off",
+        "Boss Entrances": "Full",
+        "Shuffle 100 GS Reward": "Off",
+        "Triforce Hunt": "Off",
+        "Triforce Hunt Total Pieces": "30",
+        "Triforce Hunt Required Pieces": "20",
+        "Shuffle Boss Souls": "Off",
+        "Fishsanity": "Off",
+        "Pond Fish Count": "0",
+        "Pond Age Split": "Off",
+        "Shuffle Fishing Pole": "On",
+        "Infinite Upgrades": "Progressive",
+        "Skeleton Key": "On",
+        "Shuffle Deku Stick Bag": "Off",
+        "Shuffle Deku Nut Bag": "Off",
+        "Shuffle Freestanding Items": "Off",
+        "Shuffle Fairies in Fountains": "Off",
+        "Shuffle Gossip Stone Fairies": "Off",
+        "Shuffle Bean Fairies": "Off",
+        "Shuffle Fairy Spots": "Off",
+        "Lock Overworld Doors": "On",
+        "Shuffle Grass": "Off"
+    },
+    "excludedLocations": [
+        "LW Deku Scrub Grotto Front",
+        "SFM Deku Scrub Grotto Front",
+        "SFM Deku Scrub Grotto Rear",
+        "LH Deku Scrub Grotto Left",
+        "LH Deku Scrub Grotto Center",
+        "LH Deku Scrub Grotto Right",
+        "GV Deku Scrub Grotto Front",
+        "GV Deku Scrub Grotto Rear",
+        "Colossus Deku Scrub Grotto Front",
+        "Colossus Deku Scrub Grotto Rear",
+        "GC Deku Scrub Grotto Left",
+        "GC Deku Scrub Grotto Center",
+        "GC Deku Scrub Grotto Right",
+        "DMC Deku Scrub Grotto Left",
+        "DMC Deku Scrub Grotto Center",
+        "DMC Deku Scrub Grotto Right",
+        "ZR Deku Scrub Grotto Front",
+        "ZR Deku Scrub Grotto Rear",
+        "LLR Deku Scrub Grotto Left",
+        "LLR Deku Scrub Grotto Center",
+        "LLR Deku Scrub Grotto Right"
+    ],
+    "requiredTrials": [
+        "the Light Trial",
+        "the Forest Trial",
+        "the Fire Trial",
+        "the Spirit Trial"
+    ],
+    "SelectedStartingAge": "Child",
+    "playthrough": {
+        "sphere 00": {
+            "KF Mido Top Right Chest": "Progressive Ocarina",
+            "KF Mido Bottom Right Chest": "Progressive Wallet",
+            "HF Open Grotto Chest": "Lens of Truth",
+            "LLR GS Rain Shed": "Progressive Bomb Bag",
+            "HF Southeast Grotto Chest": "Progressive Scale",
+            "DMC Upper Grotto Chest": "Light Medallion",
+            "Kak GS Skulltula House": "Light Arrow",
+            "KF GS Know It All House": "Bottle with Green Potion"
+        },
+        "sphere 01": {
+            "Dodongos Cavern Bomb Flower Platform Chest": "Shadow Medallion",
+            "Dodongos Cavern Map Chest": "Goron's Ruby",
+            "KF GS Bean Patch": "Progressive Slingshot",
+            "KF Shop Item 4": "Buy Deku Nut (5)",
+            "KF Shop Item 5": "Buy Bottle Bug",
+            "KF Shop Item 6": "Buy Bombs (5) [35]",
+            "KF Shop Item 8": "Buy Fairy's Spirit",
+            "ZR Near Domain Freestanding PoH": "Stone of Agony",
+            "DMT GS Bean Patch": "Fire Medallion",
+            "GC Shop Item 1": "Buy Green Potion",
+            "GC Shop Item 5": "Bombchu Bowling Alley Key",
+            "GC Rolling Goron as Child": "Zora's Sapphire"
+        },
+        "sphere 02": {
+            "Kak GS Watchtower": "Kokiri Sword",
+            "Deku Tree Basement Chest": "Bottle with Ruto's Letter",
+            "Deku Tree GS Basement Vines": "Progressive Hookshot",
+            "Spirit Temple Child Bridge Chest": "Magic Bean Pack",
+            "Spirit Temple GS Metal Fence": "Spirit Temple Key Ring",
+            "LW Target in Woods": "Saria's Song",
+            "Market Bombchu Bowling Second Prize": "Progressive Wallet",
+            "Dodongos Cavern GS Back Room": "Richard's House Key"
+        },
+        "sphere 03": {
+            "KF Shop Item 1": "Buy Goron Tunic",
+            "Market Lost Dog": "Prelude of Light",
+            "Colossus GS Bean Patch": "Market Shooting Gallery Key",
+            "Spirit Temple Child Climb East Chest": "Kokiri's Emerald",
+            "Spirit Temple GS Sun on Floor Room": "Strength Upgrade",
+            "Market Bombchu Shop Item 2": "Buy Fish"
+        },
+        "sphere 04": {
+            "Market Shooting Gallery": "Boomerang"
+        },
+        "sphere 05": {
+            "KF Shop Item 3": "Buy Zora Tunic",
+            "GV GS Small Bridge": "Progressive Ocarina",
+            "LLR GS House Window": "Zelda's Lullaby",
+            "LLR GS Back Wall": "Water Medallion",
+            "Jabu Jabus Belly Map Chest": "Song of Time",
+            "Jabu Jabus Belly GS Lobby Basement Upper": "Progressive Bow"
+        },
+        "sphere 06": {
+            "SFM GS": "Ganon's Castle Boss Key",
+            "KF GS House of Twins": "Hover Boots",
+            "ZF Great Fairy Reward": "Biggoron's Sword",
+            "ZD Shop Item 1": "Buy Deku Stick (1)",
+            "ZD Shop Item 2": "Buy Arrows (50)",
+            "ZD Shop Item 8": "Buy Deku Seeds (30)",
+            "ZD GS Frozen Waterfall": "Strength Upgrade",
+            "Ice Cavern GS Push Block Room": "Nocturne of Shadow",
+            "Gerudo Training Ground Beamos Chest": "Din's Fire",
+            "Colossus Freestanding PoH": "Progressive Magic Meter"
+        },
+        "sphere 07": {
+            "DMC Volcano Freestanding PoH": "Song of Storms",
+            "Kak Bazaar Item 2": "Buy Blue Fire",
+            "Kak Bazaar Item 4": "Buy Bombchu (20)",
+            "Shadow Temple Map Chest": "Shadow Temple Small Key",
+            "Shadow Temple Hover Boots Chest": "Shadow Temple Small Key",
+            "Spirit Temple GS Boulder Room": "Progressive Hookshot",
+            "Forest Temple GS Level Island Courtyard": "Mirror Shield"
+        },
+        "sphere 08": {
+            "Market Bazaar Item 4": "Buy Hylian Shield",
+            "Market Potion Shop Item 2": "Buy Deku Shield",
+            "Bottom of the Well Freestanding Key": "Bottom of the Well Small Key",
+            "Bottom of the Well Lens of Truth Chest": "Bottom of the Well Small Key",
+            "Bottom of the Well Invisible Chest": "Bottom of the Well Small Key",
+            "Shadow Temple Falling Spikes Lower Chest": "Shadow Temple Small Key",
+            "Shadow Temple Falling Spikes Switch Chest": "Shadow Temple Small Key"
+        },
+        "sphere 09": {
+            "Bottom of the Well GS Like Like Cage": "Strength Upgrade",
+            "Shadow Temple Spike Walls Left Chest": "Master Sword"
+        },
+        "sphere 10": {
+            "Ganon's Castle Light Trial Third Right Chest": "Ganon's Castle Key Ring"
+        },
+        "sphere 11": {
+            "Ganon": "Triforce"
+        }
+    },
+    "Gossip Stone Hints": {
+        "KF Left Near Deku Gossip Stone": {
+            "type": "Way of the Hero",
+            "message": "They say that Zora's Domain is on the way of the hero.",
+            "distribution": "WotH",
+            "location": "ZD GS Frozen Waterfall",
+            "item": "Strength Upgrade",
+            "area": "Zora's Domain"
+        },
+        "KF Right Near Deku Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that a Gold Skulltula Token can be found at the Lost Woods.",
+            "distribution": "Random",
+            "location": "LW Ocarina Memory Game",
+            "item": "Gold Skulltula Token",
+            "area": "the Lost Woods"
+        },
+        "KF Gossip Stone": {
+            "type": "Message",
+            "message": "They say Greg is special.",
+            "distribution": "Junk",
+            "hintKey": 68
+        },
+        "KF Storms Grotto Gossip Stone": {
+            "type": "Item",
+            "message": "They say that the treasure thrown by Princess Zelda is a Recovery Heart.",
+            "distribution": "Always",
+            "location": "HF Ocarina of Time Item",
+            "item": "Recovery Heart",
+            "area": "Hyrule Field"
+        },
+        "LW Gossip Stone": {
+            "type": "Item",
+            "message": "They say that shooting a target in the woods grants Saria's Song.",
+            "distribution": "Overworld",
+            "location": "LW Target in Woods",
+            "item": "Saria's Song",
+            "area": "the Lost Woods"
+        },
+        "LW Near Shortcuts Grotto Gossip Stone": {
+            "type": "Item",
+            "message": "They say that night in the future reveals a spider in a valley holding a Piece of Heart.",
+            "distribution": "Overworld",
+            "location": "GV GS Pillar",
+            "item": "Piece of Heart",
+            "area": "Gerudo Valley"
+        },
+        "SFM Near LW Gossip Stone": {
+            "type": "Message",
+            "message": "Here's a hint, @. Don't be bad.",
+            "distribution": "Junk",
+            "hintKey": 25
+        },
+        "SFM Center Gossip Stone": {
+            "type": "Way of the Hero",
+            "message": "They say that the Market is on the way of the hero.",
+            "distribution": "WotH",
+            "location": "Market Shooting Gallery",
+            "item": "Boomerang",
+            "area": "the Market"
+        },
+        "SFM Near Saria Gossip Stone": {
+            "type": "Message",
+            "message": "They say this hint makes more sense in other languages.",
+            "distribution": "Junk",
+            "hintKey": 67
+        },
+        "HF Cow Grotto Gossip Stone": {
+            "type": "Trial",
+            "message": "They say that the Shadow Trial was dispelled by Sheik.",
+            "distribution": "Trial",
+            "trial": "the Shadow Trial"
+        },
+        "HF Near Market Grotto Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that Shadow Temple hoards a Gold Skulltula Token.",
+            "distribution": "Random",
+            "location": "Shadow Temple GS Single Giant Pot",
+            "item": "Gold Skulltula Token",
+            "area": "Shadow Temple"
+        },
+        "HF Open Grotto Gossip Stone": {
+            "type": "Way of the Hero",
+            "message": "They say that Ice Cavern is on the way of the hero.",
+            "distribution": "WotH",
+            "location": "Ice Cavern GS Push Block Room",
+            "item": "Nocturne of Shadow",
+            "area": "Ice Cavern"
+        },
+        "HF Southeast Grotto Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that the Biggoron Sword can be found at Zora's Fountain.",
+            "distribution": "Named Item",
+            "location": "ZF Great Fairy Reward",
+            "item": "Biggoron's Sword",
+            "area": "Zora's Fountain"
+        },
+        "Market Left Center Gossip Stone": {
+            "type": "Item",
+            "message": "They say that the frozen cavern echoes with a Purple Rupee.",
+            "distribution": "Dungeon",
+            "location": "Sheik in Ice Cavern",
+            "item": "Purple Rupee",
+            "area": "Ice Cavern"
+        },
+        "Market Leftmost Center Gossip Stone": {
+            "type": "Way of the Hero",
+            "message": "They say that Gerudo Valley is on the way of the hero.",
+            "distribution": "WotH",
+            "location": "GV GS Small Bridge",
+            "item": "Progressive Ocarina",
+            "area": "Gerudo Valley"
+        },
+        "Market Right Center Gossip Stone": {
+            "type": "Foolish",
+            "message": "They say that plundering Temple of Time is a foolish choice.",
+            "distribution": "Foolish",
+            "area": "Temple of Time"
+        },
+        "Market Rightmost Gossip Stone": {
+            "type": "Item",
+            "message": "They say that the Ocarina of Time teaches a Red Rupee.",
+            "distribution": "Always",
+            "location": "Song from Ocarina of Time",
+            "item": "Red Rupee",
+            "area": "Hyrule Field"
+        },
+        "HC Near Malon Gossip Stone": {
+            "type": "Message",
+            "message": "When all else fails, use Fire.",
+            "distribution": "Junk",
+            "hintKey": 24
+        },
+        "HC Rock Wall Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that the Prelude of Light can be found at the Market.",
+            "distribution": "Named Item",
+            "location": "Market Lost Dog",
+            "item": "Prelude of Light",
+            "area": "the Market"
+        },
+        "HC Storm Grotto Gossip Stone": {
+            "type": "Item",
+            "message": "They say that a ravaged village mourns with an Overworld Key.",
+            "distribution": "Always",
+            "location": "Sheik in Kakariko",
+            "item": "Treasure Chest Game Building Key",
+            "area": "Kakariko Village"
+        },
+        "Kak Open Grotto Gossip Stone": {
+            "type": "Message",
+            "message": "They say the longer the Goron's neck, the wiser they are.",
+            "distribution": "Junk",
+            "hintKey": 69
+        },
+        "Graveyard Gossip Stone": {
+            "type": "Item",
+            "message": "They say that spinning Goron pottery contains a Bomb Bag.",
+            "distribution": "Overworld",
+            "location": "GC Pot Freestanding PoH",
+            "item": "Progressive Bomb Bag",
+            "area": "Goron City"
+        },
+        "DMT Gossip Stone": {
+            "type": "Way of the Hero",
+            "message": "They say that Spirit Temple is on the way of the hero.",
+            "distribution": "WotH",
+            "location": "Spirit Temple GS Boulder Room",
+            "item": "Progressive Hookshot",
+            "area": "Spirit Temple"
+        },
+        "DMT Storms Grotto Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that a Red Rupee can be found at Haunted Wasteland.",
+            "distribution": "Random",
+            "location": "Wasteland GS",
+            "item": "Red Rupee",
+            "area": "Haunted Wasteland"
+        },
+        "GC Maze Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that Jabu-Jabu's Belly hoards a Red Rupee.",
+            "distribution": "Random",
+            "location": "Jabu Jabus Belly Boomerang Chest",
+            "item": "Red Rupee",
+            "area": "Jabu-Jabu's Belly"
+        },
+        "GC Medigoron Gossip Stone": {
+            "type": "Item",
+            "message": "They say that deep in a castle, Impa teaches a Gold Skulltula Token.",
+            "distribution": "Song",
+            "location": "Song from Impa",
+            "item": "Gold Skulltula Token",
+            "area": "Hyrule Castle"
+        },
+        "DMC Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that Jabu-Jabu's Belly hoards a Piece of Heart.",
+            "distribution": "Random",
+            "location": "Jabu Jabus Belly GS Lobby Basement Lower",
+            "item": "Piece of Heart",
+            "area": "Jabu-Jabu's Belly"
+        },
+        "DMC Upper Grotto Gossip Stone": {
+            "type": "Item",
+            "message": "They say that Biggoron crafts a Gold Skulltula Token.",
+            "distribution": "Always",
+            "location": "DMT Trade Claim Check",
+            "item": "Gold Skulltula Token",
+            "area": "Death Mountain Trail"
+        },
+        "ZR Near Domain Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that the Stone of Agony can be found at Zora's River.",
+            "distribution": "Named Item",
+            "location": "ZR Near Domain Freestanding PoH",
+            "item": "Stone of Agony",
+            "area": "Zora's River"
+        },
+        "ZR Near Grottos Gossip Stone": {
+            "type": "Way of the Hero",
+            "message": "They say that Deku Tree is on the way of the hero.",
+            "distribution": "WotH",
+            "location": "Deku Tree Basement Chest",
+            "item": "Bottle with Ruto's Letter",
+            "area": "Deku Tree"
+        },
+        "ZR Open Grotto Gossip Stone": {
+            "type": "Foolish",
+            "message": "They say that plundering outside Ganon's Castle is a foolish choice.",
+            "distribution": "Foolish",
+            "area": "outside Ganon's Castle"
+        },
+        "ZD Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that Spirit Temple hoards a Gold Skulltula Token.",
+            "distribution": "Random",
+            "location": "Spirit Temple GS Lobby",
+            "item": "Gold Skulltula Token",
+            "area": "Spirit Temple"
+        },
+        "ZF Near Jabu Gossip Stone": {
+            "type": "Message",
+            "message": "They say this ship is what all true gamers strive for.",
+            "distribution": "Junk",
+            "hintKey": 70
+        },
+        "ZF Near Fairy Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that an Overworld Key can be found at Goron City.",
+            "distribution": "Named Item",
+            "location": "GC GS Center Platform",
+            "item": "Stables Key",
+            "area": "Goron City"
+        },
+        "LH Near Lab Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that Spirit Temple hoards a Goron Tunic.",
+            "distribution": "Named Item",
+            "location": "Spirit Temple GS Hall After Sun Block Room",
+            "item": "Goron Tunic",
+            "area": "Spirit Temple"
+        },
+        "LH Southeast Gossip Stone": {
+            "type": "Item",
+            "message": "They say that fire in the Water Temple reveals a Fairy Bow.",
+            "distribution": "Dungeon",
+            "location": "Water Temple Torches Chest",
+            "item": "Progressive Bow",
+            "area": "Water Temple"
+        },
+        "LH Southwest Gossip Stone": {
+            "type": "Trial",
+            "message": "They say that the Water Trial was dispelled by Sheik.",
+            "distribution": "Trial",
+            "trial": "the Water Trial"
+        },
+        "Gerudo Valley Gossip Stone": {
+            "type": "Message",
+            "message": "They say that it's actually possible to beat the running man.",
+            "distribution": "Junk",
+            "hintKey": 66
+        },
+        "Desert Colossus Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that a Piece of Heart can be found at Death Mountain Crater.",
+            "distribution": "Random",
+            "location": "Sheik in Crater",
+            "item": "Piece of Heart",
+            "area": "Death Mountain Crater"
+        },
+        "Dodongo's Cavern Gossip Stone": {
+            "type": "Item Area",
+            "message": "They say that Forest Temple hoards the Mirror Shield.",
+            "distribution": "Random",
+            "location": "Forest Temple GS Level Island Courtyard",
+            "item": "Mirror Shield",
+            "area": "Forest Temple"
+        }
+    },
+    "Static Hints": {
+        "Ganondorf Hint": {
+            "type": "Area",
+            "messages": [
+                "Ha ha ha... You'll never beat me by reflecting my lightning bolts and unleashing the arrows from Kakariko Village!",
+                "Ha ha ha... You'll never defeat me, drop a castle on me and finish me off with the sacred blade from Shadow Temple!",
+                "Ha ha ha... You'll never beat me by reflecting my lightning bolts and unleashing the arrows from Kakariko Village! And even if you do, you'll never find the legendary blade hidden in Shadow Temple!"
+            ],
+            "locations": [
+                "Kak GS Skulltula House",
+                "Shadow Temple Spike Walls Left Chest"
+            ],
+            "items": [
+                "Light Arrow",
+                "Master Sword"
+            ],
+            "areas": [
+                "Kakariko Village",
+                "Shadow Temple"
+            ],
+            "hintKeys": [
+                1220,
+                1221,
+                1222
+            ]
+        },
+        "Ganondorf Joke": {
+            "type": "Message",
+            "message": "After what you did to Koholint Island, how can you call me the bad guy?",
+            "hintKey": 1331
+        },
+        "Sheik in Ganons Castle Hint": {
+            "type": "Area",
+            "message": "I overheard Ganondorf say that he misplaced the Light Arrows in Kakariko Village.",
+            "location": "Kak GS Skulltula House",
+            "area": "Kakariko Village"
+        },
+        "Dampe's Diary Hint": {
+            "type": "Area",
+            "message": "Whoever reads this, please enter Deku Tree. I will let you have my stretching, shrinking keepsake. I'm waiting for you.\n--Dampé",
+            "location": "Deku Tree GS Basement Vines",
+            "area": "Deku Tree"
+        },
+        "ToT Altar as Child": {
+            "type": "Child Altar",
+            "message": "3 Spiritual Stones found in Hyrule... Spirit Temple... Dodongo's Cavern... Goron City... Ye who may become a Hero...\nOffer the spiritual stones and\nplay the Song of Time.",
+            "locations": [
+                "Spirit Temple Child Climb East Chest",
+                "Dodongos Cavern Map Chest",
+                "GC Rolling Goron as Child"
+            ],
+            "items": [
+                "Kokiri's Emerald",
+                "Goron's Ruby",
+                "Zora's Sapphire"
+            ],
+            "areas": [
+                "Spirit Temple",
+                "Dodongo's Cavern",
+                "Goron City"
+            ]
+        },
+        "ToT Altar as Adult": {
+            "type": "Adult Altar",
+            "message": "An awakening voice from the Sacred Realm will call those destined to be Sages, who dwell in the five temples. the Graveyard... Deku Tree... Death Mountain Trail... Lon Lon Ranch... Gerudo Training Ground... Dodongo's Cavern... The awakened ones will await for the Hero to collect 7 Spiritual Stones and Medallions. And the evil one's key will be hidden somewhere\nin Hyrule. Together with the Hero of Time, the awakened ones will return the light of peace to the world...",
+            "locations": [
+                "DMC Upper Grotto Chest",
+                "Deku Tree Slingshot Room Side Chest",
+                "DMT GS Bean Patch",
+                "LLR GS Back Wall",
+                "Gerudo Training Ground Maze Right Central Chest",
+                "Dodongos Cavern Bomb Flower Platform Chest"
+            ],
+            "items": [
+                "Light Medallion",
+                "Forest Medallion",
+                "Fire Medallion",
+                "Water Medallion",
+                "Spirit Medallion",
+                "Shadow Medallion"
+            ],
+            "areas": [
+                "the Graveyard",
+                "Deku Tree",
+                "Death Mountain Trail",
+                "Lon Lon Ranch",
+                "Gerudo Training Ground",
+                "Dodongo's Cavern"
+            ]
+        },
+        "Saria's Magic Hint": {
+            "type": "Area",
+            "messages": [
+                "Did you feel the surge of magic recently? A mysterious bird told me it came from Desert Colossus. You should check that place out, @!",
+                "Did you feel the surge of magic recently? A mysterious bird told me it came from Desert Colossus. You should check that place out, @!\u000b"
+            ],
+            "location": "Colossus Freestanding PoH",
+            "area": "Desert Colossus"
+        },
+        "Minuet of Forest Destination": {
+            "type": "Area",
+            "message": "Warp to\nSacred Forest Meadow?\n\u001bOK\nNo",
+            "area": "Sacred Forest Meadow",
+            "hintKey": 1231
+        },
+        "Bolero of Fire Destination": {
+            "type": "Area",
+            "message": "Warp to\nthe Market?\n\u001bOK\nNo",
+            "area": "the Market",
+            "hintKey": 1231
+        },
+        "Serenade of Water Destination": {
+            "type": "Area",
+            "message": "Warp to\nHaunted Wasteland?\n\u001bOK\nNo",
+            "area": "Haunted Wasteland",
+            "hintKey": 1231
+        },
+        "Requiem of Spirit Destination": {
+            "type": "Area",
+            "message": "Warp to\nZora's Domain?\n\u001bOK\nNo",
+            "area": "Zora's Domain",
+            "hintKey": 1231
+        },
+        "Nocturne of Shadow Destination": {
+            "type": "Area",
+            "message": "Warp to\nDeath Mountain Crater?\n\u001bOK\nNo",
+            "area": "Death Mountain Crater",
+            "hintKey": 1231
+        },
+        "Prelude of Light Destination": {
+            "type": "Area",
+            "message": "Warp to\nJabu-Jabu's Belly?\n\u001bOK\nNo",
+            "area": "Jabu-Jabu's Belly",
+            "hintKey": 1231
+        }
+    },
+    "entrances": [
+        {
+            "type": 19,
+            "index": 75,
+            "destination": 861,
+            "override": 1812,
+            "overrideDestination": 2068
+        },
+        {
+            "type": 19,
+            "index": 2068,
+            "destination": 1812,
+            "override": 861,
+            "overrideDestination": 75
+        },
+        {
+            "type": 19,
+            "index": 45,
+            "destination": 1291,
+            "override": 16,
+            "overrideDestination": 541
+        },
+        {
+            "type": 19,
+            "index": 541,
+            "destination": 16,
+            "override": 1291,
+            "overrideDestination": 45
+        },
+        {
+            "type": 19,
+            "index": 796,
+            "destination": 865,
+            "override": 1798,
+            "overrideDestination": 2054
+        },
+        {
+            "type": 19,
+            "index": 2054,
+            "destination": 1798,
+            "override": 865,
+            "overrideDestination": 796
+        },
+        {
+            "type": 19,
+            "index": 1103,
+            "destination": 857,
+            "override": 1794,
+            "overrideDestination": 2050
+        },
+        {
+            "type": 19,
+            "index": 2050,
+            "destination": 1794,
+            "override": 857,
+            "overrideDestination": 1103
+        },
+        {
+            "type": 19,
+            "index": 2067,
+            "destination": 1811,
+            "override": 521,
+            "overrideDestination": 0
+        },
+        {
+            "type": 19,
+            "index": 0,
+            "destination": 521,
+            "override": 1811,
+            "overrideDestination": 2067
+        },
+        {
+            "type": 19,
+            "index": 1814,
+            "destination": 2070,
+            "override": 141,
+            "overrideDestination": 757
+        },
+        {
+            "type": 19,
+            "index": 757,
+            "destination": 141,
+            "override": 2070,
+            "overrideDestination": 1814
+        },
+        {
+            "type": 19,
+            "index": 2074,
+            "destination": 1818,
+            "override": 2080,
+            "overrideDestination": 1824
+        },
+        {
+            "type": 19,
+            "index": 1824,
+            "destination": 2080,
+            "override": 1818,
+            "overrideDestination": 2074
+        },
+        {
+            "type": 19,
+            "index": 1817,
+            "destination": 2073,
+            "override": 1815,
+            "overrideDestination": 2071
+        },
+        {
+            "type": 19,
+            "index": 2071,
+            "destination": 1815,
+            "override": 2073,
+            "overrideDestination": 1817
+        },
+        {
+            "type": 19,
+            "index": 1818,
+            "destination": 2074,
+            "override": 1803,
+            "overrideDestination": 2059
+        },
+        {
+            "type": 19,
+            "index": 2059,
+            "destination": 1803,
+            "override": 2074,
+            "overrideDestination": 1818
+        },
+        {
+            "type": 19,
+            "index": 1819,
+            "destination": 2075,
+            "override": 1800,
+            "overrideDestination": 2056
+        },
+        {
+            "type": 19,
+            "index": 2056,
+            "destination": 1800,
+            "override": 2075,
+            "overrideDestination": 1819
+        },
+        {
+            "type": 1,
+            "index": 638,
+            "destination": -1,
+            "override": 385,
+            "overrideDestination": -1
+        },
+        {
+            "type": 5,
+            "index": 16,
+            "destination": 541,
+            "override": 1806,
+            "overrideDestination": 2062
+        },
+        {
+            "type": 5,
+            "index": 2062,
+            "destination": 1806,
+            "override": 541,
+            "overrideDestination": 16
+        },
+        {
+            "type": 19,
+            "index": 2051,
+            "destination": 1795,
+            "override": 2049,
+            "overrideDestination": 1793
+        },
+        {
+            "type": 19,
+            "index": 1793,
+            "destination": 2049,
+            "override": 1795,
+            "overrideDestination": 2051
+        },
+        {
+            "type": 19,
+            "index": 1823,
+            "destination": 2079,
+            "override": 1823,
+            "overrideDestination": 2079
+        },
+        {
+            "type": 19,
+            "index": 2079,
+            "destination": 1823,
+            "override": 2079,
+            "overrideDestination": 1823
+        },
+        {
+            "type": 19,
+            "index": 1804,
+            "destination": 2060,
+            "override": 1802,
+            "overrideDestination": 2058
+        },
+        {
+            "type": 19,
+            "index": 2058,
+            "destination": 1802,
+            "override": 2060,
+            "overrideDestination": 1804
+        },
+        {
+            "type": 19,
+            "index": 2065,
+            "destination": 1809,
+            "override": 2069,
+            "overrideDestination": 1813
+        },
+        {
+            "type": 19,
+            "index": 1813,
+            "destination": 2069,
+            "override": 1809,
+            "overrideDestination": 2065
+        },
+        {
+            "type": 19,
+            "index": 1812,
+            "destination": 2068,
+            "override": 1819,
+            "overrideDestination": 2075
+        },
+        {
+            "type": 19,
+            "index": 2075,
+            "destination": 1819,
+            "override": 2068,
+            "overrideDestination": 1812
+        },
+        {
+            "type": 19,
+            "index": 2077,
+            "destination": 1821,
+            "override": 2067,
+            "overrideDestination": 1811
+        },
+        {
+            "type": 19,
+            "index": 1811,
+            "destination": 2067,
+            "override": 1821,
+            "overrideDestination": 2077
+        },
+        {
+            "type": 19,
+            "index": 1810,
+            "destination": 2066,
+            "override": 1047,
+            "overrideDestination": 1059
+        },
+        {
+            "type": 19,
+            "index": 1059,
+            "destination": 1047,
+            "override": 2066,
+            "overrideDestination": 1810
+        },
+        {
+            "type": 19,
+            "index": 1809,
+            "destination": 2065,
+            "override": 0,
+            "overrideDestination": 521
+        },
+        {
+            "type": 19,
+            "index": 521,
+            "destination": 0,
+            "override": 2065,
+            "overrideDestination": 1809
+        },
+        {
+            "type": 19,
+            "index": 1808,
+            "destination": 2064,
+            "override": 4,
+            "overrideDestination": 578
+        },
+        {
+            "type": 19,
+            "index": 578,
+            "destination": 4,
+            "override": 2064,
+            "overrideDestination": 1808
+        },
+        {
+            "type": 19,
+            "index": 1807,
+            "destination": 2063,
+            "override": 773,
+            "overrideDestination": 373
+        },
+        {
+            "type": 19,
+            "index": 373,
+            "destination": 773,
+            "override": 2063,
+            "overrideDestination": 1807
+        },
+        {
+            "type": 19,
+            "index": 1806,
+            "destination": 2062,
+            "override": 130,
+            "overrideDestination": 481
+        },
+        {
+            "type": 19,
+            "index": 481,
+            "destination": 130,
+            "override": 2062,
+            "overrideDestination": 1806
+        },
+        {
+            "type": 19,
+            "index": 1805,
+            "destination": 2061,
+            "override": 1804,
+            "overrideDestination": 2060
+        },
+        {
+            "type": 19,
+            "index": 2060,
+            "destination": 1804,
+            "override": 2061,
+            "overrideDestination": 1805
+        },
+        {
+            "type": 19,
+            "index": 1803,
+            "destination": 2059,
+            "override": 357,
+            "overrideDestination": 586
+        },
+        {
+            "type": 19,
+            "index": 586,
+            "destination": 357,
+            "override": 2059,
+            "overrideDestination": 1803
+        },
+        {
+            "type": 5,
+            "index": 4,
+            "destination": 578,
+            "override": 1824,
+            "overrideDestination": 2080
+        },
+        {
+            "type": 5,
+            "index": 2080,
+            "destination": 1824,
+            "override": 578,
+            "overrideDestination": 4
+        },
+        {
+            "type": 19,
+            "index": 1800,
+            "destination": 2056,
+            "override": 12,
+            "overrideDestination": 590
+        },
+        {
+            "type": 19,
+            "index": 590,
+            "destination": 12,
+            "override": 2056,
+            "overrideDestination": 1800
+        },
+        {
+            "type": 5,
+            "index": 517,
+            "destination": 55,
+            "override": 2058,
+            "overrideDestination": 1802
+        },
+        {
+            "type": 5,
+            "index": 1802,
+            "destination": 2058,
+            "override": 55,
+            "overrideDestination": 517
+        },
+        {
+            "type": 5,
+            "index": 55,
+            "destination": 517,
+            "override": 1801,
+            "overrideDestination": 2057
+        },
+        {
+            "type": 5,
+            "index": 2057,
+            "destination": 1801,
+            "override": 517,
+            "overrideDestination": 55
+        },
+        {
+            "type": 2,
+            "index": 187,
+            "destination": -1,
+            "override": 1384,
+            "overrideDestination": -1
+        },
+        {
+            "type": 5,
+            "index": 361,
+            "destination": 533,
+            "override": 361,
+            "overrideDestination": 533
+        },
+        {
+            "type": 5,
+            "index": 533,
+            "destination": 361,
+            "override": 533,
+            "overrideDestination": 361
+        },
+        {
+            "type": 19,
+            "index": 2070,
+            "destination": 1814,
+            "override": 2072,
+            "overrideDestination": 1816
+        },
+        {
+            "type": 19,
+            "index": 1816,
+            "destination": 2072,
+            "override": 1814,
+            "overrideDestination": 2070
+        },
+        {
+            "type": 19,
+            "index": 1815,
+            "destination": 2071,
+            "override": 1822,
+            "overrideDestination": 2078
+        },
+        {
+            "type": 19,
+            "index": 2078,
+            "destination": 1822,
+            "override": 2071,
+            "overrideDestination": 1815
+        },
+        {
+            "type": 4,
+            "index": 1380,
+            "destination": -1,
+            "override": 2063,
+            "overrideDestination": -1
+        },
+        {
+            "type": 19,
+            "index": 2055,
+            "destination": 1799,
+            "override": 2052,
+            "overrideDestination": 1796
+        },
+        {
+            "type": 19,
+            "index": 1796,
+            "destination": 2052,
+            "override": 1799,
+            "overrideDestination": 2055
+        },
+        {
+            "type": 19,
+            "index": 2076,
+            "destination": 1820,
+            "override": 2051,
+            "overrideDestination": 1795
+        },
+        {
+            "type": 19,
+            "index": 1795,
+            "destination": 2051,
+            "override": 1820,
+            "overrideDestination": 2076
+        },
+        {
+            "type": 19,
+            "index": 1794,
+            "destination": 2050,
+            "override": 152,
+            "overrideDestination": 678
+        },
+        {
+            "type": 19,
+            "index": 678,
+            "destination": 152,
+            "override": 2050,
+            "overrideDestination": 1794
+        },
+        {
+            "type": 19,
+            "index": 2072,
+            "destination": 1816,
+            "override": 2054,
+            "overrideDestination": 1798
+        },
+        {
+            "type": 19,
+            "index": 1798,
+            "destination": 2054,
+            "override": 1816,
+            "overrideDestination": 2072
+        },
+        {
+            "type": 1,
+            "index": 1364,
+            "destination": -1,
+            "override": 312,
+            "overrideDestination": -1
+        },
+        {
+            "type": 10,
+            "index": 1031,
+            "destination": 769,
+            "override": 2057,
+            "overrideDestination": 1801
+        },
+        {
+            "type": 10,
+            "index": 1801,
+            "destination": 2057,
+            "override": 769,
+            "overrideDestination": 1031
+        },
+        {
+            "type": 4,
+            "index": 270,
+            "destination": -1,
+            "override": 2057,
+            "overrideDestination": -1
+        },
+        {
+            "type": 4,
+            "index": 1548,
+            "destination": -1,
+            "override": 2066,
+            "overrideDestination": -1
+        },
+        {
+            "type": 4,
+            "index": 1552,
+            "destination": -1,
+            "override": 2070,
+            "overrideDestination": -1
+        },
+        {
+            "type": 5,
+            "index": 980,
+            "destination": 136,
+            "override": 197,
+            "overrideDestination": 1035
+        },
+        {
+            "type": 5,
+            "index": 1035,
+            "destination": 197,
+            "override": 136,
+            "overrideDestination": 980
+        },
+        {
+            "type": 10,
+            "index": 197,
+            "destination": 1035,
+            "override": 481,
+            "overrideDestination": 130
+        },
+        {
+            "type": 10,
+            "index": 130,
+            "destination": 481,
+            "override": 1035,
+            "overrideDestination": 197
+        },
+        {
+            "type": 4,
+            "index": 1146,
+            "destination": -1,
+            "override": 1552,
+            "overrideDestination": -1
+        },
+        {
+            "type": 19,
+            "index": 1792,
+            "destination": 2048,
+            "override": 1103,
+            "overrideDestination": 857
+        },
+        {
+            "type": 19,
+            "index": 857,
+            "destination": 1103,
+            "override": 2048,
+            "overrideDestination": 1792
+        },
+        {
+            "type": 12,
+            "index": 141,
+            "destination": 757,
+            "override": 40,
+            "overrideDestination": 545
+        },
+        {
+            "type": 12,
+            "index": 545,
+            "destination": 40,
+            "override": 757,
+            "overrideDestination": 141
+        },
+        {
+            "type": 19,
+            "index": 2069,
+            "destination": 1813,
+            "override": 1031,
+            "overrideDestination": 769
+        },
+        {
+            "type": 19,
+            "index": 769,
+            "destination": 1031,
+            "override": 1813,
+            "overrideDestination": 2069
+        },
+        {
+            "type": 3,
+            "index": 1524,
+            "destination": -1,
+            "override": 1813,
+            "overrideDestination": -1
+        },
+        {
+            "type": 3,
+            "index": 1540,
+            "destination": -1,
+            "override": 869,
+            "overrideDestination": -1
+        },
+        {
+            "type": 19,
+            "index": 865,
+            "destination": 796,
+            "override": 980,
+            "overrideDestination": 136
+        },
+        {
+            "type": 19,
+            "index": 136,
+            "destination": 980,
+            "override": 796,
+            "overrideDestination": 865
+        },
+        {
+            "type": 19,
+            "index": 2064,
+            "destination": 1808,
+            "override": 545,
+            "overrideDestination": 40
+        },
+        {
+            "type": 19,
+            "index": 40,
+            "destination": 545,
+            "override": 1808,
+            "overrideDestination": 2064
+        },
+        {
+            "type": 19,
+            "index": 1820,
+            "destination": 2076,
+            "override": 45,
+            "overrideDestination": 1291
+        },
+        {
+            "type": 19,
+            "index": 1291,
+            "destination": 45,
+            "override": 2076,
+            "overrideDestination": 1820
+        },
+        {
+            "type": 5,
+            "index": 152,
+            "destination": 678,
+            "override": 1793,
+            "overrideDestination": 2049
+        },
+        {
+            "type": 5,
+            "index": 2049,
+            "destination": 1793,
+            "override": 678,
+            "overrideDestination": 152
+        },
+        {
+            "type": 5,
+            "index": 936,
+            "destination": 8,
+            "override": 2055,
+            "overrideDestination": 1799
+        },
+        {
+            "type": 5,
+            "index": 1799,
+            "destination": 2055,
+            "override": 8,
+            "overrideDestination": 936
+        },
+        {
+            "type": 19,
+            "index": 1797,
+            "destination": 2053,
+            "override": 1807,
+            "overrideDestination": 2063
+        },
+        {
+            "type": 19,
+            "index": 2063,
+            "destination": 1807,
+            "override": 2053,
+            "overrideDestination": 1797
+        },
+        {
+            "type": 10,
+            "index": 594,
+            "destination": 1039,
+            "override": 586,
+            "overrideDestination": 357
+        },
+        {
+            "type": 10,
+            "index": 357,
+            "destination": 586,
+            "override": 1039,
+            "overrideDestination": 594
+        },
+        {
+            "type": 4,
+            "index": 1111,
+            "destination": -1,
+            "override": 1380,
+            "overrideDestination": -1
+        },
+        {
+            "type": 2,
+            "index": 642,
+            "destination": -1,
+            "override": 1214,
+            "overrideDestination": -1
+        },
+        {
+            "type": 3,
+            "index": 1536,
+            "destination": -1,
+            "override": 252,
+            "overrideDestination": -1
+        },
+        {
+            "type": 3,
+            "index": 1384,
+            "destination": -1,
+            "override": 1270,
+            "overrideDestination": -1
+        },
+        {
+            "type": 19,
+            "index": 2066,
+            "destination": 1810,
+            "override": 590,
+            "overrideDestination": 12
+        },
+        {
+            "type": 19,
+            "index": 12,
+            "destination": 590,
+            "override": 1810,
+            "overrideDestination": 2066
+        },
+        {
+            "type": 19,
+            "index": 2053,
+            "destination": 1797,
+            "override": 373,
+            "overrideDestination": 773
+        },
+        {
+            "type": 19,
+            "index": 773,
+            "destination": 373,
+            "override": 1797,
+            "overrideDestination": 2053
+        },
+        {
+            "type": 3,
+            "index": 497,
+            "destination": -1,
+            "override": 808,
+            "overrideDestination": -1
+        },
+        {
+            "type": 19,
+            "index": 2061,
+            "destination": 1805,
+            "override": 2077,
+            "overrideDestination": 1821
+        },
+        {
+            "type": 19,
+            "index": 1821,
+            "destination": 2077,
+            "override": 1805,
+            "overrideDestination": 2061
+        },
+        {
+            "type": 19,
+            "index": 2048,
+            "destination": 1792,
+            "override": 2078,
+            "overrideDestination": 1822
+        },
+        {
+            "type": 19,
+            "index": 1822,
+            "destination": 2078,
+            "override": 1792,
+            "overrideDestination": 2048
+        },
+        {
+            "type": 4,
+            "index": 1544,
+            "destination": -1,
+            "override": 2056,
+            "overrideDestination": -1
+        },
+        {
+            "type": 12,
+            "index": 1047,
+            "destination": 1059,
+            "override": 1043,
+            "overrideDestination": 690
+        },
+        {
+            "type": 12,
+            "index": 690,
+            "destination": 1043,
+            "override": 1059,
+            "overrideDestination": 1047
+        },
+        {
+            "type": 19,
+            "index": 2052,
+            "destination": 1796,
+            "override": 594,
+            "overrideDestination": 1039
+        },
+        {
+            "type": 19,
+            "index": 1039,
+            "destination": 594,
+            "override": 1796,
+            "overrideDestination": 2052
+        },
+        {
+            "type": 19,
+            "index": 861,
+            "destination": 75,
+            "override": 936,
+            "overrideDestination": 8
+        },
+        {
+            "type": 19,
+            "index": 8,
+            "destination": 936,
+            "override": 75,
+            "overrideDestination": 861
+        },
+        {
+            "type": 4,
+            "index": 1408,
+            "destination": -1,
+            "override": 1291,
+            "overrideDestination": -1
+        },
+        {
+            "type": 12,
+            "index": 1043,
+            "destination": 690,
+            "override": 1817,
+            "overrideDestination": 2073
+        },
+        {
+            "type": 12,
+            "index": 2073,
+            "destination": 1817,
+            "override": 690,
+            "overrideDestination": 1043
+        },
+        {
+            "type": 3,
+            "index": 1270,
+            "destination": -1,
+            "override": 1138,
+            "overrideDestination": -1
+        }
+    ],
+    "entrancesMap": {
+        "sphere 00": {
+            "GY Near-Hut Grave Entry": "HF Southeast Grotto",
+            "GY Royal Family's Tomb Entry": "Water Temple Entrance",
+            "GY Near-Tomb Grave Entry": "DMC Upper Grotto",
+            "GY Near-Ledge Grave Entry": "ZR Deku Scrub Grotto",
+            "HF Open Grotto": "KF Outside Deku Tree",
+            "SFM Wolfos Grotto Entry": "Twinrova",
+            "LW Tunnel Grotto": "LW Meadow Grotto Entry",
+            "LW North Grotto Entry": "SFM Deku Scrub Grotto",
+            "LW Tunnel Grotto Entry": "Kak Redead Grotto",
+            "KF Storms Grotto Entry": "DMT Storms Grotto",
+            "LH Owl Flight": "Hyrule Field River Exit",
+            "Lake Hylia Outside Temple": "HF Stone Bridge Tree Grotto",
+            "ZR Fairy Grotto": "LH Grave Grotto Entry",
+            "GV Silver Rock Grotto Entry": "GV Octorok Grotto",
+            "HC Storms Grotto Entry": "Kak Open Grotto",
+            "HF Cow Grotto": "LLR Grotto Entry",
+            "HF Southeast Boulder Grotto Entry": "KF Storms Grotto",
+            "GF Fairy Grotto": "HF South Open Grotto Entry",
+            "HF Fenced Grotto Entry": "Morpha",
+            "HF West Rock Circle Grotto Entry": "Deku Tree Entrance",
+            "HF Near Market Boulder Grotto Entry": "Dodongo's Cavern Entrance",
+            "HF Northwest Boulder Grotto Entry": "Volvagia",
+            "HF Stone Bridge Tree Grotto Entry": "Spirit Temple Entrance",
+            "HF Northwest Tree Grotto Entry": "HC Storms Grotto",
+            "Kak Center Grotto Entry": "Fire Temple Entrance",
+            "Death Mountain Trail Outside Dodongo's Cavern": "Deku Theater",
+            "DMT Rock Circle Grotto Entry": "Phantom Ganon",
+            "Shadow Temple Entrance": "Kak Open Grotto Entry",
+            "Graveyard Outside Temple": "DMT Cow Grotto",
+            "Child Spawn": "Graveyard Warp Pad",
+            "Sacred Forest Meadow Outside Forest Temple": "Forest Temple Entrance",
+            "SFM Wolfos Grotto": "SFM Fairy Grotto Entry",
+            "SFM Storms Grotto Entry": "GV Deku Scrub Grotto"
+        },
+        "sphere 01": {
+            "Volvagia Blue Warp": "HF Northwest Boulder Grotto Entry",
+            "GC Deku Scrub Grotto": "ZR Raised Open Grotto Entry",
+            "ZD Fairy Grotto": "ZR Raised Boulder Grotto Entry",
+            "ZR Rock Circle Grotto Entry": "Bottom of the Well Entrance",
+            "SFM Fairy Grotto": "DMC Upper Grotto Entry",
+            "DMT Owl Flight": "Castle Grounds South Exit",
+            "Barinade": "DMT Boulder Grotto Entry",
+            "Barinade Blue Warp": "DMT Boulder Grotto Entry"
+        },
+        "sphere 02": {
+            "Morpha Blue Warp": "HF Fenced Grotto Entry",
+            "Twinrova Blue Warp": "SFM Wolfos Grotto Entry",
+            "Ice Cavern Entrance": "Dodongo's Cavern Boss Door"
+        },
+        "sphere 03": {
+            "King Dodongo": "Colossus Outside Temple",
+            "King Dodongo Blue Warp": "Spirit Temple Blue Warp",
+            "Colossus Grotto Entry": "Dampe's Grave"
+        },
+        "sphere 04": {
+            "Spirit Temple Boss Door": "Jabu Jabu's Belly Entrance",
+            "LLR Deku Scrub Grotto": "Jabu Jabu's Belly Boss Door",
+            "Prelude of Light": "LLR Deku Scrub Grotto"
+        },
+        "sphere 05": {
+            "Serenade of Water": "Haunted Wasteland West Exit",
+            "Heart Piece Grave": "Zora's Fountain Outside Ice Cavern",
+            "HF Near Market Boulder Grotto": "Zora's Fountain Outside Jabu Jabu",
+            "ZD Island Grotto Entry": "Royal Family's Tomb",
+            "Kakariko Outside the Well": "LH Deku Scrub Grotto",
+            "Gerudo Training Ground Entrance": "GC Lava Grotto Entry",
+            "DMC Hammer Grotto Entry": "HF Fairy Grotto",
+            "Gohma": "Death Mountain Crater Outside Temple",
+            "Gohma Blue Warp": "Fire Temple Blue Warp",
+            "Adult Spawn": "DMC Great Fairy Fountain"
+        },
+        "sphere 06": {
+            "Minuet of Forest": "Sacred Forest Meadow South Exit",
+            "Nocturne of Shadow": "DMC Warp Pad",
+            "HF Fenced Deku Scrub Grotto": "Forest Temple Boss Door",
+            "DMC Deku Scrub Grotto": "Fire Temple Boss Door"
+        },
+        "sphere 07": {
+            "Requiem of Spirit": "Zora's Domain Underwater Shortcut",
+            "HF Tektite Grotto": "GF Storms Grotto Entry",
+            "Colossus Deku Scrub Grotto": "GV Behind Tent Grotto Entry",
+            "Phantom Ganon Blue Warp": "DMT Rock Circle Grotto Entry",
+            "Water Temple Boss Door": "Bongo-Bongo"
+        },
+        "sphere 08": {
+            "ZR Open Grotto": "Deku Tree Boss Door",
+            "Shield Grave": "GF Outside Training Ground",
+            "Bongo-Bongo Blue Warp": "GY Royal Family's Tomb Entry",
+            "Shadow Temple Boss Door": "LW Deku Scrub Grotto"
+        },
+        "sphere 09": {
+            "Bolero of Fire": "ToT Courtyard Temple Entry"
+        }
+    },
+    "locations": {
+        "Link's Pocket": "Purple Rupee",
+        "Queen Gohma": "Gold Skulltula Token",
+        "King Dodongo": "Piece of Heart",
+        "Barinade": "Progressive Nut Capacity",
+        "Phantom Ganon": "Gold Skulltula Token",
+        "Volvagia": "Arrows (30)",
+        "Morpha": "Fishing Hole Key",
+        "Bongo Bongo": "Water Temple Small Key",
+        "Twinrova": "Water Temple Boss Key",
+        "Ganon": "Triforce",
+        "Gift from Rauru": "Gold Skulltula Token",
+        "Song from Impa": "Gold Skulltula Token",
+        "Song from Malon": "Arrows (30)",
+        "Song from Saria": "Hylian Shield",
+        "Song from Royal Family's Tomb": "Huge Rupee",
+        "Song from Ocarina of Time": "Red Rupee",
+        "Song from Windmill": "Huge Rupee",
+        "Sheik in Forest": "Gold Skulltula Token",
+        "Sheik in Crater": "Piece of Heart",
+        "Sheik in Ice Cavern": "Purple Rupee",
+        "Sheik at Colossus": "Farore's Wind",
+        "Sheik in Kakariko": "Treasure Chest Game Building Key",
+        "Sheik at Temple": {
+            "item": "Ice Trap",
+            "model": "Progressive Scale",
+            "trickName": "Progressive Pearl"
+        },
+        "KF Mido Top Left Chest": "Gold Skulltula Token",
+        "KF Mido Top Right Chest": "Progressive Ocarina",
+        "KF Mido Bottom Left Chest": "Bombs (10)",
+        "KF Mido Bottom Right Chest": "Progressive Wallet",
+        "KF Kokiri Sword Chest": "Forest Temple Boss Key",
+        "KF Storms Grotto Chest": "Gold Skulltula Token",
+        "KF GS Know It All House": "Bottle with Green Potion",
+        "KF GS Bean Patch": "Progressive Slingshot",
+        "KF GS House of Twins": "Hover Boots",
+        "KF Shop Item 1": "Buy Goron Tunic",
+        "KF Shop Item 2": "Buy Red Potion [30]",
+        "KF Shop Item 3": "Buy Zora Tunic",
+        "KF Shop Item 4": "Buy Deku Nut (5)",
+        "KF Shop Item 5": "Buy Bottle Bug",
+        "KF Shop Item 6": "Buy Bombs (5) [35]",
+        "KF Shop Item 7": {
+            "item": "Red Rupee",
+            "price": 55
+        },
+        "KF Shop Item 8": "Buy Fairy's Spirit",
+        "LW Gift From Saria": "Huge Rupee",
+        "LW Ocarina Memory Game": "Gold Skulltula Token",
+        "LW Target in Woods": "Saria's Song",
+        "LW Near Shortcuts Grotto Chest": "Gold Skulltula Token",
+        "LW Deku Theater Skull Mask": "Gold Skulltula Token",
+        "LW Deku Theater Mask of Truth": "Requiem of Spirit",
+        "LW Skull Kid": "Arrows (10)",
+        "LW Deku Scrub Near Bridge": {
+            "item": "Piece of Heart",
+            "price": 40
+        },
+        "LW Deku Scrub Grotto Front": {
+            "item": "Bombchus (5)",
+            "price": 40
+        },
+        "LW GS Bean Patch Near Bridge": "Arrows (10)",
+        "LW GS Bean Patch Near Theater": "Piece of Heart",
+        "LW GS Above Theater": "Mask Shop Key",
+        "SFM Wolfos Grotto Chest": "Talon's House Key",
+        "SFM GS": "Ganon's Castle Boss Key",
+        "HF Ocarina of Time Item": "Recovery Heart",
+        "HF Near Market Grotto Chest": "Gold Skulltula Token",
+        "HF Tektite Grotto Freestanding PoH": "Fishing Pole",
+        "HF Southeast Grotto Chest": "Progressive Scale",
+        "HF Open Grotto Chest": "Lens of Truth",
+        "HF Deku Scrub Grotto": {
+            "item": "Gold Skulltula Token",
+            "price": 10
+        },
+        "HF GS Cow Grotto": "Gold Skulltula Token",
+        "HF GS Stone Bridge Tree Grotto": "Piece of Heart",
+        "Market Shooting Gallery": "Boomerang",
+        "Market Bombchu Bowling First Prize": "Skulltula House Key",
+        "Market Bombchu Bowling Second Prize": "Progressive Wallet",
+        "Market Lost Dog": "Prelude of Light",
+        "Market Treasure Chest Game Reward": "Progressive Bomb Bag",
+        "Market 10 Big Poes": "Progressive Scale",
+        "Market Market GS Guard House": "Gold Skulltula Token",
+        "Market Bazaar Item 1": {
+            "item": "Gold Skulltula Token",
+            "price": 95
+        },
+        "Market Bazaar Item 2": "Buy Arrows (10)",
+        "Market Bazaar Item 3": {
+            "item": "Double Defense",
+            "price": 260
+        },
+        "Market Bazaar Item 4": "Buy Hylian Shield",
+        "Market Bazaar Item 5": {
+            "item": "Recovery Heart",
+            "price": 215
+        },
+        "Market Bazaar Item 6": {
+            "item": "Gold Skulltula Token",
+            "price": 65
+        },
+        "Market Bazaar Item 7": {
+            "item": "Hylia Laboratory Key",
+            "price": 135
+        },
+        "Market Bazaar Item 8": {
+            "item": "Deku Nuts (10)",
+            "price": 165
+        },
+        "Market Potion Shop Item 1": "Buy Bombchu (10)",
+        "Market Potion Shop Item 2": "Buy Deku Shield",
+        "Market Potion Shop Item 3": "Buy Bombchu (10)",
+        "Market Potion Shop Item 4": "Buy Deku Stick (1)",
+        "Market Potion Shop Item 5": {
+            "item": "Purple Rupee",
+            "price": 50
+        },
+        "Market Potion Shop Item 6": "Buy Fish",
+        "Market Potion Shop Item 7": {
+            "item": "Blue Rupee",
+            "price": 125
+        },
+        "Market Potion Shop Item 8": "Buy Deku Nut (5)",
+        "Market Bombchu Shop Item 1": {
+            "item": "Gold Skulltula Token",
+            "price": 15
+        },
+        "Market Bombchu Shop Item 2": "Buy Fish",
+        "Market Bombchu Shop Item 3": {
+            "item": "Gold Skulltula Token",
+            "price": 25
+        },
+        "Market Bombchu Shop Item 4": {
+            "item": "Piece of Heart",
+            "price": 110
+        },
+        "Market Bombchu Shop Item 5": {
+            "item": "Heart Container",
+            "price": 170
+        },
+        "Market Bombchu Shop Item 6": {
+            "item": "Red Rupee",
+            "price": 215
+        },
+        "Market Bombchu Shop Item 7": {
+            "item": "Serenade of Water",
+            "price": 275
+        },
+        "Market Bombchu Shop Item 8": {
+            "item": "Blue Rupee",
+            "price": 50
+        },
+        "Market ToT Light Arrow Cutscene": "Purple Rupee",
+        "Market ToT Master Sword": "Arrows (30)",
+        "HC Malon Egg": "Weird Egg",
+        "HC Zeldas Letter": "Zelda's Letter",
+        "HC Great Fairy Reward": "Piece of Heart",
+        "HC GS Tree": "Piece of Heart",
+        "HC GS Storms Grotto": "Progressive Slingshot",
+        "LLR Talons Chickens": "Gold Skulltula Token",
+        "LLR Freestanding PoH": "Red Rupee",
+        "LLR GS House Window": "Zelda's Lullaby",
+        "LLR GS Tree": "Gold Skulltula Token",
+        "LLR GS Rain Shed": "Progressive Bomb Bag",
+        "LLR GS Back Wall": "Water Medallion",
+        "Kak Anju as Child": "Huge Rupee",
+        "Kak Anju as Adult": "Blue Rupee",
+        "Kak Impas House Freestanding PoH": "Piece of Heart",
+        "Kak Windmill Freestanding PoH": "Gold Skulltula Token",
+        "Kak Man on Roof": "Progressive Stick Capacity",
+        "Kak Open Grotto Chest": "Fire Arrow",
+        "Kak Redead Grotto Chest": "Skeleton Key",
+        "Kak Shooting Gallery Reward": "Alley House Key",
+        "Kak Granny's Shop": {
+            "item": "Blue Potion Refill",
+            "price": 100
+        },
+        "Kak 10 Gold Skulltula Reward": "Bombchus (10)",
+        "Kak 20 Gold Skulltula Reward": "Recovery Heart",
+        "Kak 30 Gold Skulltula Reward": "Gold Skulltula Token",
+        "Kak 40 Gold Skulltula Reward": "Gold Skulltula Token",
+        "Kak 50 Gold Skulltula Reward": "Piece of Heart",
+        "Kak GS Tree": "Gold Skulltula Token",
+        "Kak GS Guards House": "Piece of Heart",
+        "Kak GS Watchtower": "Kokiri Sword",
+        "Kak GS Skulltula House": "Light Arrow",
+        "Kak GS House Under Construction": "Gold Skulltula Token",
+        "Kak GS Above Impas House": "Iron Boots",
+        "Kak Bazaar Item 1": "Buy Arrows (10)",
+        "Kak Bazaar Item 2": "Buy Blue Fire",
+        "Kak Bazaar Item 3": "Buy Deku Nut (10)",
+        "Kak Bazaar Item 4": "Buy Bombchu (20)",
+        "Kak Bazaar Item 5": {
+            "item": "Gold Skulltula Token",
+            "price": 185
+        },
+        "Kak Bazaar Item 6": {
+            "item": "Gold Skulltula Token",
+            "price": 90
+        },
+        "Kak Bazaar Item 7": {
+            "item": "Gold Skulltula Token",
+            "price": 205
+        },
+        "Kak Bazaar Item 8": {
+            "item": "Arrows (30)",
+            "price": 125
+        },
+        "Kak Potion Shop Item 1": "Buy Hylian Shield",
+        "Kak Potion Shop Item 2": "Buy Blue Fire",
+        "Kak Potion Shop Item 3": "Buy Bombs (20)",
+        "Kak Potion Shop Item 4": "Buy Bottle Bug",
+        "Kak Potion Shop Item 5": {
+            "item": "Gold Skulltula Token",
+            "price": 155
+        },
+        "Kak Potion Shop Item 6": "Buy Bombchu (10)",
+        "Kak Potion Shop Item 7": {
+            "item": "Gold Skulltula Token",
+            "price": 135
+        },
+        "Kak Potion Shop Item 8": {
+            "item": "Gold Skulltula Token",
+            "price": 90
+        },
+        "Graveyard Shield Grave Chest": "Gold Skulltula Token",
+        "Graveyard Heart Piece Grave Chest": "Bombs (20)",
+        "Graveyard Royal Family's Tomb Chest": "Gold Skulltula Token",
+        "Graveyard Freestanding PoH": "Gold Skulltula Token",
+        "Graveyard Dampe Gravedigging Tour": "Gold Skulltula Token",
+        "Graveyard Hookshot Chest": "Huge Rupee",
+        "Graveyard Dampe Race Freestanding PoH": "Huge Rupee",
+        "Graveyard GS Bean Patch": "Deku Shield",
+        "Graveyard GS Wall": "Gold Skulltula Token",
+        "DMT Freestanding PoH": "Piece of Heart",
+        "DMT Chest": "Recovery Heart",
+        "DMT Storms Grotto Chest": "Progressive Stick Capacity",
+        "DMT Trade Claim Check": "Gold Skulltula Token",
+        "DMT Great Fairy Reward": "Gold Skulltula Token",
+        "DMT GS Near Kak": "Greg the Green Rupee",
+        "DMT GS Bean Patch": "Fire Medallion",
+        "DMT GS Above Dodongos Cavern": "Gold Skulltula Token",
+        "DMT GS Falling Rocks Path": "Gold Skulltula Token",
+        "GC Darunias Joy": "Fire Temple Boss Key",
+        "GC Pot Freestanding PoH": "Progressive Bomb Bag",
+        "GC Rolling Goron as Child": "Zora's Sapphire",
+        "GC Rolling Goron as Adult": "Gold Skulltula Token",
+        "GC Medigoron": {
+            "item": "Giant's Knife",
+            "price": 200
+        },
+        "GC Maze Left Chest": "Gold Skulltula Token",
+        "GC Maze Right Chest": "Huge Rupee",
+        "GC Maze Center Chest": "Piece of Heart",
+        "GC GS Center Platform": "Stables Key",
+        "GC GS Boulder Maze": "Dampe's Hut Key",
+        "GC Shop Item 1": "Buy Green Potion",
+        "GC Shop Item 2": "Buy Bombs (10)",
+        "GC Shop Item 3": {
+            "item": "Bombs (20)",
+            "price": 60
+        },
+        "GC Shop Item 4": "Buy Bombs (5) [25]",
+        "GC Shop Item 5": {
+            "item": "Bombchu Bowling Alley Key",
+            "price": 90
+        },
+        "GC Shop Item 6": {
+            "item": "Piece of Heart",
+            "price": 245
+        },
+        "GC Shop Item 7": {
+            "item": "Gold Skulltula Token",
+            "price": 160
+        },
+        "GC Shop Item 8": {
+            "item": "Gold Skulltula Token",
+            "price": 90
+        },
+        "DMC Volcano Freestanding PoH": "Song of Storms",
+        "DMC Wall Freestanding PoH": "Gold Skulltula Token",
+        "DMC Upper Grotto Chest": "Light Medallion",
+        "DMC Great Fairy Reward": "Gold Skulltula Token",
+        "DMC GS Crate": "Gold Skulltula Token",
+        "DMC GS Bean Patch": "Gold Skulltula Token",
+        "ZR Magic Bean Salesman": {
+            "item": "Piece of Heart (WINNER)",
+            "price": 30
+        },
+        "ZR Open Grotto Chest": "Blue Rupee",
+        "ZR Frogs in the Rain": "Gold Skulltula Token",
+        "ZR Frogs Ocarina Game": "Bombs (10)",
+        "ZR Near Open Grotto Freestanding PoH": "Piece of Heart",
+        "ZR Near Domain Freestanding PoH": "Stone of Agony",
+        "ZR GS Tree": "Recovery Heart",
+        "ZR GS Ladder": "Bombchu Shop Key",
+        "ZR GS Near Raised Grottos": "Minuet of Forest",
+        "ZR GS Above Bridge": "Boss's House Key",
+        "ZD Diving Minigame": "Hylian Shield",
+        "ZD Chest": "Sun's Song",
+        "ZD King Zora Thawed": "Gold Skulltula Token",
+        "ZD GS Frozen Waterfall": "Strength Upgrade",
+        "ZD Shop Item 1": "Buy Deku Stick (1)",
+        "ZD Shop Item 2": "Buy Arrows (50)",
+        "ZD Shop Item 3": "Buy Fairy's Spirit",
+        "ZD Shop Item 4": "Buy Deku Stick (1)",
+        "ZD Shop Item 5": {
+            "item": "Blue Rupee",
+            "price": 180
+        },
+        "ZD Shop Item 6": "Buy Arrows (30)",
+        "ZD Shop Item 7": {
+            "item": "Kakariko Bazaar Key",
+            "price": 95
+        },
+        "ZD Shop Item 8": "Buy Deku Seeds (30)",
+        "ZF Great Fairy Reward": "Biggoron's Sword",
+        "ZF Iceberg Freestanding PoH": "Gold Skulltula Token",
+        "ZF Bottom Freestanding PoH": "Progressive Slingshot",
+        "ZF GS Above The Log": "Blue Rupee",
+        "ZF GS Tree": "Progressive Slingshot",
+        "ZF GS Hidden Cave": "Piece of Heart",
+        "LH Underwater Item": "Red Rupee",
+        "LH Child Fishing": "Piece of Heart",
+        "LH Adult Fishing": {
+            "item": "Ice Trap",
+            "model": "Gerudo Membership Card",
+            "trickName": "Desert Title Deed"
+        },
+        "LH Lab Dive": "Purple Rupee",
+        "LH Freestanding PoH": {
+            "item": "Ice Trap",
+            "model": "Kokiri Sword",
+            "trickName": "Korok Sword"
+        },
+        "LH Sun": "Deku Nuts (5)",
+        "LH GS Bean Patch": "Gold Skulltula Token",
+        "LH GS Lab Wall": "Progressive Stick Capacity",
+        "LH GS Small Island": "Gold Skulltula Token",
+        "LH GS Lab Crate": "Bottle with Poe",
+        "LH GS Tree": "Gold Skulltula Token",
+        "GV Crate Freestanding PoH": "Gold Skulltula Token",
+        "GV Waterfall Freestanding PoH": "Ice Arrow",
+        "GV Chest": "Gold Skulltula Token",
+        "GV GS Small Bridge": "Progressive Ocarina",
+        "GV GS Bean Patch": "Red Rupee",
+        "GV GS Behind Tent": "Impa's House Key",
+        "GV GS Pillar": "Piece of Heart",
+        "GF Chest": "Gold Skulltula Token",
+        "GF HBA 1000 Points": "Bombs (20)",
+        "GF HBA 1500 Points": "Gold Skulltula Token",
+        "GF Freed All Carpenters": "Bolero of Fire",
+        "GF 1 Torch Carpenter": "Gerudo Fortress Small Key",
+        "GF Dead End Carpenter": "Recovery Heart",
+        "GF Double Cell Carpenter": "Recovery Heart",
+        "GF Steep Slope Carpenter": "Recovery Heart",
+        "GF GS Top Floor": "Gold Skulltula Token",
+        "GF GS Archery Range": "Gold Skulltula Token",
+        "Wasteland Carpet Salesman": {
+            "item": "Bombchus (10)",
+            "price": 200
+        },
+        "Wasteland Chest": "Kakariko Potion Shop Key",
+        "Wasteland GS": "Red Rupee",
+        "Colossus Great Fairy Reward": "Gold Skulltula Token",
+        "Colossus Freestanding PoH": "Progressive Magic Meter",
+        "Colossus GS Bean Patch": "Market Shooting Gallery Key",
+        "Colossus GS Tree": "Heart Container",
+        "Colossus GS Hill": "Gold Skulltula Token",
+        "OGC Great Fairy Reward": "Bombs (20)",
+        "HC OGC GS": "Piece of Heart",
+        "Deku Tree Map Chest": "Guard House Key",
+        "Deku Tree Slingshot Room Side Chest": "Forest Medallion",
+        "Deku Tree Slingshot Chest": "Bombchus (20)",
+        "Deku Tree Compass Chest": "Gold Skulltula Token",
+        "Deku Tree Compass Room Side Chest": "Piece of Heart",
+        "Deku Tree Basement Chest": "Bottle with Ruto's Letter",
+        "Deku Tree GS Compass Room": "Piece of Heart",
+        "Deku Tree GS Basement Vines": "Progressive Hookshot",
+        "Deku Tree GS Basement Gate": "Red Rupee",
+        "Deku Tree GS Basement Back Room": "Arrows (10)",
+        "Deku Tree Queen Gohma Heart Container": "Arrows (30)",
+        "Dodongos Cavern Map Chest": "Goron's Ruby",
+        "Dodongos Cavern Compass Chest": "Purple Rupee",
+        "Dodongos Cavern Bomb Flower Platform Chest": "Shadow Medallion",
+        "Dodongos Cavern Bomb Bag Chest": "Progressive Nut Capacity",
+        "Dodongos Cavern End Of Bridge Chest": "Huge Rupee",
+        "Dodongos Cavern GS Side Room Near Lower Lizalfos": "Deku Nuts (5)",
+        "Dodongos Cavern GS Scarecrow": "Piece of Heart",
+        "Dodongos Cavern GS Alcove Above Stairs": "Gold Skulltula Token",
+        "Dodongos Cavern GS Vines Above Stairs": "Gold Skulltula Token",
+        "Dodongos Cavern GS Back Room": "Richard's House Key",
+        "Dodongos Cavern Boss Room Chest": "Bombs (10)",
+        "Dodongos Cavern King Dodongo Heart Container": "Arrows (10)",
+        "Jabu Jabus Belly Boomerang Chest": "Red Rupee",
+        "Jabu Jabus Belly Map Chest": "Song of Time",
+        "Jabu Jabus Belly Compass Chest": "Heart Container",
+        "Jabu Jabus Belly GS Water Switch Room": "Progressive Wallet",
+        "Jabu Jabus Belly GS Lobby Basement Lower": "Piece of Heart",
+        "Jabu Jabus Belly GS Lobby Basement Upper": "Progressive Bow",
+        "Jabu Jabus Belly GS Near Boss": "Piece of Heart",
+        "Jabu Jabus Belly Barinade Heart Container": "Progressive Nut Capacity",
+        "Bottom of the Well Front Left Fake Wall Chest": "Gerudo Membership Card",
+        "Bottom of the Well Front Center Bombable Chest": "Gold Skulltula Token",
+        "Bottom of the Well Back Left Bombable Chest": "Heart Container",
+        "Bottom of the Well Underwater Left Chest": "Red Rupee",
+        "Bottom of the Well Freestanding Key": "Bottom of the Well Small Key",
+        "Bottom of the Well Compass Chest": "Arrows (30)",
+        "Bottom of the Well Center Skulltula Chest": "Gold Skulltula Token",
+        "Bottom of the Well Right Bottom Fake Wall Chest": "Bombs (5)",
+        "Bottom of the Well Fire Keese Chest": "Gold Skulltula Token",
+        "Bottom of the Well Like Like Chest": "Recovery Heart",
+        "Bottom of the Well Map Chest": "Epona's Song",
+        "Bottom of the Well Underwater Front Chest": "Huge Rupee",
+        "Bottom of the Well Invisible Chest": "Bottom of the Well Small Key",
+        "Bottom of the Well Lens of Truth Chest": "Bottom of the Well Small Key",
+        "Bottom of the Well GS West Inner Room": "Gold Skulltula Token",
+        "Bottom of the Well GS East Inner Room": "Gold Skulltula Token",
+        "Bottom of the Well GS Like Like Cage": "Strength Upgrade",
+        "Forest Temple First Room Chest": "Forest Temple Small Key",
+        "Forest Temple First Stalfos Chest": "Forest Temple Small Key",
+        "Forest Temple Raised Island Courtyard Chest": "Forest Temple Small Key",
+        "Forest Temple Map Chest": "Gold Skulltula Token",
+        "Forest Temple Well Chest": "Forest Temple Small Key",
+        "Forest Temple Eye Switch Chest": "Heart Container",
+        "Forest Temple Boss Key Chest": "Gold Skulltula Token",
+        "Forest Temple Floormaster Chest": "Piece of Heart",
+        "Forest Temple Red Poe Chest": "Progressive Bow",
+        "Forest Temple Bow Chest": "Arrows (10)",
+        "Forest Temple Blue Poe Chest": "Red Rupee",
+        "Forest Temple Falling Ceiling Room Chest": "Gold Skulltula Token",
+        "Forest Temple Basement Chest": "Huge Rupee",
+        "Forest Temple GS First Room": "Piece of Heart",
+        "Forest Temple GS Lobby": "Deku Shield",
+        "Forest Temple GS Raised Island Courtyard": "Forest Temple Small Key",
+        "Forest Temple GS Level Island Courtyard": "Mirror Shield",
+        "Forest Temple GS Basement": "Gold Skulltula Token",
+        "Forest Temple Phantom Ganon Heart Container": "Gold Skulltula Token",
+        "Fire Temple Near Boss Chest": "Fire Temple Small Key",
+        "Fire Temple Flare Dancer Chest": "Gold Skulltula Token",
+        "Fire Temple Boss Key Chest": "Piece of Heart",
+        "Fire Temple Big Lava Room Lower Open Door Chest": "Fire Temple Small Key",
+        "Fire Temple Big Lava Room Blocked Door Chest": "Fire Temple Small Key",
+        "Fire Temple Boulder Maze Lower Chest": "Fire Temple Small Key",
+        "Fire Temple Boulder Maze Side Room Chest": "Gold Skulltula Token",
+        "Fire Temple Map Chest": "Red Rupee",
+        "Fire Temple Boulder Maze Shortcut Chest": "Purple Rupee",
+        "Fire Temple Boulder Maze Upper Chest": "Progressive Magic Meter",
+        "Fire Temple Scarecrow Chest": "Fire Temple Small Key",
+        "Fire Temple Compass Chest": "Gold Skulltula Token",
+        "Fire Temple Megaton Hammer Chest": "Fire Temple Small Key",
+        "Fire Temple Highest Goron Chest": "Gold Skulltula Token",
+        "Fire Temple GS Boss Key Loop": "Fire Temple Small Key",
+        "Fire Temple GS Song of Time Room": "Gold Skulltula Token",
+        "Fire Temple GS Boulder Maze": {
+            "item": "Ice Trap",
+            "model": "Bottle with Milk",
+            "trickName": "Bottle with Chateau Romani"
+        },
+        "Fire Temple GS Scarecrow Climb": "Fire Temple Small Key",
+        "Fire Temple GS Scarecrow Top": "Gold Skulltula Token",
+        "Fire Temple Volvagia Heart Container": "Gold Skulltula Token",
+        "Water Temple Compass Chest": "Piece of Heart",
+        "Water Temple Map Chest": "Nayru's Love",
+        "Water Temple Cracked Wall Chest": "Piece of Heart",
+        "Water Temple Torches Chest": "Progressive Bow",
+        "Water Temple Boss Key Chest": "Gold Skulltula Token",
+        "Water Temple Central Pillar Chest": "Progressive Bomb Bag",
+        "Water Temple Central Bow Target Chest": "Water Temple Small Key",
+        "Water Temple Longshot Chest": "Gold Skulltula Token",
+        "Water Temple River Chest": "Arrows (30)",
+        "Water Temple Dragon Chest": "Gold Skulltula Token",
+        "Water Temple GS Behind Gate": "Water Temple Small Key",
+        "Water Temple GS Near Boss Key Chest": "Megaton Hammer",
+        "Water Temple GS Central Pillar": "Water Temple Small Key",
+        "Water Temple GS Falling Platform Room": "Water Temple Small Key",
+        "Water Temple GS River": "Deku Nuts (5)",
+        "Water Temple Morpha Heart Container": "Purple Rupee",
+        "Shadow Temple Map Chest": "Shadow Temple Small Key",
+        "Shadow Temple Hover Boots Chest": "Shadow Temple Small Key",
+        "Shadow Temple Compass Chest": "Recovery Heart",
+        "Shadow Temple Early Silver Rupee Chest": "Market Bazaar Key",
+        "Shadow Temple Invisible Blades Visible Chest": "Deku Shield",
+        "Shadow Temple Invisible Blades Invisible Chest": "Piece of Heart",
+        "Shadow Temple Falling Spikes Lower Chest": "Shadow Temple Small Key",
+        "Shadow Temple Falling Spikes Upper Chest": "Gold Skulltula Token",
+        "Shadow Temple Falling Spikes Switch Chest": "Shadow Temple Small Key",
+        "Shadow Temple Invisible Spikes Chest": "Purple Rupee",
+        "Shadow Temple Freestanding Key": "Deku Shield",
+        "Shadow Temple Wind Hint Chest": "Shadow Temple Boss Key",
+        "Shadow Temple After Wind Enemy Chest": "Arrows (10)",
+        "Shadow Temple After Wind Hidden Chest": "Heart Container",
+        "Shadow Temple Spike Walls Left Chest": "Master Sword",
+        "Shadow Temple Boss Key Chest": "Piece of Heart",
+        "Shadow Temple Invisible Floormaster Chest": "Arrows (10)",
+        "Shadow Temple GS Like Like Room": "Recovery Heart",
+        "Shadow Temple GS Falling Spikes Room": "Shadow Temple Small Key",
+        "Shadow Temple GS Single Giant Pot": "Gold Skulltula Token",
+        "Shadow Temple GS Near Ship": "Recovery Heart",
+        "Shadow Temple GS Triple Giant Pot": "Gold Skulltula Token",
+        "Shadow Temple Bongo Bongo Heart Container": "Water Temple Small Key",
+        "Spirit Temple Child Bridge Chest": "Magic Bean Pack",
+        "Spirit Temple Child Early Torches Chest": "Gold Skulltula Token",
+        "Spirit Temple Child Climb North Chest": "Gold Skulltula Token",
+        "Spirit Temple Child Climb East Chest": "Kokiri's Emerald",
+        "Spirit Temple Map Chest": "Red Rupee",
+        "Spirit Temple Sun Block Room Chest": "Red Rupee",
+        "Spirit Temple Silver Gauntlets Chest": {
+            "item": "Ice Trap",
+            "model": "Serenade of Water",
+            "trickName": "Manbo's Mambo"
+        },
+        "Spirit Temple Compass Chest": "Deku Nuts (5)",
+        "Spirit Temple Early Adult Right Chest": {
+            "item": "Ice Trap",
+            "model": "Biggoron's Sword",
+            "trickName": "Biggoron's Knife"
+        },
+        "Spirit Temple First Mirror Left Chest": "Purple Rupee",
+        "Spirit Temple First Mirror Right Chest": "Bombchus (10)",
+        "Spirit Temple Statue Room Northeast Chest": "Recovery Heart",
+        "Spirit Temple Statue Room Hand Chest": "Market Potion Shop Key",
+        "Spirit Temple Near Four Armos Chest": "Purple Rupee",
+        "Spirit Temple Hallway Right Invisible Chest": "Bombchus (10)",
+        "Spirit Temple Hallway Left Invisible Chest": "Gold Skulltula Token",
+        "Spirit Temple Mirror Shield Chest": "Purple Rupee",
+        "Spirit Temple Boss Key Chest": "Blue Rupee",
+        "Spirit Temple Topmost Chest": "Piece of Heart",
+        "Spirit Temple GS Metal Fence": "Spirit Temple Key Ring",
+        "Spirit Temple GS Sun on Floor Room": "Strength Upgrade",
+        "Spirit Temple GS Hall After Sun Block Room": "Goron Tunic",
+        "Spirit Temple GS Lobby": "Gold Skulltula Token",
+        "Spirit Temple GS Boulder Room": "Progressive Hookshot",
+        "Spirit Temple Twinrova Heart Container": "Gold Skulltula Token",
+        "Ice Cavern Map Chest": "Progressive Bow",
+        "Ice Cavern Compass Chest": "Granny's Potion Shop Key",
+        "Ice Cavern Freestanding PoH": "Piece of Heart",
+        "Ice Cavern Iron Boots Chest": "Red Rupee",
+        "Ice Cavern GS Spinning Scythe Room": "Kakariko Shooting Gallery Key",
+        "Ice Cavern GS Heart Piece Room": "Arrows (30)",
+        "Ice Cavern GS Push Block Room": "Nocturne of Shadow",
+        "Gerudo Training Ground Lobby Left Chest": "Gold Skulltula Token",
+        "Gerudo Training Ground Lobby Right Chest": "Red Rupee",
+        "Gerudo Training Ground Stalfos Chest": "Gold Skulltula Token",
+        "Gerudo Training Ground Before Heavy Block Chest": "Recovery Heart",
+        "Gerudo Training Ground Heavy Block First Chest": "Claim Check",
+        "Gerudo Training Ground Heavy Block Second Chest": "Gold Skulltula Token",
+        "Gerudo Training Ground Heavy Block Third Chest": "Gold Skulltula Token",
+        "Gerudo Training Ground Heavy Block Fourth Chest": "Heart Container",
+        "Gerudo Training Ground Eye Statue Chest": "Piece of Heart",
+        "Gerudo Training Ground Near Scarecrow Chest": "Progressive Magic Meter",
+        "Gerudo Training Ground Hammer Room Clear Chest": "Bottle with Milk",
+        "Gerudo Training Ground Hammer Room Switch Chest": "Arrows (10)",
+        "Gerudo Training Ground Freestanding Key": "Progressive Wallet",
+        "Gerudo Training Ground Maze Right Central Chest": "Spirit Medallion",
+        "Gerudo Training Ground Maze Right Side Chest": "Training Ground Key Ring",
+        "Gerudo Training Ground Underwater Silver Rupee Chest": "Arrows (5)",
+        "Gerudo Training Ground Beamos Chest": "Din's Fire",
+        "Gerudo Training Ground Hidden Ceiling Chest": "Gold Skulltula Token",
+        "Gerudo Training Ground Maze Path First Chest": "Piece of Heart",
+        "Gerudo Training Ground Maze Path Second Chest": "Back Tower Key",
+        "Gerudo Training Ground Maze Path Third Chest": "Purple Rupee",
+        "Gerudo Training Ground Maze Path Final Chest": "Gold Skulltula Token",
+        "Ganon's Castle Forest Trial Chest": "Zora Tunic",
+        "Ganon's Castle Water Trial Left Chest": "Recovery Heart",
+        "Ganon's Castle Water Trial Right Chest": "Progressive Wallet",
+        "Ganon's Castle Shadow Trial Front Chest": "Progressive Scale",
+        "Ganon's Castle Shadow Trial Golden Gauntlets Chest": "Bombs (20)",
+        "Ganon's Castle Light Trial First Left Chest": "Bombs (10)",
+        "Ganon's Castle Light Trial Second Left Chest": "Purple Rupee",
+        "Ganon's Castle Light Trial Third Left Chest": "Spirit Temple Boss Key",
+        "Ganon's Castle Light Trial First Right Chest": "Purple Rupee",
+        "Ganon's Castle Light Trial Second Right Chest": "Heart Container",
+        "Ganon's Castle Light Trial Third Right Chest": "Ganon's Castle Key Ring",
+        "Ganon's Castle Light Trial Invisible Enemies Chest": "Bombs (5)",
+        "Ganon's Castle Light Trial Lullaby Chest": "Deku Seeds (30)",
+        "Ganon's Castle Spirit Trial Crystal Switch Chest": "Windmill Key",
+        "Ganon's Castle Spirit Trial Invisible Chest": "Arrows (5)",
+        "Ganon's Castle Tower Boss Key Chest": "Gold Skulltula Token"
+    }
+}

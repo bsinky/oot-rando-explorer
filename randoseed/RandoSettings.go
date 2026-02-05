@@ -10,18 +10,30 @@ import (
 	"github.com/bsinky/sohrando/randoseed/tokensanity"
 )
 
+// Before 9.0.0, SpoilerLog JSON had a different (Legacy) format
 type RandoSettings struct {
-	Logic         string `json:"Logic Options:Logic"`
-	Shopsanity    string `json:"Shuffle Settings:Shopsanity"`
-	Tokensanity   string `json:"Shuffle Settings:Tokensanity"`
-	Scrubsanity   string `json:"Shuffle Settings:Scrub Shuffle"`
-	MQDungeons    string `json:"World Settings:MQ Dungeon Count"`
-	ItemPool      string `json:"Item Pool Settings:Item Pool"`
-	EntranceRando string `json:"World Settings:Shuffle Entrances"`
+	Logic               string `json:"Logic"`
+	LegacyLogic         string `json:"Logic Options:Logic,omitempty"`
+	Shopsanity          string `json:"Shop Shuffle"`
+	LegacyShopsanity    string `json:"Shuffle Settings:Shopsanity,omitempty"`
+	Tokensanity         string `json:"Token Shuffle"`
+	LegacyTokensanity   string `json:"Shuffle Settings:Tokensanity,omitempty"`
+	Scrubsanity         string `json:"Scrub Shuffle"`
+	LegacyScrubsanity   string `json:"Shuffle Settings:Scrub Shuffle,omitempty"`
+	MQDungeons          string `json:"MQ Dungeon Count"`
+	LegacyMQDungeons    string `json:"World Settings:MQ Dungeon Count,omitempty"`
+	ItemPool            string `json:"Item Pool"`
+	LegacyItemPool      string `json:"Item Pool Settings:Item Poo,omitempty"`
+	EntranceRando       string `json:"Shuffle Entrances"`
+	LegacyEntranceRando string `json:"World Settings:Shuffle Entrances,omitempty"`
 }
 
 func (s *RandoSettings) LogicOrDefault() logic.Logic {
-	if v, err := logic.FromDisplayName(s.Logic); err != nil {
+	logicToUse := s.Logic
+	if logicToUse == "" && s.LegacyLogic != "" {
+		logicToUse = s.LegacyLogic
+	}
+	if v, err := logic.FromDisplayName(logicToUse); err != nil {
 		return logic.Glitchless
 	} else {
 		return v
@@ -29,7 +41,11 @@ func (s *RandoSettings) LogicOrDefault() logic.Logic {
 }
 
 func (s *RandoSettings) ShopsanityOrDefault() shopsanity.Shopsanity {
-	if v, err := shopsanity.FromDisplayName(s.Shopsanity); err != nil {
+	shopsanityToUse := s.Shopsanity
+	if shopsanityToUse == "" && s.LegacyShopsanity != "" {
+		shopsanityToUse = s.LegacyShopsanity
+	}
+	if v, err := shopsanity.FromDisplayName(shopsanityToUse); err != nil {
 		return shopsanity.Off
 	} else {
 		return v
@@ -37,7 +53,11 @@ func (s *RandoSettings) ShopsanityOrDefault() shopsanity.Shopsanity {
 }
 
 func (s *RandoSettings) TokensanityOrDefault() tokensanity.Tokensanity {
-	if v, err := tokensanity.FromDisplayName(s.Tokensanity); err != nil {
+	tokensanityToUse := s.Tokensanity
+	if tokensanityToUse == "" && s.LegacyTokensanity != "" {
+		tokensanityToUse = s.LegacyTokensanity
+	}
+	if v, err := tokensanity.FromDisplayName(tokensanityToUse); err != nil {
 		return tokensanity.Off
 	} else {
 		return v
@@ -45,7 +65,11 @@ func (s *RandoSettings) TokensanityOrDefault() tokensanity.Tokensanity {
 }
 
 func (s *RandoSettings) ScrubsanityOrDefault() scrubsanity.Scrubsanity {
-	if v, err := scrubsanity.FromDisplayName(s.Scrubsanity); err != nil {
+	scrubsanityToUse := s.Scrubsanity
+	if scrubsanityToUse == "" && s.LegacyScrubsanity != "" {
+		scrubsanityToUse = s.LegacyScrubsanity
+	}
+	if v, err := scrubsanity.FromDisplayName(scrubsanityToUse); err != nil {
 		return scrubsanity.Off
 	} else {
 		return v
@@ -53,7 +77,11 @@ func (s *RandoSettings) ScrubsanityOrDefault() scrubsanity.Scrubsanity {
 }
 
 func (s *RandoSettings) MQDungeonsOrDefault() mqdungeons.MQDungeons {
-	if v, err := mqdungeons.FromDisplayName(s.MQDungeons); err != nil {
+	mqDungeonsToUse := s.MQDungeons
+	if mqDungeonsToUse == "" && s.LegacyMQDungeons != "" {
+		mqDungeonsToUse = s.LegacyMQDungeons
+	}
+	if v, err := mqdungeons.FromDisplayName(mqDungeonsToUse); err != nil {
 		return mqdungeons.Zero
 	} else {
 		return v
@@ -61,7 +89,11 @@ func (s *RandoSettings) MQDungeonsOrDefault() mqdungeons.MQDungeons {
 }
 
 func (s *RandoSettings) ItemPoolOrDefault() itempool.ItemPool {
-	if v, err := itempool.FromDisplayName(s.ItemPool); err != nil {
+	itemPoolToUse := s.ItemPool
+	if itemPoolToUse == "" && s.LegacyItemPool != "" {
+		itemPoolToUse = s.LegacyItemPool
+	}
+	if v, err := itempool.FromDisplayName(itemPoolToUse); err != nil {
 		return itempool.Balanced
 	} else {
 		return v
@@ -69,7 +101,11 @@ func (s *RandoSettings) ItemPoolOrDefault() itempool.ItemPool {
 }
 
 func (s *RandoSettings) EntranceRandoOrDefault() entrancerando.EntranceRando {
-	if v, err := entrancerando.FromDisplayName(s.EntranceRando); err != nil {
+	settingToUse := s.EntranceRando
+	if settingToUse == "" && s.LegacyEntranceRando != "" {
+		settingToUse = s.LegacyEntranceRando
+	}
+	if v, err := entrancerando.FromDisplayName(settingToUse); err != nil {
 		return entrancerando.Off
 	} else {
 		return v

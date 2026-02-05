@@ -6,7 +6,13 @@ import (
 	"path"
 	"testing"
 
+	"github.com/bsinky/sohrando/randoseed/entrancerando"
+	"github.com/bsinky/sohrando/randoseed/logic"
+	"github.com/bsinky/sohrando/randoseed/mqdungeons"
+	"github.com/bsinky/sohrando/randoseed/shopsanity"
+	"github.com/bsinky/sohrando/randoseed/tokensanity"
 	"github.com/go-playground/validator/v10"
+	"github.com/stretchr/testify/assert"
 )
 
 var validate *validator.Validate
@@ -15,7 +21,7 @@ func init() {
 	validate = validator.New(validator.WithRequiredStructEnabled())
 }
 
-func testReadingSpoilerLog(t *testing.T, filePath string) {
+func testReadingSpoilerLog(t *testing.T, filePath string) *SpoilerLog {
 	fileBytes, err := os.ReadFile(path.Join("..", "test", filePath))
 	if err != nil {
 		t.Fatal(err)
@@ -31,6 +37,35 @@ func testReadingSpoilerLog(t *testing.T, filePath string) {
 		errs := err.(validator.ValidationErrors)
 		t.Fatalf(errs.Error())
 	}
+
+	return &spoilerLog
+}
+
+func testRandoSettingsParsing(t *testing.T, filePath string, versionName string,
+	expectedLogic logic.Logic, expectedTokensanity tokensanity.Tokensanity,
+	expectedShopsanity shopsanity.Shopsanity, expectedMQDungeons mqdungeons.MQDungeons,
+	expectedEntranceRando entrancerando.EntranceRando) {
+	spoilerLog := testReadingSpoilerLog(t, filePath)
+
+	actualLogic := spoilerLog.Settings.LogicOrDefault()
+	assert.Equalf(t, expectedLogic, actualLogic,
+		"%s Logic parsing failed", versionName)
+
+	actualTokensanity := spoilerLog.Settings.TokensanityOrDefault()
+	assert.Equal(t, expectedTokensanity, actualTokensanity,
+		"%s Tokensanity parsing failed", versionName)
+
+	actualShopsanity := spoilerLog.Settings.ShopsanityOrDefault()
+	assert.Equalf(t, expectedShopsanity, actualShopsanity,
+		"%s Shopsanity parsing failed", versionName)
+
+	actualMQDungeons := spoilerLog.Settings.MQDungeonsOrDefault()
+	assert.Equal(t, expectedMQDungeons, actualMQDungeons,
+		"%s MQ Dungeons parsing failed", versionName)
+
+	actualEntranceRando := spoilerLog.Settings.EntranceRandoOrDefault()
+	assert.Equal(t, expectedEntranceRando, actualEntranceRando,
+		"%s Entrance Rando parsing failed", versionName)
 }
 
 func TestFileHashString(t *testing.T) {
@@ -69,7 +104,31 @@ func TestReadingSpockCharlieSpoilerLog(t *testing.T) {
 }
 
 // Sulu Bravo 7.1.1
+const SuluBravoFileName = "27-46-32-77-65.json"
+
 func TestReadingSuluBravoSpoilerLog(t *testing.T) {
 	t.Parallel()
-	testReadingSpoilerLog(t, "27-46-32-77-65.json")
+	testReadingSpoilerLog(t, SuluBravoFileName)
+}
+
+func TestSuluBravoSpoilerLogSettingsReadProperly(t *testing.T) {
+	t.Parallel()
+	testRandoSettingsParsing(t, SuluBravoFileName, "Sulu Bravo",
+		logic.Glitchless, tokensanity.AllTokens,
+		shopsanity.Random, mqdungeons.Random, entrancerando.Off)
+}
+
+const CopperBravoFileName = "02-69-65-39-41.json"
+
+// Copper Bravo 9.1.2
+func TestReadingCopperBravoSpoilerLog(t *testing.T) {
+	t.Parallel()
+	testReadingSpoilerLog(t, CopperBravoFileName)
+}
+
+func TestCopperBravoSpoilerLogSettingsReadProperly(t *testing.T) {
+	t.Parallel()
+	testRandoSettingsParsing(t, CopperBravoFileName, "Copper Bravo",
+		logic.Glitchless, tokensanity.AllTokens,
+		shopsanity.Random, mqdungeons.Zero, entrancerando.On)
 }
