@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"log"
 	"os"
 
@@ -29,9 +28,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	f, _ := os.Create("oot-rando.log")
-	// Write to logfile and stdout
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	// Write to stdout
+	gin.DefaultWriter = os.Stdout
 
 	r := gin.Default()
 	routes.SetupRouter(r, app)

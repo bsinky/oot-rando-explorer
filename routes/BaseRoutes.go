@@ -57,7 +57,7 @@ func getDBProvider(dbURI string) gorm.Dialector {
 	case "postgres":
 		return postgres.Open(dbURI)
 	default:
-		log.Default().Println(envKey + " not set, falling back to SQLite")
+		log.Default().Println(envKey + " not set or unknown, falling back to SQLite")
 		return sqlite.Open(dbURI)
 	}
 }
