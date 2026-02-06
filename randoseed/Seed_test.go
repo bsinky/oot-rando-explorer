@@ -26,7 +26,7 @@ func TestValidation(t *testing.T) {
 		}
 	} else if err != nil {
 		t.Fatalf("Error was not expected type %s", err)
-	} else if err == nil {
+	} else {
 		t.Fatalf("Should have gotten a non-nil error")
 	}
 }
