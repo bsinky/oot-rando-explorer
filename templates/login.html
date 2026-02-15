@@ -1,28 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html class="{{ getHtmlStyles }}">
     {{ template "head" }}
-    <body>
+    <body class="{{ getBodyStyles }}">
         {{ template "banner.html" . }}
-        <h1>Sign In</h1>
-        <div class="login-form">
-            {{ block "loginform" . }}
-            <form id="login-form" hx-post="/login/auth" hx-target="this" hx-swap="outerHTML">
-                <div>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" required="" maxlength="30" value="{{ .Username }}"/>
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" required="" maxlength="100" value="{{ .Password }}"/>
-                </div>
-                {{ template "error.html" .Errors }}
-                <!-- TODO: CAPTCHA -->
-                <button type="submit">Login</button>
-                <div>
-                    Don't have an account? <a href="/signup">Create one now!</a>
-                </div>
-            </form>
-            {{ end }}
-        </div>
+
+        <main class="max-w-4xl mx-auto px-6 py-12">
+            <header class="mb-12 text-center">
+                <h1 class="text-4xl font-black text-orange-500 tracking-tighter uppercase mb-2">
+                    Sign In
+                </h1>
+            </header>
+            <div class="max-w-xl mx-auto px-6 py-12">
+                {{ block "loginform" . }}
+
+                <form id="login-form" hx-post="/login/auth" hx-target="this" hx-swap="outerHTML">
+                    <div class="bg-zinc-900/50 border border-orange-900/30 rounded-lg p-6 text-center mb-12">
+
+                        <div class="max-w-sm mx-auto mb-6 text-left">
+                            <label class="text-xl text-zinc-400 font-medium p-2" for="username">Username</label>
+                            <div class="mt-2.5">
+                                <input id="username" name="username" type="text" required="" maxlength="30" value="{{ .Username }}"
+                                    class="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-orange-500" />
+                            </div>
+                        </div>
+                        <div class="max-w-sm mx-auto mb-6 text-left">
+                            <label class="text-xl text-zinc-400 font-medium p-2" for="password">Password</label>
+                            <div class="mt-2.5">
+                                <input id="password" name="password" type="password" required="" maxlength="100" value="{{ .Password }}"
+                                    class="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-orange-500" />
+                            </div>
+                        </div>
+                        {{ template "error.html" .Errors }}
+                        <!-- TODO: CAPTCHA -->
+                        <div class="max-w-sm mx-auto mb-6 mt-10">
+                            <button type="submit" class="block cursor-pointer w-full rounded-md bg-orange-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">Login</button>
+                        </div>
+                        <div>
+                            <p class="text-md text-zinc-400 font-medium">
+                            Don't have an account? <a href="/signup" class="font-semibold whitespace-nowrap text-orange-500">Create one now!</a>
+                            </p>
+                        </div>
+                    </div> 
+                </form>
+                {{ end }}
+            </div>
+        </main>
     </body>
 </html>

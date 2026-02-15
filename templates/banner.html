@@ -1,15 +1,24 @@
-<nav class="menu">
-    <ul>
-        <li><a href="/">OOT Rando Explorer</a></li>
-        <li><a href="/top">Top Seeds</a></li>
-        <li><a href="/search">Search</a></li>
-        <li>
-        {{ if .User }}
-            {{ template "usercard.html" . }}
-            <a href="/logout">Logout</a>
-        {{ else }}
-            <a href="/login">Login</a>
-        {{ end }}
-        </li>
-    </ul>
+<nav class="sticky top-0 z-50 bg-zinc-950 backdrop-blur-md border-b border-zinc-600 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex-shrink-0 flex items-center gap-2">
+                <span class="text-xl font-black tracking-tight text-orange-600">OOT Rando Explorer</span>
+            </div>
+
+            <div class="md:flex space-x-8 items-center">
+                <a href="/" class="text-orange-600 hover:text-blue-600 transition-colors font-bold">Home</a>
+                <a href="/top" class="text-orange-600 hover:text-blue-600 transition-colors font-bold">Top Seeds</a>
+                <a href="/search" class="text-orange-600 hover:text-blue-600 transition-colors font-bold">Search</a>
+                
+                {{ if .User }}
+                    <span>
+                    {{ template "usercard.html" . }}
+                    </span>
+                    <a href="/logout" class="text-orange-600 hover:text-blue-600 transition-colors font-bold">Logout</a>
+                {{ else }}
+                    <a href="/login" class="text-orange-600 hover:text-blue-600 transition-colors font-bold">Login</a>
+                {{ end }}
+            </div>
+        </div>
+    </div>
 </nav>

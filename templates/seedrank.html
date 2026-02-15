@@ -1,46 +1,73 @@
 {{ define "seedrank" }}
-<div id="seed_rank" class="ranking">
-    <section>
-        <div>Current Rating</div>
+<div id="seed_rank" class="text-center">
+    <section class="mb-2">
+        <h2 class="text-lg font-black text-orange-500 tracking-tighter uppercase mb-px">
+            Current Rating
+        </h2>
         {{ if .AvgRating }}
-        <label>Difficulty</label>
-        <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Difficulty }}"/>
-        <label>Fun</label>
-        <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Fun }}"/>
+        <div class="flex justify-center items-center">
+            <div class="p-4">
+                <label class="block text-md font-black text-orange-500 tracking-tighter uppercase mb-px">
+                    Difficulty
+                </label>
+                <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Difficulty }}"/>
+            </div>
+            <div class="p-4">
+                <label class="block text-md font-black text-orange-500 tracking-tighter uppercase mb-px">
+                    Fun
+                </label>
+                <input type="range" disabled="true" min="0" max="5.0" step="0.1" value="{{ .AvgRating.Fun }}"/>
+            </div>
+        </div>
         <div>{{ .AvgRating.TotalVotes }} total votes</div>
         {{ else }}
         <div>No votes yet.</div>
         {{ end }}
     </section>
-    <section>
+    <section class="mb-2">
         {{ if .User }}
         <form hx-post="/s/{{ .Seed.FileHash }}/vote"
             hx-target="#seed_rank"
             hx-swap="outerHTML">
-            <div>
+            <h2 class="text-lg font-black text-orange-500 tracking-tighter uppercase mb-px">
                 {{ if .MyRating }}
-                Your rating:
+                Your rating
                 {{ else }}
                 Rate this seed:
                 {{ end }}
+            </h2>
+            <div class="flex justify-center items-center">
+                <div class="p-4">
+                    <label for="difficulty" class="block text-md font-black text-orange-500 tracking-tighter uppercase mb-px">
+                        Difficulty
+                    </label>
+                    {{ if .MyRating }}
+                    <input type="range" min="0" max="5" step="1" name="difficulty" value="{{ .MyRating.Difficulty }}"/>
+                    {{ else }}
+                    <input type="range" min="0" max="5" step="1" name="difficulty" value="3"/>
+                    {{ end }}
+                </div>
+                <div class="p-4">
+                    <label for="fun" class="block text-md font-black text-orange-500 tracking-tighter uppercase mb-px">
+                        Fun
+                    </label>
+                    {{ if .MyRating }}
+                    <input type="range" min="0" max="5" step="1" name="fun" value="{{ .MyRating.Fun }}"/>
+                    {{ else }}
+                    <input type="range" min="0" max="5" step="1" name="fun" value="3"/>
+                    {{ end }}
+                </div>
             </div>
-            <label for="difficulty">Difficulty</label>
-            {{ if .MyRating }}
-            <input type="range" min="0" max="5" step="1" name="difficulty" value="{{ .MyRating.Difficulty }}"/>
-            {{ else }}
-            <input type="range" min="0" max="5" step="1" name="difficulty" value="3"/>
-            {{ end }}
-            <label for="fun">Fun</label>
-            {{ if .MyRating }}
-            <input type="range" min="0" max="5" step="1" name="fun" value="{{ .MyRating.Fun }}"/>
-            {{ else }}
-            <input type="range" min="0" max="5" step="1" name="fun" value="3"/>
-            {{ end }}
-            <button type="submit">Vote</button>
+            <button class="sm:w-auto px-6 py-2 bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
+                type="submit">
+                Vote
+            </button>
             {{ template "error.html" .Error }}
         </form>
         {{ else }}
-            <div>You must be <a href="/login">logged in</a> to vote</div>
+            <p class="text-zinc-400">
+                You must be <a href="/login" class="text-orange-500 hover:underline font-bold transition-colors">logged in</a> to vote
+            </p>
         {{ end }}
     </section>
 </div>

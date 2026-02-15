@@ -1,12 +1,12 @@
 {{ define "seedwithuploadtime" }}
-<div>
-    <a href="/s/{{ .FileHash }}" class="hash-icons">
-        {{ range fileHashIcons .FileHash }}
-            <img src="{{.}}"/>
-        {{end}}
-    <span class="recent-seed-info">
-        {{ .CachedVersion }} <i>({{ .FormattedUploadTime }})</i>
-    </span>
-    </a>
-</div>
+<a href="/s/{{ .FileHash }}">
+    <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-lg hover:border-orange-500/50 transition-colors group">
+            {{ range fileHashIcons .FileHash }}
+                <img class="inline" src="{{.}}"/>
+            {{end}}
+        <span class="text-md text-zinc-400 font-medium">
+            {{ .CachedVersion }} <span class="italic">({{ .FormattedUploadTime }})</span>
+        </span>
+    </div>
+</a>
 {{ end }}

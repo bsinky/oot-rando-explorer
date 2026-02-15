@@ -3,3 +3,5 @@
 *.db
 spoiler_logs/
 sohrando
+tailwindcss
+assets/index.css

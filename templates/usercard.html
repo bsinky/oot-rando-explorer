@@ -1,6 +1,6 @@
-<span class="user-card">
+<span class="text-md text-zinc-400 font-medium hover:text-zinc-300 transition-all ">
     <a href="/user/{{ .User.ID }}">
-        <img src="/assets/hash/{{ .User.Avatar }}.png"/>
-        <div>{{ .User.Username }}</div>
+        <img class="inline" src="/assets/hash/{{ .User.Avatar }}.png"/>
+        <div class="inline">{{ .User.Username }}</div>
     </a>
 </span>

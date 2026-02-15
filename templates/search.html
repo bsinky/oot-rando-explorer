@@ -1,48 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html class="{{ getHtmlStyles }}">
     {{ template "head" }}
-    <body>
+    <body class="{{ getBodyStyles }}">
         {{ template "banner.html" . }}
-        <h2>Settings</h2>
-        <form id="search-form" hx-get="/search/run"
-            hx-target="#search-results"
-            hx-swap="innerHTML"
-            hx-indicator="#search-loading"
-            hx-disabled-elt="#search-button">
-            <div class="randoSettings">
-                {{ range .Filters }}
-                <div class="seedSetting searchFilter">
-                    <label>{{ .Label }}</label>
-                    <select name="{{ .FieldName }}">
-                        <option value=""></option>
-                        {{ range .Options }}
-                            <option value="{{ .Value }}">{{ .Label }}</option>
-                        {{ end }}
-                    </select>
+        <main class="max-w-4xl mx-auto px-6 py-12">
+            <header class="mb-12 text-center">
+                <h1 class="text-4xl font-black text-orange-500 tracking-tighter uppercase mb-2">
+                    Search
+                </h1>
+            </header>
+            <form id="search-form" hx-get="/search/run"
+                hx-target="#search-results"
+                hx-swap="innerHTML"
+                hx-indicator="#search-loading"
+                hx-disabled-elt="#search-button">
+                <div class="mx-auto grid grid-cols-3 gap-3">
+                    {{ range .Filters }}
+                    <div class="bg-zinc-900/50 border border-orange-900/30 rounded-md p-4 text-left mb-6">
+                        <label class="text-md text-zinc-400 font-medium">{{ .Label }}</label>
+                        <div class="mt-1.5">
+                            <select class="bg-zinc-800 border border-orange-900/30 rounded-md p-2" name="{{ .FieldName }}">
+                                <option value=""></option>
+                                {{ range .Options }}
+                                    <option value="{{ .Value }}">{{ .Label }}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+                    </div>
+                    {{ end }}
                 </div>
-                {{ end }}
+                <!-- TODO: fix styling on this, it not centered... -->
+                <div class="max-w-xl mx-auto p-6">
+                    <button type="submit" id="search-button"
+                                class="sm:w-auto px-10 py-3 bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20">
+                                Search
+                    </button>
+                </div>
+            </form>
+            <div id="search-loading" class="htmx-indicator">Loading...</div>
+            <div id="search-results">
             </div>
-            <button type="submit" id="search-button">Search</button>
-        </form>
-        <div id="search-loading" class="htmx-indicator">Loading...</div>
-        <div id="search-results">
-        </div>
+        </main>
     </body>
 </html>
 {{ define "searchresult" }}
-<h3>Results</h3>
+<div class="flex items-center gap-4 mb-4">
+    <h3 class="text-2xl font-bold text-orange-400">Results</h3>
+    <div class="h-[1px] flex-grow bg-zinc-800"></div>
+</div>
+<div class="grid gap-4">
 {{ range .Result.Seeds }}
-    <div>
-        <a href="/s/{{ .FileHash }}" class="hash-icons">
-            {{ range fileHashIcons .FileHash }}
-                <img src="{{.}}"/>
-            {{end}}
-        <span class="recent-seed-info">
-            {{ .CachedVersion }} <i>({{ .FormattedUploadTime }})</i>
-        </span>
-        </a>
-    </div>
+    <a href="/s/{{ .FileHash }}" class="hash-icons">
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-lg hover:border-orange-500/50 transition-colors group">
+                {{ range fileHashIcons .FileHash }}
+                    <img class="inline" src="{{.}}"/>
+                {{end}}
+            <span class="text-md text-zinc-400 font-medium">
+                {{ .CachedVersion }} <span class="italic">({{ .FormattedUploadTime }})</span>
+            </span>
+        </div>
+    </a>
 {{ else }}
-    <div>No matching seeds found.</div>
+    <p class="text-md text-zinc-400 font-medium">No matching seeds found.</p>
 {{ end }}
+</div>
 {{ end }}

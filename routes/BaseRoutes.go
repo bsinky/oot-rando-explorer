@@ -38,6 +38,14 @@ func preserveLinebreaks(text string) template.HTML {
 	return template.HTML(strings.Replace(template.HTMLEscapeString(text), "\n", "<br>", -1))
 }
 
+func getHtmlStyles() string {
+	return "dark"
+}
+
+func getBodyStyles() string {
+	return "bg-zinc-950 text-zinc-100 min-h-screen font-sans selection:bg-orange-500/30"
+}
+
 func SetUpDBAndStorage(dbURI string) (*App, error) {
 	db, err := gorm.Open(getDBProvider(dbURI), &gorm.Config{})
 	if err != nil {
@@ -87,6 +95,8 @@ func SetupRouter(r *gin.Engine, app *App) {
 	r.StaticFS("/assets", http.Dir("assets"))
 	r.SetFuncMap(template.FuncMap{
 		"fileHashIcons":      fileHashIcons,
+		"getHtmlStyles":      getHtmlStyles,
+		"getBodyStyles":      getBodyStyles,
 		"preserveLinebreaks": preserveLinebreaks,
 		"toErrors":           util.ToErrors,
 	})

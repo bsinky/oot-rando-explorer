@@ -1,30 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html class="{{ getHtmlStyles }}">
     {{ template "head" }}
-    <body>
+    <body class="{{ getBodyStyles }}">
         {{ template "banner.html" . }}
-        <section>
-            <div class="hash-icons-2x">
-                <img src="/assets/hash/{{ .Viewed.User.Avatar }}.png"/>
-                <div class="username-large">{{ .Viewed.User.Username }}</div>
+
+        <main class="max-w-4xl mx-auto px-6 py-12">
+            <header class="mb-12 text-center">
+                <img class="inline w-15" src="/assets/hash/{{ .Viewed.User.Avatar }}.png"/>
+                <div class="inline align-middle text-4xl font-black text-orange-500 tracking-tighter uppercase mb-2">{{ .Viewed.User.Username }}</div>
                 {{ if .Viewed.User.IsAdmin }}
-                <i>Admin</i>
+                    <div>
+                        <span class="italic">Admin</span>
+                    </div>
                 {{ end }}
                 {{ if .Viewed.User.IsModerator }}
-                <i>Moderator</i>
+                    <div>
+                        <span class="italic">Moderator</span>
+                    </div>
                 {{ end }}
-            </div>
+            </header>
             <div>
                 {{ if .ViewingOwnProfile }}
                     <!-- IDEA: option to change avatar -->
                 {{ end }}
             </div>
-            <h2>Uploaded Seeds</h2>
-            {{ range .UploadedSeeds }}
-                {{ template "seedwithuploadtime" . }}
-            {{ else }}
-                <div>No uploaded seeds yet.</div>
-            {{ end }}
-        </section>
+
+            <section>
+                <div class="flex items-center gap-4 mb-6">
+                    <h3 class="text-2xl font-bold text-orange-400">Uploaded Seeds</h3>
+                    <div class="h-[1px] flex-grow bg-zinc-800"></div>
+                </div>
+                
+                <div class="grid gap-4">
+                    {{ range .UploadedSeeds }}
+                        {{ template "seedwithuploadtime" . }}
+                    {{ else }}
+                        <div class="text-xl text-zinc-400 font-medium italic">No uploaded seeds yet.</div>
+                    {{ end }}
+                </div>
+            </section>
+        </main>
     </body>
 </html>

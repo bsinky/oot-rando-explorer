@@ -1,49 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html class="{{ getHtmlStyles }}">
     {{ template "head" }}
-    <body class="wide">
+    <body class="{{ getBodyStyles }}">
         {{ template "banner.html" . }}
-        <h1>Top Seeds</h1>
-        <div class="top-seeds">
-            <div class="top-seeds-category">
-                <h2>Baby Seeds</h2>
-                <div hx-get="/top/difficulty/easy" hx-trigger="load">
-                    <div class="htmx-indicator">Loading...</div>
+        <main class="max-w-4xl mx-auto px-6 py-12">
+            <header class="mb-12 text-center">
+                <h1 class="text-4xl font-black text-orange-500 tracking-tighter uppercase mb-2">
+                    Top Seeds
+                </h1>
+            </header>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="top-seeds-category">
+                    <h2 class="text-2xl font-black text-orange-500 tracking-tighter uppercase mb-2">
+                        Baby Seeds
+                    </h2>
+                    <div hx-get="/top/difficulty/easy" hx-trigger="load">
+                        <div class="htmx-indicator text-zinc-400">Loading...</div>
+                    </div>
+                </div>
+                <div class="top-seeds-category">
+                    <h2 class="text-2xl font-black text-orange-500 tracking-tighter uppercase mb-2">
+                        Hardest Seeds
+                    </h2>
+                    <div hx-get="/top/difficulty/hard" hx-trigger="load">
+                        <div class="htmx-indicator text-zinc-400">Loading...</div>
+                    </div>
+                </div>
+                <div class="top-seeds-category">
+                    <h2 class="text-2xl font-black text-orange-500 tracking-tighter uppercase mb-2">
+                        Most Fun Seeds
+                    </h2>
+                    <div hx-get="/top/fun" hx-trigger="load">
+                        <div class="htmx-indicator text-zinc-400">Loading...</div>
+                    </div>
                 </div>
             </div>
-            <div class="top-seeds-category">
-                <h2>Hardest Seeds</h2>
-                <div hx-get="/top/difficulty/hard" hx-trigger="load">
-                    <div class="htmx-indicator">Loading...</div>
-                </div>
-            </div>
-            <div class="top-seeds-category">
-                <h2>Most Fun Seeds</h2>
-                <div hx-get="/top/fun" hx-trigger="load">
-                    <div class="htmx-indicator">Loading...</div>
-                </div>
-            </div>
-        </div>
+        </main>
     </body>
 </html>
 {{ define "topseeds" }}
     {{ range .AvgSeedRanks }}
-        <div>
-            <a href="/s/{{ .Seed.FileHash }}" class="hash-icons">
-                {{ range fileHashIcons .Seed.FileHash }}
-                    <img src="{{.}}"/>
-                {{end}}
-            <span class="top-seed-info">
-                {{ .TotalVotes }} votes, Difficulty: {{ .Difficulty }}, Fun: {{ .Fun }}
-            </span>
-            </a>
-        </div>
+        <a href="/s/{{ .Seed.FileHash }}">
+            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-lg hover:border-orange-500/50 transition-colors group mb-2">
+                <div class="mb-2">
+                    {{ range fileHashIcons .Seed.FileHash }}
+                        <img class="inline" src="{{.}}"/>
+                    {{end}}
+                </div>
+                <div class="text-md text-zinc-400 font-medium italic">
+                    {{ .TotalVotes }} votes, Difficulty: {{ .Difficulty }}, Fun: {{ .Fun }}
+                </div>
+            </div>
+        </a>
+    </div>
     {{ end }}
     {{ if .AvgSeedRanks }}
-        <a href="#" hx-get="{{ .LoadMoreAction }}?lastvalue={{ .LastValue }}&lastid={{ .LastID }}" hx-swap="outerHTML">
+        <a href="#"
+            class="text-zinc-400 hover:text-zinc-300 transition-colors font-bold"
+            hx-get="{{ .LoadMoreAction }}?lastvalue={{ .LastValue }}&lastid={{ .LastID }}"
+            hx-swap="outerHTML">
             Load more
         </a>
     {{ else }}
-        <div>That's the end!</div>
+        <div class="text-zinc-400">That's the end!</div>
     {{ end }}
 {{ end }}
