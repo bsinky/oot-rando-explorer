@@ -19,10 +19,11 @@
                     <div class="bg-zinc-900/50 border border-orange-900/30 rounded-md p-4 text-left mb-6">
                         <label class="text-md text-zinc-400 font-medium">{{ .Label }}</label>
                         <div class="mt-1.5">
-                            <select class="bg-zinc-800 border border-orange-900/30 rounded-md p-2" name="{{ .FieldName }}">
+                            <select class="bg-zinc-800 border focus:border-orange-500 border-orange-900/30 rounded-md p-2
+                                focus:ring-orange-500 text-zinc-300 truncate w-full" name="{{ .FieldName }}">
                                 <option value=""></option>
                                 {{ range .Options }}
-                                    <option value="{{ .Value }}">{{ .Label }}</option>
+                                    <option class="text-zinc-300" value="{{ .Value }}">{{ .Label }}</option>
                                 {{ end }}
                             </select>
                         </div>
@@ -30,9 +31,9 @@
                     {{ end }}
                 </div>
                 <!-- TODO: fix styling on this, it not centered... -->
-                <div class="max-w-xl mx-auto p-6">
+                <div class="w-full flex justify-center p-6">
                     <button type="submit" id="search-button"
-                                class="sm:w-auto px-10 py-3 bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20">
+                                class="w-sm px-10 py-3 cursor-pointer bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20">
                                 Search
                     </button>
                 </div>
