@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"html/template"
 	"log"
 	"net/http"
@@ -44,6 +45,21 @@ func getHtmlStyles() string {
 
 func getBodyStyles() string {
 	return "bg-zinc-950 text-zinc-100 min-h-screen font-sans selection:bg-orange-500/30"
+}
+
+func templateDicts(values ...interface{}) (map[string]interface{}, error) {
+	if len(values)%2 != 0 {
+		return nil, errors.New("invalid dict call")
+	}
+	dict := make(map[string]interface{}, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		key, ok := values[i].(string)
+		if !ok {
+			return nil, errors.New("dict keys must be strings")
+		}
+		dict[key] = values[i+1]
+	}
+	return dict, nil
 }
 
 func SetUpDBAndStorage(dbURI string) (*App, error) {
@@ -97,6 +113,7 @@ func SetupRouter(r *gin.Engine, app *App) {
 		"fileHashIcons":      fileHashIcons,
 		"getHtmlStyles":      getHtmlStyles,
 		"getBodyStyles":      getBodyStyles,
+		"dict":               templateDicts,
 		"preserveLinebreaks": preserveLinebreaks,
 		"toErrors":           util.ToErrors,
 	})

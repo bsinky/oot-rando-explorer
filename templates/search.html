@@ -30,12 +30,8 @@
                     </div>
                     {{ end }}
                 </div>
-                <!-- TODO: fix styling on this, it not centered... -->
                 <div class="w-full flex justify-center p-6">
-                    <button type="submit" id="search-button"
-                                class="w-sm px-10 py-3 cursor-pointer bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20">
-                                Search
-                    </button>
+                    {{ template "button" dict "Type" "submit" "Label" "Search" "Id" "search-button" }}
                 </div>
             </form>
             <div id="search-loading" class="htmx-indicator">Loading...</div>

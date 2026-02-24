@@ -38,9 +38,8 @@
                             <label class="confirmPassword-errors text-red-400"></label>
                         </div>
                         {{ template "error.html" .Errors }}
-                        <!-- TODO: CAPTCHA -->
                         <div class="max-w-sm mx-auto mb-6 mt-10">
-                            <button type="submit" class="block cursor-pointer w-full rounded-md bg-orange-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">Sign Up</button>
+                            {{ template "button" dict "Type" "submit" "Label" "Sign Up"}}
                         </div>
                     </div>
                 </form>

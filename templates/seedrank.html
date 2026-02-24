@@ -58,10 +58,7 @@
                     {{ end }}
                 </div>
             </div>
-            <button class="sm:w-auto px-6 py-2 bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
-                type="submit">
-                Vote
-            </button>
+            {{ template "button" dict "Type" "submit" "Label" "Vote"}}
             {{ template "error.html" .Error }}
         </form>
         {{ else }}

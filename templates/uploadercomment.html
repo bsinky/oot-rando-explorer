@@ -41,10 +41,8 @@
                 hx-get="/s/{{ .Seed.FileHash }}/uploadercomment">
                 Cancel
             </button>
-            <button class="mx-2 inline sm:w-auto px-6 py-2 bg-orange-600 hover:cursor-pointer hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
-                type="submit">
-                Submit
-            </button>
+            {{ template "button" dict "Type" "submit"
+                "Label" "Submit" "Class" "inline" }}
         </div>
     </form>
 {{ end }}

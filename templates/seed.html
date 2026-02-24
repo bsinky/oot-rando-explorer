@@ -26,7 +26,7 @@
             </section>
             {{ if .User.CanDeleteSeeds }}
             <section>
-                <button class="sm:w-auto px-6 py-2 bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
+                <button class="sm:w-auto px-6 py-2 cursor-pointer bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
                     hx-get="/s/{{ .Seed.FileHash }}/confirmdelete"
                     id="updateComment" hx-swap="outerHTML">
                     Delete Seed
@@ -34,7 +34,7 @@
             </section>
             {{ end }}
             <section class="text-center mx-auto p-4 mt-2">
-                <a class="sm:w-auto px-6 py-2 bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
+                <a class="sm:w-auto px-6 py-2 cursor-pointer bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
                     href="/s/{{ .Seed.FileHash }}/download">
                     Download
                 </a>
@@ -68,7 +68,7 @@
 {{ define "seedconfirmdelete" }}
 <div class="text-center font-medium text-zinc-400">Really delete seed?</div>
 <div>
-    <button class="sm:w-auto px-6 py-2 bg-red-600 hover:bg-red-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-red-900/20"
+    <button class="sm:w-auto px-6 py-2 cursor-pointer bg-red-600 hover:bg-red-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-red-900/20"
         hx-delete="/s/{{ .Seed.FileHash }}/delete" id="updateComment">
         Yep, Delete it
     </button>
