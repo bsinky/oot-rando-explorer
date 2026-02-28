@@ -1,0 +1,3 @@
+[submodule "shipwright"]
+	path = shipwright
+	url = git@github.com:HarbourMasters/Shipwright.git

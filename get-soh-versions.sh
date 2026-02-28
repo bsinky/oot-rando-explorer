@@ -1,14 +1,20 @@
 #! /usr/bin/env bash
-# Pass the path to the Shipwright repo as the first argument
 
+# make sure the submodule exists
+SUBMODULE_DIR="./shipwright"
+if [[ ! -d "$SUBMODULE_DIR" ]]; then
+    echo "Error: Shipwright submodule not found at $SUBMODULE_DIR."
+    echo "Please run: 'git submodule update --init --recursive'"
+    exit 1
+fi
+
+# prepare output file
 touch ./randoseed/versions.txt
 outfile=`realpath ./randoseed/versions.txt`
 # truncate current file
 : > $outfile
 
-if [[ $1 ]]; then
-	cd "$1"
-fi
+cd "$SUBMODULE_DIR" || exit 1
 
 echo "Generating $outfile..."
 
