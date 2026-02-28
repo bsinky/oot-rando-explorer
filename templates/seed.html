@@ -25,7 +25,7 @@
                 {{ template "uploaderComment" . }}
             </section>
             {{ if .User.CanDeleteSeeds }}
-            <section>
+            <section class="flex items-center flex-col">
                 <button class="sm:w-auto px-6 py-2 cursor-pointer bg-orange-600 hover:bg-orange-500 text-zinc-950 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-orange-900/20"
                     hx-get="/s/{{ .Seed.FileHash }}/confirmdelete"
                     id="updateComment" hx-swap="outerHTML">
