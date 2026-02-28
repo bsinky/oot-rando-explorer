@@ -134,3 +134,47 @@ func LogoutCurrentUser(c *gin.Context) error {
 	session.Clear()
 	return session.Save()
 }
+
+// SetAdmin toggles the IsAdmin flag for a user identified by username.
+// Returns an error if the user does not exist or on database failure.
+func SetAdmin(db *gorm.DB, username string, makeAdmin bool) error {
+	user, err := GetUser(db, username)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.New("user not found")
+	}
+	user.IsAdmin = makeAdmin
+	return db.Save(user).Error
+}
+
+// SetModerator toggles the IsModerator flag for a user.
+func SetModerator(db *gorm.DB, username string, makeModerator bool) error {
+	user, err := GetUser(db, username)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.New("user not found")
+	}
+	user.IsModerator = makeModerator
+	return db.Save(user).Error
+}
+
+// ResetPassword updates the given user's password to a new value.
+func ResetPassword(db *gorm.DB, username, newPassword string) error {
+	user, err := GetUser(db, username)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.New("user not found")
+	}
+	hashed, err := argon2id.CreateHash(newPassword, argon2id.DefaultParams)
+	if err != nil {
+		return err
+	}
+	user.HashedPassword = hashed
+	return db.Save(user).Error
+}
