@@ -35,4 +35,5 @@ COPY --from=builder /app/assets ./assets
 COPY --from=builder /app/templates ./templates
 
 EXPOSE 8080
+ENV PATH="/root:${PATH}"
 CMD ["./sohrando"]
