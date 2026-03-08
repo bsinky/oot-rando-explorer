@@ -53,7 +53,7 @@
                     <img class="inline" src="{{.}}"/>
                 {{end}}
             <span class="text-md text-zinc-400 font-medium">
-                {{ .CachedVersion }} <span class="italic">({{ .FormattedUploadTime }})</span>
+                {{ .CachedVersion }} <span class="italic">(<time datetime="{{ .FormattedUploadTime }}">({{ .FormattedUploadTime }})</time>)</span>
             </span>
         </div>
     </a>

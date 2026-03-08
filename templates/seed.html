@@ -21,7 +21,7 @@
                     Uploaded by
                     {{ template "usercard.html" .Seed }}
                 </div>
-                <div class="italic text-md text-zinc-400 font-medium">{{ .Seed.CreatedAt }}</div>
+                <div class="italic text-md text-zinc-400 font-medium"><time datetime="{{ .Seed.FormattedUploadTime }}">{{ .Seed.FormattedUploadTime }}</time></div>
                 {{ template "uploaderComment" . }}
             </section>
             {{ if .User.CanDeleteSeeds }}

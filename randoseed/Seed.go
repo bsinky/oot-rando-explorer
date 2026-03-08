@@ -134,7 +134,7 @@ type Setting struct {
 }
 
 func (seed Seed) FormattedUploadTime() string {
-	return seed.CreatedAt.Format(time.RFC1123)
+	return seed.CreatedAt.Format(time.RFC3339)
 }
 
 func (seed *Seed) CachedVersion() string {
