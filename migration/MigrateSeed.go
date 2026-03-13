@@ -2,6 +2,7 @@ package migration
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bsinky/sohrando/randoseed"
 
@@ -62,9 +63,15 @@ func updateAllSeedsFromStoredSpoilerLogs(db *gorm.DB) error {
 		return err
 	} else {
 		for _, entry := range spoilerLogFiles {
+
+			if entry.Seed == nil {
+				log.Printf("migration: SpoilerLogFile ID=%d has nil Seed (seed_id=%d); skipping entry\n", entry.ID, entry.SeedID)
+				continue
+			}
+
 			fileHash := entry.Seed.FileHash
 
-			seed, seedErr := randoseed.GetByFileHash(db, fileHash)
+			seed, seedErr := randoseed.GetByFileHashWithRelationships(db, fileHash)
 			if seedErr != nil {
 				return seedErr
 			}
@@ -77,6 +84,14 @@ func updateAllSeedsFromStoredSpoilerLogs(db *gorm.DB) error {
 			}
 
 			spoilerLog.UpdateDatabaseSeed(seed)
+
+			// Ensure we update existing RawSettings instead of inserting a new one
+			if seed.RawSettings != nil {
+				var existingRaw randoseed.RawSettings
+				if err := db.Where("seed_id = ?", seed.ID).First(&existingRaw).Error; err == nil {
+					seed.RawSettings.ID = existingRaw.ID
+				}
+			}
 
 			if err := db.Save(seed).Error; err != nil {
 				return err

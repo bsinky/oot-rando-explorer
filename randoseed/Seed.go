@@ -135,6 +135,20 @@ type Setting struct {
 	Value string
 }
 
+func (s *Seed) BeforeDelete(tx *gorm.DB) (err error) {
+	// Soft-delete associated RawSettings
+	if err := tx.Where("seed_id = ?", s.ID).Delete(&RawSettings{}).Error; err != nil {
+		return err
+	}
+
+	// Soft-delete associated SpoilerLogFiles
+	if err := tx.Where("seed_id = ?", s.ID).Delete(&SpoilerLogFile{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (seed Seed) FormattedUploadTime() string {
 	return seed.CreatedAt.Format(time.RFC3339)
 }
