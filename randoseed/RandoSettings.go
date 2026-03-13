@@ -7,6 +7,7 @@ import (
 	"github.com/bsinky/sohrando/randoseed/mqdungeons"
 	"github.com/bsinky/sohrando/randoseed/scrubsanity"
 	"github.com/bsinky/sohrando/randoseed/shopsanity"
+	"github.com/bsinky/sohrando/randoseed/startingage"
 	"github.com/bsinky/sohrando/randoseed/tokensanity"
 )
 
@@ -26,6 +27,8 @@ type RandoSettings struct {
 	LegacyItemPool      string `json:"Item Pool Settings:Item Poo,omitempty"`
 	EntranceRando       string `json:"Shuffle Entrances"`
 	LegacyEntranceRando string `json:"World Settings:Shuffle Entrances,omitempty"`
+	StartingAge         string `json:"Starting Age"`
+	LegacyStartingAge   string `json:"World Settings:Starting Age,omitempty"`
 }
 
 func (s *RandoSettings) LogicOrDefault() logic.Logic {
@@ -107,6 +110,18 @@ func (s *RandoSettings) EntranceRandoOrDefault() entrancerando.EntranceRando {
 	}
 	if v, err := entrancerando.FromDisplayName(settingToUse); err != nil {
 		return entrancerando.Off
+	} else {
+		return v
+	}
+}
+
+func (s *RandoSettings) StartingAgeOrDefault() startingage.StartingAge {
+	ageToUse := s.StartingAge
+	if ageToUse == "" && s.LegacyStartingAge != "" {
+		ageToUse = s.LegacyStartingAge
+	}
+	if v, err := startingage.FromDisplayName(ageToUse); err != nil {
+		return startingage.Random
 	} else {
 		return v
 	}

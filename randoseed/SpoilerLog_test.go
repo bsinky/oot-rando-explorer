@@ -10,6 +10,7 @@ import (
 	"github.com/bsinky/sohrando/randoseed/logic"
 	"github.com/bsinky/sohrando/randoseed/mqdungeons"
 	"github.com/bsinky/sohrando/randoseed/shopsanity"
+	"github.com/bsinky/sohrando/randoseed/startingage"
 	"github.com/bsinky/sohrando/randoseed/tokensanity"
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
@@ -35,7 +36,7 @@ func testReadingSpoilerLog(t *testing.T, filePath string) *SpoilerLog {
 
 	if err := validate.Struct(&spoilerLog); err != nil {
 		errs := err.(validator.ValidationErrors)
-		t.Fatalf(errs.Error())
+		t.Fatalf("%s", errs.Error())
 	}
 
 	return &spoilerLog
@@ -44,7 +45,8 @@ func testReadingSpoilerLog(t *testing.T, filePath string) *SpoilerLog {
 func testRandoSettingsParsing(t *testing.T, filePath string, versionName string,
 	expectedLogic logic.Logic, expectedTokensanity tokensanity.Tokensanity,
 	expectedShopsanity shopsanity.Shopsanity, expectedMQDungeons mqdungeons.MQDungeons,
-	expectedEntranceRando entrancerando.EntranceRando) {
+	expectedEntranceRando entrancerando.EntranceRando,
+	expectedStartingAge startingage.StartingAge) {
 	spoilerLog := testReadingSpoilerLog(t, filePath)
 
 	actualLogic := spoilerLog.Settings.LogicOrDefault()
@@ -66,6 +68,10 @@ func testRandoSettingsParsing(t *testing.T, filePath string, versionName string,
 	actualEntranceRando := spoilerLog.Settings.EntranceRandoOrDefault()
 	assert.Equal(t, expectedEntranceRando, actualEntranceRando,
 		"%s Entrance Rando parsing failed", versionName)
+
+	actualStartingAge := spoilerLog.Settings.StartingAgeOrDefault()
+	assert.Equal(t, expectedStartingAge, actualStartingAge,
+		"%s Starting Age parsing failed", versionName)
 }
 
 func TestFileHashString(t *testing.T) {
@@ -115,7 +121,8 @@ func TestSuluBravoSpoilerLogSettingsReadProperly(t *testing.T) {
 	t.Parallel()
 	testRandoSettingsParsing(t, SuluBravoFileName, "Sulu Bravo",
 		logic.Glitchless, tokensanity.AllTokens,
-		shopsanity.Random, mqdungeons.Random, entrancerando.Off)
+		shopsanity.Random, mqdungeons.Random, entrancerando.Off,
+		startingage.Child)
 }
 
 const CopperBravoFileName = "02-69-65-39-41.json"
@@ -130,5 +137,6 @@ func TestCopperBravoSpoilerLogSettingsReadProperly(t *testing.T) {
 	t.Parallel()
 	testRandoSettingsParsing(t, CopperBravoFileName, "Copper Bravo",
 		logic.Glitchless, tokensanity.AllTokens,
-		shopsanity.Random, mqdungeons.Zero, entrancerando.On)
+		shopsanity.Random, mqdungeons.Zero, entrancerando.On,
+		startingage.Random)
 }

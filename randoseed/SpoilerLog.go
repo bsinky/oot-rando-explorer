@@ -96,6 +96,7 @@ func (s *SpoilerLog) UpdateDatabaseSeed(seed *Seed) {
 	seed.MQDungeons = s.Settings.MQDungeonsOrDefault()
 	seed.ItemPool = s.Settings.ItemPoolOrDefault()
 	seed.EntranceRando = s.Settings.EntranceRandoOrDefault()
+	seed.StartingAge = s.Settings.StartingAgeOrDefault()
 	seed.RawSettings = &RawSettings{
 		SettingsJSON: s.RawSettings,
 	}

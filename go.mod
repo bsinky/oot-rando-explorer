@@ -1,6 +1,6 @@
 module github.com/bsinky/sohrando
 
-go 1.21.3
+go 1.24.1
 
 require (
 	github.com/alexedwards/argon2id v1.0.0
@@ -10,7 +10,9 @@ require (
 	github.com/glebarez/sqlite v1.10.0
 	github.com/go-playground/validator/v10 v10.15.5
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
+	github.com/stretchr/testify v1.11.1
 	gorm.io/datatypes v1.2.0
+	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.5
 )
 
@@ -26,6 +28,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
@@ -44,19 +47,17 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/wader/gormstore/v2 v2.0.3 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/net v0.16.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/crypto v0.36.0 // indirect
+	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.4.7 // indirect
-	gorm.io/driver/postgres v1.5.4 // indirect
 	gorm.io/driver/sqlite v1.5.1 // indirect
 	modernc.org/libc v1.22.5 // indirect
 	modernc.org/mathutil v1.5.0 // indirect

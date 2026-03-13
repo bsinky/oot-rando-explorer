@@ -13,6 +13,7 @@ import (
 	"github.com/bsinky/sohrando/randoseed/mqdungeons"
 	"github.com/bsinky/sohrando/randoseed/scrubsanity"
 	"github.com/bsinky/sohrando/randoseed/shopsanity"
+	"github.com/bsinky/sohrando/randoseed/startingage"
 	"github.com/bsinky/sohrando/randoseed/tokensanity"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/datatypes"
@@ -104,6 +105,7 @@ type Seed struct {
 	MQDungeons      mqdungeons.MQDungeons       `gorm:"index"`
 	ItemPool        itempool.ItemPool           `gorm:"index"`
 	EntranceRando   entrancerando.EntranceRando `gorm:"index"`
+	StartingAge     startingage.StartingAge     `gorm:"index"`
 	RawSettings     *RawSettings
 	User            *authentication.User `gorm:"foreignKey:UserIDUploader"`
 	UserIDUploader  uint                 `gorm:"index" binding:"required"`
@@ -174,6 +176,10 @@ func (seed Seed) Settings() []Setting {
 		{
 			Label: "Entrance Rando",
 			Value: seed.EntranceRando.DisplayName(),
+		},
+		{
+			Label: "Starting Age",
+			Value: seed.StartingAge.DisplayName(),
 		},
 	}
 }

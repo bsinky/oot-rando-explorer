@@ -13,6 +13,7 @@ import (
 	"github.com/bsinky/sohrando/randoseed/scrubsanity"
 	"github.com/bsinky/sohrando/randoseed/shopsanity"
 	"github.com/bsinky/sohrando/randoseed/tokensanity"
+	"github.com/bsinky/sohrando/randoseed/startingage"
 	"gorm.io/gorm"
 )
 
@@ -127,6 +128,10 @@ func AllFilters(db *gorm.DB) (map[string]*SearchFilter, error) {
 		"EntranceRando": {
 			Label:   "Entrance Rando",
 			Options: optionsFromProvider(entrancerando.EntranceRandoEnum{}),
+		},
+		"StartingAge": {
+			Label:   "Starting Age",
+			Options: optionsFromProvider(startingage.StartingAgeEnum{}),
 		},
 	}
 
