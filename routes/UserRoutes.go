@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,6 +11,7 @@ import (
 	"github.com/bsinky/sohrando/util"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
 type ViewWithUser interface {
@@ -42,6 +45,10 @@ func AddUserRoutes(r *gin.Engine) {
 	r.GET("/signup", signupPage)
 
 	r.GET("/user/:id", userProfile)
+
+	authGroup := r.Group("/user", authRequired())
+	authGroup.GET("/avataroptions", avatarOptions)
+	authGroup.POST("/changeavatar", userChangeAvatar)
 
 	r.POST("/login/auth", loginGetAuthToken)
 	r.POST("/signup/register", signupCreateUser)
@@ -110,6 +117,69 @@ func userProfile(c *gin.Context) {
 		"ViewingOwnProfile": viewingOwnProfile,
 		"UploadedSeeds":     uploadedSeeds,
 	})
+}
+
+func avatarOptions(c *gin.Context) {
+	// build list of possible avatars to choose from
+	avatars := make([]string, 100)
+	for i := range 100 {
+		avatars[i] = fmt.Sprintf("%02d", i)
+	}
+
+	c.HTML(http.StatusOK, "avatarOptions.html", gin.H{
+		"User":    authentication.GetCurrentUser(c),
+		"Avatars": avatars,
+	})
+}
+
+func userChangeAvatar(c *gin.Context) {
+	db := util.GetDatabase(c)
+	user := authentication.GetCurrentUser(c)
+
+	if user == nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+	// fetch the real User record
+	var realUser authentication.User
+	if err := db.First(&realUser, "id = ?", user.ID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// read and validate the new avatar value from the form
+	avatarVal := c.PostForm("avatar")
+	if avatarVal == "" {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	n, err := strconv.Atoi(avatarVal)
+	if err != nil || n < 0 || n > 99 {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	newAvatar := fmt.Sprintf("%02d", n)
+	realUser.Avatar = newAvatar
+
+	if err := db.Save(&realUser).Error; err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// update the session representation of the current user
+	if err := authentication.SetCurrentUser(c, &realUser); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// redirect back to the user's profile
+	util.HtmxRedirect(c, fmt.Sprintf("/user/%d", realUser.ID))
 }
 
 func loginGetAuthToken(c *gin.Context) {

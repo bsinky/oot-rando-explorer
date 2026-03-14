@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html class="{{ getHtmlStyles }}">
+    {{ template "head" }}
+    <body class="{{ getBodyStyles }}">
+        {{ template "banner.html" . }}
+
+        <main class="max-w-4xl mx-auto px-6 py-12">
+            <header class="mb-12 text-center">
+                <img class="inline w-15" src="/assets/hash/{{ .User.Avatar }}.png"/>
+                <div class="inline align-middle text-4xl font-black text-orange-500 tracking-tighter uppercase mb-2">{{ .User.Username }}</div>
+            </header>
+
+            <section>
+                <div class="flex items-center gap-4 mb-6">
+                    <h3 class="text-2xl font-bold text-orange-400">Avatars</h3>
+                    <div class="h-[1px] flex-grow bg-zinc-800"></div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    {{ range .Avatars }}
+                        <button class="cursor-pointer w-15 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-800 hover:border-orange-400 transition-colors"
+                            hx-post="/user/changeavatar"
+                            name="avatar"
+                            value="{{.}}">
+                            <img class="p-2 mx-auto active:scale-95 transition-all" src="/assets/hash/{{.}}.png"
+                                alt="Avatar {{.}} option"/>
+                        </button>
+                    {{ end }}
+                </div>
+                </form>
+            </section>
+        </main>
+    </body>
+</html>
