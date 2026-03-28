@@ -1,6 +1,6 @@
 # OOT Rando Explorer
 
-This repo contains a web app for self-hosting to share Randomizer seeds from Ship of Harkinian with your friends.
+OOT Rando Explorer is a website for you to upload your Ship of Harkinian Randomizer seeds, and download seeds others have shared. You can either check out the reference instance of the site, or self host it to share Randomizer seeds with your friends.
 
 ## Running
 
@@ -93,3 +93,7 @@ git submodule update --remote
 If any new versions were found, it will update the list in `randoseed/versions.txt` for you to review and commit the changes if everything seems correct. For a lot of Ship updates, this is likely all that is needed.
 
 If the JSON format Ship uses has changed significantly, more code changes will be needed to support the new spoilerlog format.
+
+### Disclaimer
+
+This repo isn't affiliated with or endorsed by either Nintendo or the Ship of Harkinian team.
